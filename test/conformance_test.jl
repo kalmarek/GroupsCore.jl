@@ -1,0 +1,244 @@
+function conformance_Group_interface(G::Group)
+    @testset "Group interface" begin
+        @testset "Iteration protocol" begin
+            IS = Base.IteratorSize(typeof(G))
+            if IS isa Base.HasLength || IS isa Base.HasShape
+                @test isfinite(G) == true
+                @test length(G) isa Integer
+                @test length(G) > 0
+
+                @test eltype(G) <: GroupsCore.GroupElement
+                @test one(G) isa eltype(G)
+
+                @test first(iterate(G)) == one(G)
+                _, s = iterate(G)
+                @test first(iterate(G, s)) isa eltype(G)
+            else
+                @test isfinite(G) == false
+            end
+        end
+
+        @testset "Group generators" begin
+            @test GroupsCore.hasgens(G) isa Bool
+
+            if GroupsCore.hasgens(G)
+                @test ngens(G) isa Int
+                @test gens(G) isa AbstractVector{eltype(G)}
+                @test length(gens(G)) == ngens(G)
+                @test first(gens(G)) == gens(G, 1)
+                @test last(gens(G)) == gens(G, ngens(G))
+            else
+                # TODO: throw something more specific
+                @test_throws ErrorException gens(G)
+                @test_throws ErrorException ngens(G)
+            end
+        end
+
+        @testset "order, rand" begin
+            if isfinite(G)
+                @test order(Int16, G) isa Int16
+                @test order(G) isa Integer
+                @test order(G) >= 1
+            end
+            @test rand(G) isa GroupElement
+            @test rand(G, 2) isa AbstractVector{eltype(G)}
+            g,h = rand(G, 2)
+            @test parent(g) === parent(h) === G
+
+            @test pseudo_rand(G) isa GroupElement
+            @test pseudo_rand(G, 2) isa GroupElement
+
+            g,h = pseudo_rand(G, 2)
+            @test parent(g) === parent(h) === G
+        end
+    end
+end
+
+conformance_GroupElement_interface(G::Group) =
+    conformance_GroupElement_interface(rand(G, 2)...)
+
+function conformance_GroupElement_interface(g::GEl, h::GEl) where GEl<:GroupElement
+
+    @assert parent(g) === parent(h)
+
+    @testset "GroupElement interface" begin
+
+        @testset "Parent methods" begin
+            @test parent(g) isa Group
+            G = parent(g)
+
+            @test eltype(G) == typeof(g)
+            @test parent_type(typeof(g)) == typeof(G)
+
+            @test one(g) isa eltype(G)
+
+            @test one(G) == one(g) == one(h)
+            @test one(G) !== one(g)
+        end
+
+        @testset "Equality, deepcopy && hash" begin
+            @test (g == h) isa Bool
+
+            @test istrulyequal(g, h) isa Bool
+            @test g == g
+            @test istrulyequal(h, h)
+
+            if g != h
+                @test !istrulyequal(g, h)
+            end
+
+            @test deepcopy(g) isa typeof(g)
+            @test deepcopy(g) == g
+            @test deepcopy(g) !== g
+            k = deepcopy(g)
+            @test parent(k) === parent(g)
+            @test hash(g) isa UInt
+            @test hash(g) == hash(k)
+        end
+
+        @testset "Group operations" begin
+            old_g, old_h = deepcopy(g), deepcopy(h)
+
+            # check that the default operations don't mutate their arguments
+            @test inv(g) isa typeof(g)
+            @test g,h == old_g, old_h
+            @test g*h isa typeof(g)
+            @test g,h == old_g, old_h
+            @test g^2 == g*g
+            @test g,h == old_g, old_h
+            @test g^-3 == inv(g)*inv(g)*inv(g)
+            @test g,h == old_g, old_h
+            @test (g*h)^-1 == inv(h)*inv(g)
+            @test g,h == old_g, old_h
+            @test conj(g, h) == inv(h)* g * h
+            @test g,h == old_g, old_h
+            @test comm(g, h) == g^-1*h^-1*g*h
+            @test g,h == old_g, old_h
+            @test isone(g*inv(g)) && isone(inv(g)*g)
+            @test g,h == old_g, old_h
+            @test g/h == g*inv(h)
+            @test g,h == old_g, old_h
+        end
+
+        @testset "Misc GroupElement methods" begin
+            @test one(g) isa typeof(g)
+            @test isone(g) isa Bool
+            @test isone(one(g))
+
+            @test hasorder(g) isa Bool
+
+            if hasorder(g)
+                @test order(g) isa Integer
+                @test order(Int16, g) isa Int16
+                @test order(g) >= 1
+                if g^2 != g
+                    @test order(g) > 2
+                end
+                @test order(inv(g)) == order(g)
+                @test order(one(g)) == 1
+            end
+
+            @test similar(g) isa typeof(g)
+        end
+
+        @testset "In-place operations" begin
+            old_g, old_h = deepcopy(g), deepcopy(h)
+            out = similar(g)
+
+            @test isone(one!(g))
+            g = deepcopy(old_g)
+
+            @test inv!(out, g) == inv(old_g)
+            @test g == old_g
+            @test inv!(g) == inv(old_g)
+            g = deepcopy(old_g)
+
+            @testset "mul!" begin
+                @test mul!(out, g, h) == old_g * old_h
+                @test g,h == old_g, old_h
+
+                @test mul!(out, g, h) == old_g * old_h
+                @test g,h == old_g, old_h
+
+                @test mul!(g, g, h) == old_g * old_h
+                @test h == old_h
+                g = deepcopy(old_g)
+
+                @test mul!(h, g, h) == old_g * old_h
+                @test g == old_g
+                h = deepcopy(old_h)
+
+                @test mul!(g, g, g) == old_g * old_g
+                g = deepcopy(old_g)
+            end
+
+            @testset "conj!" begin
+                res = old_h^-1*old_g*old_h
+                @test conj!(out, g, h) == res
+                @test g,h == old_g, old_h
+
+                @test conj!(g, g, h) == res
+                @test h == old_h
+                g = deepcopy(old_g)
+
+                @test conj!(h, g, h) == res
+                @test g == old_g
+                h = deepcopy(old_h)
+
+                @test conj!(g, g, g) == old_g
+                g = deepcopy(old_g)
+            end
+
+            @testset "comm!" begin
+                res = old_g^-1 * old_h^-1 * old_g * old_h
+
+                @test comm!(out, g, h, similar(g)) == res
+                @test g,h == old_g, old_h
+
+                @test comm!(out, g, h) == res
+                @test g,h == old_g, old_h
+
+                @test comm!(g, g, h) == res
+                @test h == old_h
+                g = deepcopy(old_g)
+
+                @test comm!(h, g, h) == res
+                @test g == old_g
+                h = deepcopy(old_h)
+            end
+
+            @testset "div_[left|right]!" begin
+                res = g*h^-1
+                @test div_right!(out, g, h) == res
+                @test g,h == old_g, old_h
+
+                @test div_right!(g, g, h) == res
+                @test h == old_h
+                g = deepcopy(old_g)
+
+                @test div_right!(h, g, h) == res
+                @test g == old_g
+                h = deepcopy(old_h)
+
+                @test div_right!(g, g, g) == one(g)
+                g = deepcopy(old_g)
+
+
+                res = h^-1*g
+                @test div_left!(out, g, h) == res
+                @test g,h == old_g, old_h
+
+                @test div_left!(g, g, h) == res
+                @test h == old_h
+                g = deepcopy(old_g)
+
+                @test div_left!(h, g, h) == res
+                @test g == old_g
+                h = deepcopy(old_h)
+
+                @test div_left!(g, g, g) == one(g)
+                g = deepcopy(old_g)
+            end
+        end
+    end
+end
