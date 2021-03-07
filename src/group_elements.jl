@@ -44,6 +44,9 @@ Base.deepcopy_internal(g::GroupElement, stackdict::IdDict) = throw(
 Base.inv(g::GroupElement) =
     throw(InterfaceNotSatisfied(:Group, "Base.inv(::$(typeof(g)))"))
 
+Base.:(*)(g::GEl, h::GEl) where GEl<:GroupElement =
+    throw(InterfaceNotSatisfied(:Group, "Base.:(*)(::$(typeof(g)), ::$(typeof(g)))"))
+
 ### Default implementations for `GroupElement`
 
 #### Modification not recommended
@@ -59,7 +62,15 @@ See also the in-place version `conj!`
 Base.conj(g::GEl, h::GEl) where {GEl<:GroupElement} = conj!(similar(g), g, h)
 comm(g::GEl, h::GEl) where {GEl<:GroupElement} = comm!(similar(g), g, h, tmp=similar(g))
 
-Base.literal_pow(typeof(^), g::GroupElement, ::Val{-1}) = inv(g)
+function comm(args::Vararg{GEl, N}) where {GEl<:GroupElement, N}
+    N == 0 && throw("Commutator of empty collection is undefined")
+    N == 1 && return one(first(args))
+    @assert N > 2
+    a,b, args = args
+    comm(comm(a,b),args)
+end
+
+Base.literal_pow(::typeof(^), g::GroupElement, ::Val{-1}) = inv(g)
 
 Base.:(/)(g::GEl, h::GEl) where GEl<:GroupElement = mul!(similar(g), g, inv(h))
 
@@ -95,7 +106,7 @@ div_right!(out::GEl, g::GEl, h::GEl) where {GEl<:GroupElement} = mul!(out, g, in
 
 # aliasing of g and h with out is allowed;
 function div_left!(out::GEl, g::GEl, h::GEl) where {GEl<:GroupElement}
-    out = (out === g || out === h ? inv(h), inv!(out, h))
+    out = (out === g || out === h) ? inv(h) : inv!(out, h)
     return mul!(out, out, g)
 end
 
@@ -127,7 +138,7 @@ AbstractAlgebra.mul!(out::GEl, g::GEl, h::GEl) where {GEl<:GroupElement} = g*h
 
 # aliasing of g and h with out is allowed
 function conj!(out::GEl, g::GEl, h::GEl) where {GEl<:GroupElement}
-    out = (out === g || out === h ? inv(h), inv!(out, h))
+    out = (out === g || out === h) ? inv(h) : inv!(out, h)
     out = mul!(out, out, g)
     return mul!(out, out, h)
 end
