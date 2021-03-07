@@ -14,12 +14,12 @@ export Group, GroupElement
 export comm, istrulyequal, gens, hasorder, hasgens, ngens, order
 # export one!, inv!, mul!, conj!, comm!, div_left!, div_right!
 
-struct InterfaceNotSatisfied <: Exception
+struct InterfaceNotImplemented <: Exception
     family::Symbol
     method::String
 end
 
-Base.showerror(io::IO, err::InterfaceNotSatisfied) =
+Base.showerror(io::IO, err::InterfaceNotImplemented) =
     print(io, "Missing method from $(err.family) interface: `$(err.method)`")
 
 include("groups.jl")

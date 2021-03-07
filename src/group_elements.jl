@@ -3,12 +3,12 @@
 ### Obligatory methods for `GroupElement`
 
 AbstractAlgebra.parent(g::GroupElement) = throw(
-    InterfaceNotSatisfied(:Group, "AbstractAlgebra.parent(::$(typeof(g)))"),
+    InterfaceNotImplemented(:Group, "AbstractAlgebra.parent(::$(typeof(g)))"),
 )
 
 # TODO: Do we actually need this?
 # AbstractAlgebra.parent_type(GEl::Type{<:GroupElement}) = throw(
-#     InterfaceNotSatisfied(:Group, "AbstractAlgebra.parent_type(::$GEl)"),
+#     InterfaceNotImplemented(:Group, "AbstractAlgebra.parent_type(::$GEl)"),
 # )
 """
     istrulyequal(g::GEl, h::GEl) where {GEl<:GroupElement}
@@ -17,14 +17,14 @@ Return the mathematical equality of group elements.
 This function may not return due to e.g. unsolvable word problem in groups.
 """
 istrulyequal(g::GEl, h::GEl) where {GEl<:GroupElement} =
-    throw(InterfaceNotSatisfied(:Group, "istrulyequal(::$GEl, ::$GEl)"))
+    throw(InterfaceNotImplemented(:Group, "istrulyequal(::$GEl, ::$GEl)"))
 
 """
     hasorder(g::GroupElement)
 Return `true` if `g` has finite order (without computing it).
 """
 hasorder(g::GroupElement) =
-    throw(InterfaceNotSatisfied(:Group, "hasorder(::$(typeof(g)))"))
+    throw(InterfaceNotImplemented(:Group, "hasorder(::$(typeof(g)))"))
 
 #=
 """
@@ -34,7 +34,7 @@ Return a completely intependent copy of a group element `g` without copying its 
 That is `parent(g) === parent(deepcopy(g))` must be satisfied. It is not necessary to implement this method if `parent(g)` can be reconstructed exactly from `g`.
 """
 Base.deepcopy_internal(g::GroupElement, stackdict::IdDict) = throw(
-    InterfaceNotSatisfied(
+    InterfaceNotImplemented(
         :Group,
         "Base.deepcopy_internal(::$(typeof(g)), ::IdDict)",
     ),
@@ -42,10 +42,13 @@ Base.deepcopy_internal(g::GroupElement, stackdict::IdDict) = throw(
 =#
 
 Base.inv(g::GroupElement) =
-    throw(InterfaceNotSatisfied(:Group, "Base.inv(::$(typeof(g)))"))
+    throw(InterfaceNotImplemented(:Group, "Base.inv(::$(typeof(g)))"))
 
 Base.:(*)(g::GEl, h::GEl) where {GEl<:GroupElement} = throw(
-    InterfaceNotSatisfied(:Group, "Base.:(*)(::$(typeof(g)), ::$(typeof(g)))"),
+    InterfaceNotImplemented(
+        :Group,
+        "Base.:(*)(::$(typeof(g)), ::$(typeof(g)))",
+    ),
 )
 
 ### Default implementations for `GroupElement`

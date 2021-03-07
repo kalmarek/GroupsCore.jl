@@ -1,11 +1,11 @@
 ## Iterator protocol for `Group`
 
 Base.eltype(::Type{G}) where {G<:Group} =
-    throw(InterfaceNotSatisfied(:Iteration, "Base.eltype(::Type{$G})"))
+    throw(InterfaceNotImplemented(:Iteration, "Base.eltype(::Type{$G})"))
 Base.iterate(G::Group) =
-    throw(InterfaceNotSatisfied(:Iteration, "Base.iterate(::$(typeof(G)))"))
+    throw(InterfaceNotImplemented(:Iteration, "Base.iterate(::$(typeof(G)))"))
 Base.iterate(G::Group, state) = throw(
-    InterfaceNotSatisfied(:Iteration, "Base.iterate(::$(typeof(G)), state)"),
+    InterfaceNotImplemented(:Iteration, "Base.iterate(::$(typeof(G)), state)"),
 )
 
 #=
@@ -32,24 +32,25 @@ which is "best effort", cheap computation of length of the group iterator. For p
 ### Obligatory methods for `Group`
 
 Base.one(G::Group) =
-    throw(InterfaceNotSatisfied(:Group, "Base.one(::$(typeof(G)))"))
+    throw(InterfaceNotImplemented(:Group, "Base.one(::$(typeof(G)))"))
 
 AbstractAlgebra.order(::Type{<:Integer}, G::Group) = throw(
-    InterfaceNotSatisfied(
+    InterfaceNotImplemented(
         :Group,
         "AbstractAlgebra.order(::Type{<:Integer}, ::$(typeof(G)))",
     ),
 )
 
-AbstractAlgebra.gens(G::Group) =
-    throw(InterfaceNotSatisfied(:Group, "AbstractAlgebra.gens(::$(typeof(G)))"))
+AbstractAlgebra.gens(G::Group) = throw(
+    InterfaceNotImplemented(:Group, "AbstractAlgebra.gens(::$(typeof(G)))"),
+)
 
 function Base.rand(
     rng::Random.AbstractRNG,
     rs::Random.SamplerTrivial{G},
 ) where {G<:Group}
     throw(
-        InterfaceNotSatisfied(
+        InterfaceNotImplemented(
             :Random,
             "Base.rand(::Random.AbstractRNG, ::Random.SamplerTrivial{$G}))",
         ),

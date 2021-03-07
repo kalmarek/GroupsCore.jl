@@ -8,6 +8,8 @@ include("symmetric.jl")
 
 @testset "GroupsCore.jl" begin
 
+    include("test_notsatisfied.jl")
+
     @testset "Cyclic(12)" begin
         G = CyclicGroup(12)
         conformance_Group_interface(G)
