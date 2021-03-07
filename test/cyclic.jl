@@ -49,7 +49,10 @@ end
 
 ################## Implementing Group Interface Done!
 
-### Performance modification
+#=
+### Possible performance modifications:
+
+NOTE: Since CyclicGroupElement is immutable there is no need to implement in-place mutable arithmetic.
 
 Base.isone(g::CyclicGroupElement) = iszero(g.residual)
 
@@ -60,6 +63,8 @@ function GroupsCore.order(::Type{I}, g::CyclicGroupElement) where {I<:Integer}
 end
 
 Base.hash(g::CyclicGroupElement, h::UInt) = hash(g.residual, hash(parent(g), h))
+
+=#
 
 ### end of Group[Element] methods
 

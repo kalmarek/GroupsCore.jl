@@ -123,13 +123,13 @@ end
 
 function AbstractAlgebra.order(::Type{I}, g::GroupElement) where {I<:Integer}
     hasorder(g) || throw("$g does not seem to have finite order")
-    isone(m) && return I(1)
+    isone(g) && return I(1)
     o = I(1)
-    _one = one(g)
-    mm = deepcopy(m)
-    while mm != _one
+    gg = deepcopy(g)
+    out = similar(g)
+    while !isone(gg)
         o += I(1)
-        mm *= m
+        gg = mul!(out, gg, g)
     end
     return o
 end
