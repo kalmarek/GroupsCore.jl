@@ -225,7 +225,7 @@ function test_GroupElement_interface(g::GEl, h::GEl) where {GEl<:GroupElement}
             @testset "comm!" begin
                 res = old_g^-1 * old_h^-1 * old_g * old_h
 
-                @test comm!(out, g, h, tmp = similar(g)) == res
+                @test comm!(out, g, h) == res
                 @test (g, h) == (old_g, old_h)
 
                 @test comm!(out, g, h) == res

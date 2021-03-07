@@ -2,8 +2,8 @@
 
 ### Obligatory methods for `GroupElement`
 
-AbstractAlgebra.parent(g::GroupElement) =
-    throw(InterfaceNotImplemented(:Group, "GroupsCore.parent(::$(typeof(g)))"))
+Base.parent(g::GroupElement) =
+    throw(InterfaceNotImplemented(:Group, "Base.parent(::$(typeof(g)))"))
 
 """
     parent_type(element_type)
@@ -32,8 +32,8 @@ hasorder(g::GroupElement) = throw(
 )
 
 """
-    Base.deepcopy_internal(g::GroupElement, ::IdDict)
-Return a completely intependent copy of a group element `g` without copying its parent.
+    deepcopy_internal(g::GroupElement, ::IdDict)
+Return a completely intependent copy of group element `g` **without copying its parent**.
 
 That is `parent(g) === parent(deepcopy(g))` must be satisfied. There is no need to implement this method if `g` is `isbits`.
 """
@@ -44,10 +44,16 @@ Base.deepcopy_internal(g::GroupElement, stackdict::IdDict) = throw(
     ),
 )
 # TODO: Technically, it is not necessary to implement `deepcopy_internal` method if `parent(g)` can be reconstructed exactly from `g` (i.e. either it's cached, or a singleton). However by defining this fallback we force everybody to implement it, except isbits group elements.
-
+"""
+    inv(g::GroupElement)
+Return the group inverse of `g`
+"""
 Base.inv(g::GroupElement) =
     throw(InterfaceNotImplemented(:Group, "Base.inv(::$(typeof(g)))"))
-
+"""
+    (*)(g::GEl, h::GEl) where GEl<:GroupElement
+Return the result of group binary operation on `g` and `h`.
+"""
 Base.:(*)(g::GEl, h::GEl) where {GEl<:GroupElement} = throw(
     InterfaceNotImplemented(
         :Group,
@@ -58,20 +64,41 @@ Base.:(*)(g::GEl, h::GEl) where {GEl<:GroupElement} = throw(
 ### Default implementations for `GroupElement`
 
 #### Modification not recommended
+"""
+    one(g::GroupElement)
+Return the identity element of the parent group of `g`.
+"""
 Base.one(g::GroupElement) = one(parent(g))
 
+"""
+    order([BigInt, ]g::GroupElement)
+    order(I::Type{<:Integer}, g::GroupElement)
+Return the order of `g` as an instance of `I`.
+
+Only arbitrary size integers are required to return mathematically correct answer.
+"""
 AbstractAlgebra.order(g::GroupElement) = order(BigInt, g)
 
 """
-    Base.conj(g::GEl, h::GEl) where {GEl<:GroupElement}
-Return conjugation of `g` by `h`, i.e. `h¯¹gh`.
-See also the in-place version `conj!`
+    conj(g::GEl, h::GEl) where {GEl<:GroupElement}
+Return conjugation of `g` by `h`, i.e. `h^-1*g*h`.
 """
 Base.conj(g::GEl, h::GEl) where {GEl<:GroupElement} = conj!(similar(g), g, h)
+
+"""
+    ^(g::GEl, h::GEl) where {GEl<:GroupElement}
+Conjugation action of `h` on `g`. See `conj`.
+"""
 Base.:(^)(g::GEl, h::GEl) where {GEl<:GroupElement} = conj(g, h)
 
-comm(g::GEl, h::GEl) where {GEl<:GroupElement} =
-    comm!(similar(g), g, h, tmp = similar(g))
+"""
+    comm(g::GEl, h::GEl[, Vararg{GEl}...) where GEl<:GroupElement
+Return the commutator `inv(g)*inv(h)*g*h` of `g` and `h`.
+
+The `Vararg` version returns the repeated (`foldl`) commutator, i.e.
+`comm(g, h, k) == comm(comm(g, h), k)`.
+"""
+comm(g::GEl, h::GEl) where {GEl<:GroupElement} = comm!(similar(g), g, h)
 
 function comm(args::Vararg{GEl,N}) where {GEl<:GroupElement,N}
     N == 0 && throw("Commutator of empty collection is undefined")
@@ -84,7 +111,7 @@ end
 Base.literal_pow(::typeof(^), g::GroupElement, ::Val{-1}) = inv(g)
 
 Base.:(/)(g::GEl, h::GEl) where {GEl<:GroupElement} =
-    mul!(similar(g), g, inv(h))
+    div_right!(similar(g), g, h)
 
 #### Modification possible for performance reasons
 
@@ -113,16 +140,6 @@ function Base.:^(g::GroupElement, n::Integer)
     return Base.power_by_squaring(g, n)
 end
 
-# aliasing of g and h with out is allowed;
-div_right!(out::GEl, g::GEl, h::GEl) where {GEl<:GroupElement} =
-    mul!(out, g, inv(h))
-
-# aliasing of g and h with out is allowed;
-function div_left!(out::GEl, g::GEl, h::GEl) where {GEl<:GroupElement}
-    out = (out === g || out === h) ? inv(h) : inv!(out, h)
-    return mul!(out, out, g)
-end
-
 #### Modification RECOMMENDED for performance reasons
 
 function AbstractAlgebra.order(::Type{I}, g::GroupElement) where {I<:Integer}
@@ -141,31 +158,67 @@ end
 Base.hash(g::GroupElement, h::UInt) = hash(typeof(g), h)
 
 ##### Mutable API
-
+"""
+    one!(g::GroupElement)
+Return `one(g)`, possibly modifying `g`.
+"""
 one!(g::GroupElement) = one(parent(g))
-# aliasing of g with out is allowed
+
+"""
+    inv!(out::GEl, g::GEl) where GEl<:GroupElement
+Return `inv(g)`, possibly modifying `out`.
+
+Aliasing of `g` with `out` is allowed.
+"""
 AbstractAlgebra.inv!(out::GEl, g::GEl) where {GEl<:GroupElement} = inv(g)
 
-# aliasing of g and h with out is allowed
+"""
+    mul!(out::GEl, g::GEl, h::GEl) where GEl<:GroupElement
+Return `g*h`, possibly modifying `out`.
+
+Aliasing of `g` or `h` with `out` is allowed.
+"""
 AbstractAlgebra.mul!(out::GEl, g::GEl, h::GEl) where {GEl<:GroupElement} = g * h
 
-# aliasing of g and h with out is allowed
+"""
+    div_right!(out::GEl, g::GEl, h::GEl) where GEl<:GroupElement
+Return `g*h^-1`, possibly modifying `out`.
+
+Aliasing of `g` or `h` with `out` is allowed;
+"""
+div_right!(out::GEl, g::GEl, h::GEl) where {GEl<:GroupElement} =
+    mul!(out, g, inv(h))
+
+"""
+    div_left!(out::GEl, g::GEl, h::GEl) where GEl<:GroupElement
+Return `h^-1*g`, possibly modifying `out`.
+
+Aliasing of `g` or `h` with `out` is allowed;
+"""
+function div_left!(out::GEl, g::GEl, h::GEl) where {GEl<:GroupElement}
+    out = (out === g || out === h) ? inv(h) : inv!(out, h)
+    return mul!(out, out, g)
+end
+"""
+    conj!(out::GEl, g::GEl, h::GEl) where GEl<:GroupElement
+Return `h^-1*g*h, `possibly modifying `out`.
+
+Aliasing of `g` or `h` with `out` is allowed.
+"""
 function conj!(out::GEl, g::GEl, h::GEl) where {GEl<:GroupElement}
     out = (out === g || out === h) ? inv(h) : inv!(out, h)
     out = mul!(out, out, g)
     return mul!(out, out, h)
 end
 
-# aliasing of g and h with out is allowed;
-# aliasing with tmp is NOT allowed → there is a 3 argument version (allocates 1 element)
+"""
+    comm!(out::GEl, g::GEl, h::GEl) where GEl<:GroupElement
+Return `g^-1*h^-1*g*h, `possibly modifying `out`.
+
+Aliasing of `g` or `h` with `out` is allowed.
+"""
 # TODO: can we make comm! with 3 arguments without allocation??
-function comm!(
-    out::GEl,
-    g::GEl,
-    h::GEl;
-    tmp::GEl = similar(out),
-) where {GEl<:GroupElement}
-    tmp = conj!(tmp, g, h)
-    out = inv!(out, g)
-    return mul!(out, out, tmp)
+function comm!(out::GEl, g::GEl, h::GEl) where {GEl<:GroupElement}
+    out = conj!(out, g, h)
+    return div_left!(out, out, g)
 end
