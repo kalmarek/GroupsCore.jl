@@ -54,13 +54,22 @@ end
 
 ### Default implementations for `Group`
 
+function Base.isfinite(G::Group)
+    IS = Base.IteratorSize(typeof(G))
+    IS isa Base.HasLength && return true
+    IS isa Base.HasShape && return true
+    # else : IS isa (Base.SizeUnknown, Base.IsInfinite, ...)
+    return false
+end
+
 hasgens(G::Group) = true
 
 AbstractAlgebra.order(G::Group) = order(BigInt, G)
-AbstractAlgebra.elem_type(G::Type{<:Group}) = eltype(G)
+AbstractAlgebra.elem_type(G::Type{<:Group}) = eltype(typeof(G))
 
 function AbstractAlgebra.gens(G::Group, i::Integer)
     hasgens(G) && return gens(G)[i]
+    # TODO: throw something more specific
     throw(
         "Group does not seem to have generators. Did you alter `hasgens(::$(typeof(G)))`?",
     )
@@ -68,18 +77,11 @@ end
 
 function AbstractAlgebra.ngens(G::Group)
     hasgens(G) && return length(gens(G))
+    # TODO: throw something more specific
     throw(
         "Group does not seem to have generators. Did you alter `hasgens(::$(typeof(G)))`?",
     )
 end
 
-rand_pseudo(G::Group) = rand_pseudo(Random.default_rng(), G)
-rand_pseudo(rng::Random.AbstractRNG, G::Group) = rand(rng, G)
-
-Base.isfinite(G::Group) =
-    IS = Base.IteratorSize(typeof(G))
-    IS isa Base.HasLength && return true
-    IS isa Base.HasShape && return true
-    # else : IS isa (Base.SizeUnknown, Base.IsInfinite, ...)
-    return false
-end
+pseudo_rand(G::Group, args...) = pseudo_rand(Random.default_rng(), G, args...)
+pseudo_rand(rng::Random.AbstractRNG, G::Group, args...) = rand(rng, G, args...)
