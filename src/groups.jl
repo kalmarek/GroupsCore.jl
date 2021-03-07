@@ -59,7 +59,7 @@ end
 ### Default implementations for `Group`
 
 function Base.isfinite(G::Group)
-    IS = Base.IteratorSize(typeof(G))
+    IS = Base.IteratorSize(G)
     IS isa Base.HasLength && return true
     IS isa Base.HasShape && return true
     # else : IS isa (Base.SizeUnknown, Base.IsInfinite, ...)

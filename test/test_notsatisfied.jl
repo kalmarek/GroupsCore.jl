@@ -31,6 +31,18 @@ struct SomeGroupElement <: GroupElement end
         @test Base.IteratorSize(G) == Base.HasLength()
         @test Base.isfinite(G)
 
+        Base.IteratorSize(::Type{SomeGroup}) = Base.HasShape{1}()
+        @test Base.isfinite(G)
+
+        Base.IteratorSize(::Type{SomeGroup}) = Base.SizeUnknown()
+        @test !Base.isfinite(G)
+
+        Base.IteratorSize(::Type{SomeGroup}) = Base.IsInfinite()
+        @test !Base.isfinite(G)
+
+        # return to the default:
+        Base.IteratorSize(::Type{SomeGroup}) = Base.HasLength()
+
         # Assumption 2: Groups have generators:
         @test hasgens(G)
 
