@@ -2,9 +2,9 @@
 
 ### Obligatory methods for `GroupElement`
 
-AbstractAlgebra.parent(g::GroupElement) = throw(
-    InterfaceNotImplemented(:Group, "AbstractAlgebra.parent(::$(typeof(g)))"),
-)
+AbstractAlgebra.parent(g::GroupElement) =
+    throw(InterfaceNotImplemented(:Group, "GroupsCore.parent(::$(typeof(g)))"))
+
 
 # TODO: Do we actually need this?
 # AbstractAlgebra.parent_type(GEl::Type{<:GroupElement}) = throw(
@@ -16,15 +16,17 @@ Return the mathematical equality of group elements.
 
 This function may not return due to e.g. unsolvable word problem in groups.
 """
-istrulyequal(g::GEl, h::GEl) where {GEl<:GroupElement} =
-    throw(InterfaceNotImplemented(:Group, "istrulyequal(::$GEl, ::$GEl)"))
+istrulyequal(g::GEl, h::GEl) where {GEl<:GroupElement} = throw(
+    InterfaceNotImplemented(:Group, "GroupsCore.istrulyequal(::$GEl, ::$GEl)"),
+)
 
 """
     hasorder(g::GroupElement)
 Return `true` if `g` has finite order (without computing it).
 """
-hasorder(g::GroupElement) =
-    throw(InterfaceNotImplemented(:Group, "hasorder(::$(typeof(g)))"))
+hasorder(g::GroupElement) = throw(
+    InterfaceNotImplemented(:Group, "GroupsCore.hasorder(::$(typeof(g)))"),
+)
 
 #=
 """

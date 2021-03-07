@@ -37,13 +37,12 @@ Base.one(G::Group) =
 AbstractAlgebra.order(::Type{<:Integer}, G::Group) = throw(
     InterfaceNotImplemented(
         :Group,
-        "AbstractAlgebra.order(::Type{<:Integer}, ::$(typeof(G)))",
+        "GroupsCore.order(::Type{<:Integer}, ::$(typeof(G)))",
     ),
 )
 
-AbstractAlgebra.gens(G::Group) = throw(
-    InterfaceNotImplemented(:Group, "AbstractAlgebra.gens(::$(typeof(G)))"),
-)
+AbstractAlgebra.gens(G::Group) =
+    throw(InterfaceNotImplemented(:Group, "GroupsCore.gens(::$(typeof(G)))"))
 
 function Base.rand(
     rng::Random.AbstractRNG,
