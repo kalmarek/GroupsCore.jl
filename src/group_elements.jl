@@ -5,11 +5,14 @@
 AbstractAlgebra.parent(g::GroupElement) =
     throw(InterfaceNotImplemented(:Group, "GroupsCore.parent(::$(typeof(g)))"))
 
+"""
+    parent_type(element_type)
+Given the type of an element return the type of its parent.
+"""
+AbstractAlgebra.parent_type(GEl::Type{<:GroupElement}) = throw(
+    InterfaceNotImplemented(:Group, "GroupsCore.parent_type(::Type{$GEl})"),
+)
 
-# TODO: Do we actually need this?
-# AbstractAlgebra.parent_type(GEl::Type{<:GroupElement}) = throw(
-#     InterfaceNotImplemented(:Group, "AbstractAlgebra.parent_type(::$GEl)"),
-# )
 """
     istrulyequal(g::GEl, h::GEl) where {GEl<:GroupElement}
 Return the mathematical equality of group elements.

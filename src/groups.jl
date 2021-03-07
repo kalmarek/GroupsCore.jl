@@ -69,7 +69,12 @@ end
 hasgens(G::Group) = true
 
 AbstractAlgebra.order(G::Group) = order(BigInt, G)
-AbstractAlgebra.elem_type(G::Type{<:Group}) = eltype(typeof(G))
+
+"""
+    elem_type(parent_type)
+Given the type of a parent object return the type of its elements.
+"""
+AbstractAlgebra.elem_type(T::Type{<:Group}) = eltype(T)
 
 function AbstractAlgebra.gens(G::Group, i::Integer)
     hasgens(G) && return gens(G)[i]

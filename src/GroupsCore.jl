@@ -2,7 +2,7 @@ module GroupsCore
 
 import Random
 import AbstractAlgebra
-import AbstractAlgebra: gens, ngens, order, parent, parent_type
+import AbstractAlgebra: elem_type, gens, ngens, order, parent, parent_type
 import AbstractAlgebra: inv!, mul!
 const Group = AbstractAlgebra.Group
 const GroupElement = AbstractAlgebra.GroupElem
