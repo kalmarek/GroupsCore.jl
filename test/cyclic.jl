@@ -72,6 +72,6 @@ Base.hash(g::CyclicGroupElement, h::UInt) = hash(g.residual, hash(parent(g), h))
 
 # Some eye-candy if you please
 Base.show(io::IO, C::CyclicGroup) =
-    print(io, "Group of residuals modulo $(order(Int, C))")
+    print(io, "Group of residues modulo $(order(Int, C))")
 Base.show(io::IO, c::CyclicGroupElement) =
     print(io, Int(c.residual), " (mod ", order(Int, parent(c)), ")")

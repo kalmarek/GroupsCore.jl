@@ -67,6 +67,7 @@ end
         g = SomeGroupElement(Int[])
 
         @test_throws INI parent(g)
+        @test_throws INI GroupsCore.parent_type(g)
         @test_throws INI istrulyequal(g, g)
 
         @test_throws INI hasorder(g)
