@@ -1,5 +1,3 @@
-
-
 using Random
 
 struct CyclicGroup <: GroupsCore.Group
@@ -34,13 +32,6 @@ GroupsCore.parent(c::CyclicGroupElement) = c.parent
 GroupsCore.istrulyequal(g::CyclicGroupElement, h::CyclicGroupElement) =
     parent(g) === parent(h) && g.residual == h.residual
 
-# Some eye-candy if you please
-Base.show(io::IO, C::CyclicGroup) =
-    print(io, "Group of residuals modulo $(order(Int, C))")
-Base.show(io::IO, c::CyclicGroupElement) =
-    print(io, Int(c.residual), " (mod ", order(Int, parent(c)), ")")
-
-
 GroupsCore.hasorder(g::CyclicGroupElement) = true
 
 Base.deepcopy_internal(g::CyclicGroupElement, ::IdDict) =
@@ -55,6 +46,10 @@ function Base.:(*)(g::CyclicGroupElement, h::CyclicGroupElement)
     return CyclicGroupElement((g.residual + h.residual) % order(UInt, C), C)
 end
 
+################## Implementing Group Interface Done!
+
+### Performance modification
+
 Base.isone(g::CyclicGroupElement) = iszero(g.residual)
 
 function GroupsCore.order(::Type{I}, g::CyclicGroupElement) where {I<:Integer}
@@ -65,11 +60,10 @@ end
 
 Base.hash(g::CyclicGroupElement, h::UInt) = hash(g.residual, hash(parent(g), h))
 
+### end of Group[Element] methods
 
-################## Implementing Group Interface Done!
-
-@testset "Cyclic(12)" begin
-    G = CyclicGroup(12)
-    conformance_Group_interface(G)
-    conformance_GroupElement_interface(rand(G, 2)...)
-end
+# Some eye-candy if you please
+Base.show(io::IO, C::CyclicGroup) =
+    print(io, "Group of residuals modulo $(order(Int, C))")
+Base.show(io::IO, c::CyclicGroupElement) =
+    print(io, Int(c.residual), " (mod ", order(Int, parent(c)), ")")
