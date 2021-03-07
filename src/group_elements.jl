@@ -98,14 +98,12 @@ Return the commutator `inv(g)*inv(h)*g*h` of `g` and `h`.
 The `Vararg` version returns the repeated (`foldl`) commutator, i.e.
 `comm(g, h, k) == comm(comm(g, h), k)`.
 """
-comm(g::GEl, h::GEl) where {GEl<:GroupElement} = comm!(similar(g), g, h)
-
-function comm(args::Vararg{GEl,N}) where {GEl<:GroupElement,N}
-    N == 0 && throw("Commutator of empty collection is undefined")
-    N == 1 && return one(first(args))
-    @assert N > 2
-    a, b, args = args
-    comm(comm(a, b), args)
+function comm(g::GEl, h::GEl, tail::GEl...) where {GEl<:GroupElement}
+    res = comm!(similar(g), g, h)
+    for k in tail
+        res = comm!(res, res, k)
+    end
+    return res
 end
 
 Base.literal_pow(::typeof(^), g::GroupElement, ::Val{-1}) = inv(g)
