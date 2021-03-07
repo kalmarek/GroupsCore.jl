@@ -44,8 +44,9 @@ Base.deepcopy_internal(g::GroupElement, stackdict::IdDict) = throw(
 Base.inv(g::GroupElement) =
     throw(InterfaceNotSatisfied(:Group, "Base.inv(::$(typeof(g)))"))
 
-Base.:(*)(g::GEl, h::GEl) where GEl<:GroupElement =
-    throw(InterfaceNotSatisfied(:Group, "Base.:(*)(::$(typeof(g)), ::$(typeof(g)))"))
+Base.:(*)(g::GEl, h::GEl) where {GEl<:GroupElement} = throw(
+    InterfaceNotSatisfied(:Group, "Base.:(*)(::$(typeof(g)), ::$(typeof(g)))"),
+)
 
 ### Default implementations for `GroupElement`
 
@@ -60,19 +61,21 @@ Return conjugation of `g` by `h`, i.e. `h¯¹gh`.
 See also the in-place version `conj!`
 """
 Base.conj(g::GEl, h::GEl) where {GEl<:GroupElement} = conj!(similar(g), g, h)
-comm(g::GEl, h::GEl) where {GEl<:GroupElement} = comm!(similar(g), g, h, tmp=similar(g))
+comm(g::GEl, h::GEl) where {GEl<:GroupElement} =
+    comm!(similar(g), g, h, tmp = similar(g))
 
-function comm(args::Vararg{GEl, N}) where {GEl<:GroupElement, N}
+function comm(args::Vararg{GEl,N}) where {GEl<:GroupElement,N}
     N == 0 && throw("Commutator of empty collection is undefined")
     N == 1 && return one(first(args))
     @assert N > 2
-    a,b, args = args
-    comm(comm(a,b),args)
+    a, b, args = args
+    comm(comm(a, b), args)
 end
 
 Base.literal_pow(::typeof(^), g::GroupElement, ::Val{-1}) = inv(g)
 
-Base.:(/)(g::GEl, h::GEl) where GEl<:GroupElement = mul!(similar(g), g, inv(h))
+Base.:(/)(g::GEl, h::GEl) where {GEl<:GroupElement} =
+    mul!(similar(g), g, inv(h))
 
 #### Modification possible for performance reasons
 
@@ -102,7 +105,8 @@ function Base.:^(g::GroupElement, n::Integer)
 end
 
 # aliasing of g and h with out is allowed;
-div_right!(out::GEl, g::GEl, h::GEl) where {GEl<:GroupElement} = mul!(out, g, inv(h))
+div_right!(out::GEl, g::GEl, h::GEl) where {GEl<:GroupElement} =
+    mul!(out, g, inv(h))
 
 # aliasing of g and h with out is allowed;
 function div_left!(out::GEl, g::GEl, h::GEl) where {GEl<:GroupElement}
@@ -134,7 +138,7 @@ one!(g::GroupElement) = one(parent(g))
 AbstractAlgebra.inv!(out::GEl, g::GEl) where {GEl<:GroupElement} = inv(g)
 
 # aliasing of g and h with out is allowed
-AbstractAlgebra.mul!(out::GEl, g::GEl, h::GEl) where {GEl<:GroupElement} = g*h
+AbstractAlgebra.mul!(out::GEl, g::GEl, h::GEl) where {GEl<:GroupElement} = g * h
 
 # aliasing of g and h with out is allowed
 function conj!(out::GEl, g::GEl, h::GEl) where {GEl<:GroupElement}
@@ -146,7 +150,12 @@ end
 # aliasing of g and h with out is allowed;
 # aliasing with tmp is NOT allowed → there is a 3 argument version (allocates 1 element)
 # TODO: can we make comm! with 3 arguments without allocation??
-function comm!(out::GEl, g::GEl, h::GEl; tmp::GEl=similar(out)) where {GEl<:GroupElement}
+function comm!(
+    out::GEl,
+    g::GEl,
+    h::GEl;
+    tmp::GEl = similar(out),
+) where {GEl<:GroupElement}
     tmp = conj!(tmp, g, h)
     out = inv!(out, g)
     return mul!(out, out, tmp)
