@@ -117,20 +117,34 @@ function conformance_GroupElement_interface(
             # check that the default operations don't mutate their arguments
             @test inv(g) isa typeof(g)
             @test (g, h) == (old_g, old_h)
+
             @test g * h isa typeof(g)
             @test (g, h) == (old_g, old_h)
+
             @test g^2 == g * g
             @test (g, h) == (old_g, old_h)
+
             @test g^-3 == inv(g) * inv(g) * inv(g)
             @test (g, h) == (old_g, old_h)
+
             @test (g * h)^-1 == inv(h) * inv(g)
             @test (g, h) == (old_g, old_h)
+
             @test conj(g, h) == inv(h) * g * h
             @test (g, h) == (old_g, old_h)
+
+            @test ^(g, h) == inv(h) * g * h
+            @test (g, h) == (old_g, old_h)
+
             @test comm(g, h) == g^-1 * h^-1 * g * h
             @test (g, h) == (old_g, old_h)
+
+            @test comm(g, h, g) == conj(inv(g), h) * conj(conj(g, h), g)
+            @test (g, h) == (old_g, old_h)
+
             @test isone(g * inv(g)) && isone(inv(g) * g)
             @test (g, h) == (old_g, old_h)
+
             @test g / h == g * inv(h)
             @test (g, h) == (old_g, old_h)
         end

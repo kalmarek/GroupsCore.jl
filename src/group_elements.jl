@@ -61,6 +61,8 @@ Return conjugation of `g` by `h`, i.e. `h¯¹gh`.
 See also the in-place version `conj!`
 """
 Base.conj(g::GEl, h::GEl) where {GEl<:GroupElement} = conj!(similar(g), g, h)
+Base.:(^)(g::GEl, h::GEl) where {GEl<:GroupElement} = conj(g, h)
+
 comm(g::GEl, h::GEl) where {GEl<:GroupElement} =
     comm!(similar(g), g, h, tmp = similar(g))
 
