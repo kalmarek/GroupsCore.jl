@@ -1,17 +1,18 @@
 module GroupsCore
 
-using AbstractAlgebra
+import Random
+import AbstractAlgebra
+import AbstractAlgebra: gens, ngens, order, parent, parent_type
+import AbstractAlgebra: inv!, mul!
 const Group = AbstractAlgebra.Group
 const GroupElement = AbstractAlgebra.GroupElem
 
 # abstract type Group end
 # abstract type GroupElement end
 
-# export hasgens, hasorder, rand_pseudo,
-#     direct_product, semidirect_product,
-#     one!, conj, conj!, comm, comm!, div_left!, div_right!
-
-export truly_equal, hasorder, hasgens
+export Group, GroupElement
+export comm, istrulyequal, gens, hasorder, hasgens, ngens, order
+# export one!, inv!, mul!, conj!, comm!, div_left!, div_right!
 
 struct InterfaceNotSatisfied <: Exception
     family::Symbol
