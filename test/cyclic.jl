@@ -7,6 +7,7 @@ end
 struct CyclicGroupElement <: GroupsCore.GroupElement
     residual::UInt
     parent::CyclicGroup
+    CyclicGroupElement(n::Integer, C::CyclicGroup) = new(n % C.order, C)
 end
 
 Base.one(C::CyclicGroup) = CyclicGroupElement(0, C)
@@ -43,7 +44,7 @@ Base.inv(g::CyclicGroupElement) =
 function Base.:(*)(g::CyclicGroupElement, h::CyclicGroupElement)
     @assert parent(g) === parent(h)
     C = parent(g)
-    return CyclicGroupElement((g.residual + h.residual) % order(UInt, C), C)
+    return CyclicGroupElement(g.residual + h.residual, C)
 end
 
 ################## Implementing Group Interface Done!

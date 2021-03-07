@@ -2,7 +2,7 @@ if VERSION <= v"1.5.0"
     ismutable(x) = !isimmutable(x)
 end
 
-function conformance_Group_interface(G::Group)
+function test_Group_interface(G::Group)
     @testset "Group interface" begin
         @testset "Iteration protocol" begin
             IS = Base.IteratorSize(typeof(G))
@@ -59,13 +59,7 @@ function conformance_Group_interface(G::Group)
     end
 end
 
-conformance_GroupElement_interface(G::Group) =
-    conformance_GroupElement_interface(rand(G, 2)...)
-
-function conformance_GroupElement_interface(
-    g::GEl,
-    h::GEl,
-) where {GEl<:GroupElement}
+function test_GroupElement_interface(g::GEl, h::GEl) where {GEl<:GroupElement}
 
     @assert parent(g) === parent(h)
 
