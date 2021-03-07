@@ -1,6 +1,8 @@
 struct SomeGroup <: Group end
 
-struct SomeGroupElement <: GroupElement end
+struct SomeGroupElement <: GroupElement
+    elts::Vector{Int} # SomeGroupElement is not isbits anymore
+end
 
 @testset "SomeGroup: No interface implemented" begin
 
@@ -62,12 +64,14 @@ struct SomeGroupElement <: GroupElement end
 
     @testset "GroupElem Interface" begin
 
-        g = SomeGroupElement()
+        g = SomeGroupElement(Int[])
 
         @test_throws INI parent(g)
         @test_throws INI istrulyequal(g, g)
 
         @test_throws INI hasorder(g)
+        @test_throws INI deepcopy(g)
+
         @test_throws INI inv(g)
         @test_throws INI g * g
     end

@@ -36,8 +36,9 @@ GroupsCore.istrulyequal(g::CyclicGroupElement, h::CyclicGroupElement) =
 
 GroupsCore.hasorder(g::CyclicGroupElement) = true
 
-Base.deepcopy_internal(g::CyclicGroupElement, ::IdDict) =
-    CyclicGroupElement(deepcopy(g.residual), parent(g))
+# since CyclicGroupElement is isbits, there is no need to define
+# Base.deepcopy_internal(g::CyclicGroupElement, ::IdDict) =
+#     CyclicGroupElement(deepcopy(g.residual), parent(g))
 
 Base.inv(g::CyclicGroupElement) =
     (C = parent(g); CyclicGroupElement(order(UInt, C) - g.residual, C))
