@@ -7,9 +7,9 @@ AbstractAlgebra.parent(g::GroupElement) = throw(
 )
 
 # TODO: Do we actually need this?
-AbstractAlgebra.parent_type(GEl::Type{<:GroupElement}) = throw(
-    InterfaceNotSatisfied(:Group, "AbstractAlgebra.parent_type(::$GEl)"),
-)
+# AbstractAlgebra.parent_type(GEl::Type{<:GroupElement}) = throw(
+#     InterfaceNotSatisfied(:Group, "AbstractAlgebra.parent_type(::$GEl)"),
+# )
 """
     istrulyequal(g::GEl, h::GEl) where {GEl<:GroupElement}
 Return the mathematical equality of group elements.

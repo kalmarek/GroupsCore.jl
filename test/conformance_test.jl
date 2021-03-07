@@ -7,12 +7,13 @@ function conformance_Group_interface(G::Group)
                 @test length(G) isa Integer
                 @test length(G) > 0
 
-                @test eltype(G) <: GroupsCore.GroupElement
+                @test eltype(G) <: GroupElement
                 @test one(G) isa eltype(G)
 
-                @test first(iterate(G)) == one(G)
+                @test first(iterate(G)) isa eltype(G)
                 _, s = iterate(G)
                 @test first(iterate(G, s)) isa eltype(G)
+                @test isone(first(G))
             else
                 @test isfinite(G) == false
             end
@@ -42,13 +43,13 @@ function conformance_Group_interface(G::Group)
             end
             @test rand(G) isa GroupElement
             @test rand(G, 2) isa AbstractVector{eltype(G)}
-            g,h = rand(G, 2)
+            g, h = rand(G, 2)
             @test parent(g) === parent(h) === G
 
-            @test pseudo_rand(G) isa GroupElement
-            @test pseudo_rand(G, 2) isa GroupElement
+            @test GroupsCore.pseudo_rand(G) isa eltype(G)
+            @test GroupsCore.pseudo_rand(G, 2, 2) isa AbstractMatrix{eltype(G)}
 
-            g,h = pseudo_rand(G, 2)
+            g, h = GroupsCore.pseudo_rand(G, 2)
             @test parent(g) === parent(h) === G
         end
     end
@@ -57,7 +58,10 @@ end
 conformance_GroupElement_interface(G::Group) =
     conformance_GroupElement_interface(rand(G, 2)...)
 
-function conformance_GroupElement_interface(g::GEl, h::GEl) where GEl<:GroupElement
+function conformance_GroupElement_interface(
+    g::GEl,
+    h::GEl,
+) where {GEl<:GroupElement}
 
     @assert parent(g) === parent(h)
 
@@ -68,12 +72,17 @@ function conformance_GroupElement_interface(g::GEl, h::GEl) where GEl<:GroupElem
             G = parent(g)
 
             @test eltype(G) == typeof(g)
-            @test parent_type(typeof(g)) == typeof(G)
+            # @test GroupsCore.parent_type(typeof(g)) == typeof(G)
 
             @test one(g) isa eltype(G)
 
             @test one(G) == one(g) == one(h)
-            @test one(G) !== one(g)
+
+            if ismutable(g)
+                @test one(G) !== one(g)
+            end
+
+            @test isone(one(G))
         end
 
         @testset "Equality, deepcopy && hash" begin
@@ -89,7 +98,9 @@ function conformance_GroupElement_interface(g::GEl, h::GEl) where GEl<:GroupElem
 
             @test deepcopy(g) isa typeof(g)
             @test deepcopy(g) == g
-            @test deepcopy(g) !== g
+            if ismutable(g)
+                @test deepcopy(g) !== g
+            end
             k = deepcopy(g)
             @test parent(k) === parent(g)
             @test hash(g) isa UInt
@@ -101,23 +112,23 @@ function conformance_GroupElement_interface(g::GEl, h::GEl) where GEl<:GroupElem
 
             # check that the default operations don't mutate their arguments
             @test inv(g) isa typeof(g)
-            @test g,h == old_g, old_h
-            @test g*h isa typeof(g)
-            @test g,h == old_g, old_h
-            @test g^2 == g*g
-            @test g,h == old_g, old_h
-            @test g^-3 == inv(g)*inv(g)*inv(g)
-            @test g,h == old_g, old_h
-            @test (g*h)^-1 == inv(h)*inv(g)
-            @test g,h == old_g, old_h
-            @test conj(g, h) == inv(h)* g * h
-            @test g,h == old_g, old_h
-            @test comm(g, h) == g^-1*h^-1*g*h
-            @test g,h == old_g, old_h
-            @test isone(g*inv(g)) && isone(inv(g)*g)
-            @test g,h == old_g, old_h
-            @test g/h == g*inv(h)
-            @test g,h == old_g, old_h
+            @test (g, h) == (old_g, old_h)
+            @test g * h isa typeof(g)
+            @test (g, h) == (old_g, old_h)
+            @test g^2 == g * g
+            @test (g, h) == (old_g, old_h)
+            @test g^-3 == inv(g) * inv(g) * inv(g)
+            @test (g, h) == (old_g, old_h)
+            @test (g * h)^-1 == inv(h) * inv(g)
+            @test (g, h) == (old_g, old_h)
+            @test conj(g, h) == inv(h) * g * h
+            @test (g, h) == (old_g, old_h)
+            @test comm(g, h) == g^-1 * h^-1 * g * h
+            @test (g, h) == (old_g, old_h)
+            @test isone(g * inv(g)) && isone(inv(g) * g)
+            @test (g, h) == (old_g, old_h)
+            @test g / h == g * inv(h)
+            @test (g, h) == (old_g, old_h)
         end
 
         @testset "Misc GroupElement methods" begin
@@ -131,7 +142,9 @@ function conformance_GroupElement_interface(g::GEl, h::GEl) where GEl<:GroupElem
                 @test order(g) isa Integer
                 @test order(Int16, g) isa Int16
                 @test order(g) >= 1
-                if g^2 != g
+                @test iszero(rem(order(parent(g)), order(g)))
+
+                if g^2 != one(g)
                     @test order(g) > 2
                 end
                 @test order(inv(g)) == order(g)
@@ -140,6 +153,16 @@ function conformance_GroupElement_interface(g::GEl, h::GEl) where GEl<:GroupElem
 
             @test similar(g) isa typeof(g)
         end
+
+        one!, inv!, mul!, conj!, comm!, div_left!, div_right! = (
+            GroupsCore.one!,
+            GroupsCore.inv!,
+            GroupsCore.mul!,
+            GroupsCore.conj!,
+            GroupsCore.comm!,
+            GroupsCore.div_left!,
+            GroupsCore.div_right!,
+        )
 
         @testset "In-place operations" begin
             old_g, old_h = deepcopy(g), deepcopy(h)
@@ -150,15 +173,15 @@ function conformance_GroupElement_interface(g::GEl, h::GEl) where GEl<:GroupElem
 
             @test inv!(out, g) == inv(old_g)
             @test g == old_g
-            @test inv!(g) == inv(old_g)
+            @test inv!(out, g) == inv(old_g)
             g = deepcopy(old_g)
 
             @testset "mul!" begin
                 @test mul!(out, g, h) == old_g * old_h
-                @test g,h == old_g, old_h
+                @test (g, h) == (old_g, old_h)
 
                 @test mul!(out, g, h) == old_g * old_h
-                @test g,h == old_g, old_h
+                @test (g, h) == (old_g, old_h)
 
                 @test mul!(g, g, h) == old_g * old_h
                 @test h == old_h
@@ -173,9 +196,9 @@ function conformance_GroupElement_interface(g::GEl, h::GEl) where GEl<:GroupElem
             end
 
             @testset "conj!" begin
-                res = old_h^-1*old_g*old_h
+                res = old_h^-1 * old_g * old_h
                 @test conj!(out, g, h) == res
-                @test g,h == old_g, old_h
+                @test (g, h) == (old_g, old_h)
 
                 @test conj!(g, g, h) == res
                 @test h == old_h
@@ -192,11 +215,11 @@ function conformance_GroupElement_interface(g::GEl, h::GEl) where GEl<:GroupElem
             @testset "comm!" begin
                 res = old_g^-1 * old_h^-1 * old_g * old_h
 
-                @test comm!(out, g, h, similar(g)) == res
-                @test g,h == old_g, old_h
+                @test comm!(out, g, h, tmp = similar(g)) == res
+                @test (g, h) == (old_g, old_h)
 
                 @test comm!(out, g, h) == res
-                @test g,h == old_g, old_h
+                @test (g, h) == (old_g, old_h)
 
                 @test comm!(g, g, h) == res
                 @test h == old_h
@@ -208,9 +231,9 @@ function conformance_GroupElement_interface(g::GEl, h::GEl) where GEl<:GroupElem
             end
 
             @testset "div_[left|right]!" begin
-                res = g*h^-1
+                res = g * h^-1
                 @test div_right!(out, g, h) == res
-                @test g,h == old_g, old_h
+                @test (g, h) == (old_g, old_h)
 
                 @test div_right!(g, g, h) == res
                 @test h == old_h
@@ -224,9 +247,9 @@ function conformance_GroupElement_interface(g::GEl, h::GEl) where GEl<:GroupElem
                 g = deepcopy(old_g)
 
 
-                res = h^-1*g
+                res = h^-1 * g
                 @test div_left!(out, g, h) == res
-                @test g,h == old_g, old_h
+                @test (g, h) == (old_g, old_h)
 
                 @test div_left!(g, g, h) == res
                 @test h == old_h
