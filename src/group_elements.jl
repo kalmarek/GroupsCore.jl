@@ -28,12 +28,11 @@ hasorder(g::GroupElement) = throw(
     InterfaceNotImplemented(:Group, "GroupsCore.hasorder(::$(typeof(g)))"),
 )
 
-#=
 """
     Base.deepcopy_internal(g::GroupElement, ::IdDict)
 Return a completely intependent copy of a group element `g` without copying its parent.
 
-That is `parent(g) === parent(deepcopy(g))` must be satisfied. It is not necessary to implement this method if `parent(g)` can be reconstructed exactly from `g`.
+That is `parent(g) === parent(deepcopy(g))` must be satisfied. There is no need to implement this method if `g` is `isbits`.
 """
 Base.deepcopy_internal(g::GroupElement, stackdict::IdDict) = throw(
     InterfaceNotImplemented(
@@ -41,7 +40,7 @@ Base.deepcopy_internal(g::GroupElement, stackdict::IdDict) = throw(
         "Base.deepcopy_internal(::$(typeof(g)), ::IdDict)",
     ),
 )
-=#
+# TODO: Technically, it is not necessary to implement `deepcopy_internal` method if `parent(g)` can be reconstructed exactly from `g` (i.e. either it's cached, or a singleton). However by defining this fallback we force everybody to implement it, except isbits group elements.
 
 Base.inv(g::GroupElement) =
     throw(InterfaceNotImplemented(:Group, "Base.inv(::$(typeof(g)))"))

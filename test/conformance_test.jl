@@ -1,7 +1,3 @@
-if VERSION <= v"1.5.0"
-    ismutable(x) = !isimmutable(x)
-end
-
 function test_Group_interface(G::Group)
     @testset "Group interface" begin
         @testset "Iteration protocol" begin
@@ -76,7 +72,7 @@ function test_GroupElement_interface(g::GEl, h::GEl) where {GEl<:GroupElement}
 
             @test one(G) == one(g) == one(h)
 
-            if ismutable(g)
+            if !isbits(g)
                 @test one(G) !== one(g)
             end
 
@@ -96,7 +92,7 @@ function test_GroupElement_interface(g::GEl, h::GEl) where {GEl<:GroupElement}
 
             @test deepcopy(g) isa typeof(g)
             @test deepcopy(g) == g
-            if ismutable(g)
+            if !isbits(g)
                 @test deepcopy(g) !== g
             end
             k = deepcopy(g)
