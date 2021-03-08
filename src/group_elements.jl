@@ -38,7 +38,7 @@ Return true if $g = h$, else return false. Function may throw error, for example
 if there is a unsolvable word problem in groups.
 """
 istrulyequal(g::G, h::H) where {G <: GroupElement, H <: GroupElement} = throw(
-    InterfaceNotImplemented(:Group, "GroupsCore.istrulyequal(::$GEl, ::$GEl)"),
+    InterfaceNotImplemented(:Group, "GroupsCore.istrulyequal(::$G, ::$H)"),
 )
 
 ################################################################################
