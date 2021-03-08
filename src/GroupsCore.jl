@@ -5,6 +5,7 @@ import Random
 import AbstractAlgebra
 import AbstractAlgebra: elem_type, gens, ngens, order, parent_type
 import AbstractAlgebra: inv!, mul!
+import Nemo: fmpz
 const Group = AbstractAlgebra.Group
 const GroupElement = AbstractAlgebra.GroupElem
 

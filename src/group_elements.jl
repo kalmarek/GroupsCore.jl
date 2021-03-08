@@ -19,11 +19,11 @@ Base.parent(g::GroupElement) =
     throw(InterfaceNotImplemented(:Group, "Base.parent(::$(typeof(g)))"))
 
 @doc Markdown.doc"""
-    parent_type(g::G) where {G <: GroupElement}
+    parent_type(G::Type{<: GroupElement})
 
-Return the type of `g`'s parent.
+Return the type of parent.
 """
-AbstractAlgebra.parent_type(g::G) where {G <: GroupElement} = throw(
+AbstractAlgebra.parent_type(G::Type{<: GroupElement}) = throw(
     InterfaceNotImplemented(:Group, "GroupsCore.parent_type(::Type{$G})")
 )
 
@@ -97,7 +97,7 @@ hasorder(g::GroupElement) = throw(
 
 Return the order of $g$ as an integer of type `I`.
 """
-function order(::Type{I} = BigInt, g::GroupElement) where {I <: Union{Integer, fmpz}}
+function order(::Type{I}, g::GroupElement) where {I <: Union{Integer, fmpz}}
   hasorder(g) || throw("$g does not seem to have finite order")
   isone(g) && return I(1)
   o = I(1)
@@ -109,6 +109,8 @@ function order(::Type{I} = BigInt, g::GroupElement) where {I <: Union{Integer, f
   end
   return o
 end
+
+order(g::GroupElement) = order(BigInt, g)
 
 ################################################################################
 # Binary operations and functions
@@ -147,8 +149,9 @@ Base.:(^)(g::G, h::H) where {G <: GroupElement, H <: GroupElement} = conj(g, h)
 Return the commutator $g^{-1} h^{-1} ... g h$, where the $...$ implies that more
 arguments can be placed.
 """
-function comm(g::G, h::H, k::K...)
-    where {G <: GroupElement, H <: GroupElement, K <:GroupElement}
+function comm(g::G, h::H, k::K...) where {
+    G <: GroupElement, H <: GroupElement, K <:GroupElement
+   }
   res = comm!(similar(g), g, h)
   for l in k
     res = comm!(res, res, l)
