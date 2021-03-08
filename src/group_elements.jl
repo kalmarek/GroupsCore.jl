@@ -1,115 +1,171 @@
-## `GroupElement` interface
+################################################################################
+#
+# group_element.jl : `GroupElement` interface
+#
+################################################################################
 
-### Obligatory methods for `GroupElement`
+# Creator: Marek Kaluba
 
+################################################################################
+# Data types and parent methods
+################################################################################
+
+@doc Markdown.doc"""
+    parent(g::GroupElement)
+
+Return the group that the element belongs to.
+"""
 Base.parent(g::GroupElement) =
     throw(InterfaceNotImplemented(:Group, "Base.parent(::$(typeof(g)))"))
 
+@doc Markdown.doc"""
+    parent_type(g::G) where {G <: GroupElement}
+
+Return the type of `g`'s parent.
 """
-    parent_type(element_type)
-Given the type of an element return the type of its parent.
-"""
-AbstractAlgebra.parent_type(GEl::Type{<:GroupElement}) = throw(
-    InterfaceNotImplemented(:Group, "GroupsCore.parent_type(::Type{$GEl})"),
+AbstractAlgebra.parent_type(g::G) where {G <: GroupElement} = throw(
+    InterfaceNotImplemented(:Group, "GroupsCore.parent_type(::Type{$G})")
 )
 
-"""
-    istrulyequal(g::GEl, h::GEl) where {GEl<:GroupElement}
-Return the mathematical equality of group elements.
+################################################################################
+# Comparison
+################################################################################
 
-This function may not return due to e.g. unsolvable word problem in groups.
+@doc Markdown.doc"""
+    istrulyequal(g::G, h::H) where {G <: GroupElement, H <: GroupElement}
+
+Return true if $g = h$, else return false. Function may throw error, for example
+if there is a unsolvable word problem in groups.
 """
-istrulyequal(g::GEl, h::GEl) where {GEl<:GroupElement} = throw(
+istrulyequal(g::G, h::H) where {G <: GroupElement, H <: GroupElement} = throw(
     InterfaceNotImplemented(:Group, "GroupsCore.istrulyequal(::$GEl, ::$GEl)"),
 )
 
+################################################################################
+# Basic manipulation
+################################################################################
+
+@doc Markdown.doc"""
+    deepcopy_internal(g::GroupElement, stackdict::IdDict)
+
+Return an independent copy of $g$ without copying its parent.
 """
+function Base.deepcopy_internal(g::GroupElement, stackdict::IdDict)
+  throw(InterfaceNotImplemented(
+      :Group, "Base.deepcopy_internal(::$(typeof(g)), ::IdDict)",
+     ))
+end
+# That is `parent(g) === parent(deepcopy(g))` must be satisfied. There is no
+# need to implement this method if `g` is `isbits`.
+
+# TODO: Technically, it is not necessary to implement `deepcopy_internal` method
+# if `parent(g)` can be reconstructed exactly from `g` (i.e. either it's cached,
+# or a singleton). However by defining this fallback we force everybody to
+# implement it, except isbits group elements.
+
+@doc Markdown.doc"""
+    Base.one(g::GroupElement)
+
+Return the identity of the group.
+"""
+Base.one(g::GroupElement) = one(parent(g))
+
+@doc Markdown.doc"""
+    Base.inv(g::GroupElement)
+
+Return the inverse of $g$.
+"""
+function Base.inv(g::GroupElement)
+  throw(InterfaceNotImplemented(:Group, "Base.inv(::$(typeof(g)))"))
+end
+
+################################################################################
+# Order
+################################################################################
+
+@doc Markdown.doc"""
     hasorder(g::GroupElement)
-Return `true` if `g` has finite order (without computing it).
+
+Return true if $g$ is of finite order, else return false.
 """
 hasorder(g::GroupElement) = throw(
     InterfaceNotImplemented(:Group, "GroupsCore.hasorder(::$(typeof(g)))"),
 )
 
-"""
-    deepcopy_internal(g::GroupElement, ::IdDict)
-Return a completely intependent copy of group element `g` **without copying its parent**.
+@doc Markdown.doc"""
+    order(::Type{I} = BigInt, g::GroupElement) where {I <: Union{Integer, fmpz}}
 
-That is `parent(g) === parent(deepcopy(g))` must be satisfied. There is no need to implement this method if `g` is `isbits`.
+Return the order of $g$ as an integer of type `I`.
 """
-Base.deepcopy_internal(g::GroupElement, stackdict::IdDict) = throw(
-    InterfaceNotImplemented(
-        :Group,
-        "Base.deepcopy_internal(::$(typeof(g)), ::IdDict)",
-    ),
-)
-# TODO: Technically, it is not necessary to implement `deepcopy_internal` method if `parent(g)` can be reconstructed exactly from `g` (i.e. either it's cached, or a singleton). However by defining this fallback we force everybody to implement it, except isbits group elements.
-"""
-    inv(g::GroupElement)
-Return the group inverse of `g`
-"""
-Base.inv(g::GroupElement) =
-    throw(InterfaceNotImplemented(:Group, "Base.inv(::$(typeof(g)))"))
-"""
-    (*)(g::GEl, h::GEl) where GEl<:GroupElement
-Return the result of group binary operation on `g` and `h`.
-"""
-Base.:(*)(g::GEl, h::GEl) where {GEl<:GroupElement} = throw(
-    InterfaceNotImplemented(
-        :Group,
-        "Base.:(*)(::$(typeof(g)), ::$(typeof(g)))",
-    ),
-)
+function order(::Type{I} = BigInt, g::GroupElement) where {I <: Union{Integer, fmpz}}
+  hasorder(g) || throw("$g does not seem to have finite order")
+  isone(g) && return I(1)
+  o = I(1)
+  gg = deepcopy(g)
+  out = similar(g)
+  while !isone(gg)
+    o += I(1)
+    gg = mul!(out, gg, g)
+  end
+  return o
+end
 
-### Default implementations for `GroupElement`
+################################################################################
+# Binary operations and functions
+################################################################################
 
-#### Modification not recommended
-"""
-    one(g::GroupElement)
-Return the identity element of the parent group of `g`.
-"""
-Base.one(g::GroupElement) = one(parent(g))
+@doc Markdown.doc"""
+    *(g::G, h::H) where {G <: GroupElement, H <: GroupElement}
 
+Return the result of group binary operation $g \cdot h$.
 """
-    order([BigInt, ]g::GroupElement)
-    order(I::Type{<:Integer}, g::GroupElement)
-Return the order of `g` as an instance of `I`.
+function Base.:(*)(g::G, h::H) where {G <: GroupElement, H <: GroupElement}
+  throw(InterfaceNotImplemented(
+      :Group, "Base.:(*)(::$(typeof(g)), ::$(typeof(g)))"
+     ))
+end
 
-Only arbitrary size integers are required to return mathematically correct answer.
-"""
-AbstractAlgebra.order(g::GroupElement) = order(BigInt, g)
+@doc Markdown.doc"""
+    conj(g::G, h::H) where {G <: GroupElement, H <: GroupElement}
 
+Return the conjucation of $g$ by $h$, in other words $h^{-1} g h$.
 """
-    conj(g::GEl, h::GEl) where {GEl<:GroupElement}
-Return conjugation of `g` by `h`, i.e. `h^-1*g*h`.
-"""
-Base.conj(g::GEl, h::GEl) where {GEl<:GroupElement} = conj!(similar(g), g, h)
+function Base.conj(g::G, h::H) where {G <: GroupElement, H <: GroupElement}
+  conj!(similar(g), g, h)
+end
 
-"""
-    ^(g::GEl, h::GEl) where {GEl<:GroupElement}
-Conjugation action of `h` on `g`. See `conj`.
-"""
-Base.:(^)(g::GEl, h::GEl) where {GEl<:GroupElement} = conj(g, h)
+@doc Markdown.doc"""
+    Base.:(^)(g::G, h::H) where {G <: GroupElement, H <: GroupElement}
 
+Alias for `conj(g, h)`.
 """
-    comm(g::GEl, h::GEl[, Vararg{GEl}...) where GEl<:GroupElement
-Return the commutator `inv(g)*inv(h)*g*h` of `g` and `h`.
+Base.:(^)(g::G, h::H) where {G <: GroupElement, H <: GroupElement} = conj(g, h)
 
-The `Vararg` version returns the repeated (`foldl`) commutator, i.e.
-`comm(g, h, k) == comm(comm(g, h), k)`.
+@doc Markdown.doc"""
+    comm(g::G, h::H, k::K...)
+
+Return the commutator $g^{-1} h^{-1} ... g h$, where the $...$ implies that more
+arguments can be placed.
 """
-function comm(g::GEl, h::GEl, tail::GEl...) where {GEl<:GroupElement}
-    res = comm!(similar(g), g, h)
-    for k in tail
-        res = comm!(res, res, k)
-    end
-    return res
+function comm(g::G, h::H, k::K...)
+    where {G <: GroupElement, H <: GroupElement, K <:GroupElement}
+  res = comm!(similar(g), g, h)
+  for l in k
+    res = comm!(res, res, l)
+  end
+  return res
 end
 
 Base.literal_pow(::typeof(^), g::GroupElement, ::Val{-1}) = inv(g)
 
-Base.:(/)(g::GEl, h::GEl) where {GEl<:GroupElement} =
-    div_right!(similar(g), g, h)
+@doc Markdown.doc"""
+    Base.:(/)(g::G, h::H) where {G <: GroupElement, H <: GroupElement}
+
+Return $g h^{-1}$.
+"""
+function Base.:(/)(g::G, h::H) where {G <: GroupElement, H <: GroupElement}
+  div_right!(similar(g), g, h)
+end
 
 #### Modification possible for performance reasons
 
@@ -139,19 +195,6 @@ function Base.:^(g::GroupElement, n::Integer)
 end
 
 #### Modification RECOMMENDED for performance reasons
-
-function AbstractAlgebra.order(::Type{I}, g::GroupElement) where {I<:Integer}
-    hasorder(g) || throw("$g does not seem to have finite order")
-    isone(g) && return I(1)
-    o = I(1)
-    gg = deepcopy(g)
-    out = similar(g)
-    while !isone(gg)
-        o += I(1)
-        gg = mul!(out, gg, g)
-    end
-    return o
-end
 
 Base.hash(g::GroupElement, h::UInt) = hash(typeof(g), h)
 
