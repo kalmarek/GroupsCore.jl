@@ -30,14 +30,14 @@ which is "best effort", cheap computation of length of the group iterator. For p
 ## `Group` interface
 
 ### Obligatory methods for `Group`
-"""
+@doc Markdown.doc"""
     one(G::Group)
 Return the identity of the group.
 """
 Base.one(G::Group) =
     throw(InterfaceNotImplemented(:Group, "Base.one(::$(typeof(G)))"))
 
-"""
+@doc Markdown.doc"""
     order([BigInt, ]G::Group)
     order(I::Type{<:Integer}, g::Group)
 Return the order of `g` as an instance of `I`.
@@ -50,7 +50,7 @@ AbstractAlgebra.order(::Type{<:Integer}, G::Group) = throw(
         "GroupsCore.order(::Type{<:Integer}, ::$(typeof(G)))",
     ),
 )
-"""
+@doc Markdown.doc"""
     gens(G::Group)
 
 Return a random-accessed collection of generators of `G`.
@@ -86,7 +86,7 @@ hasgens(G::Group) = true
 
 AbstractAlgebra.order(G::Group) = order(BigInt, G)
 
-"""
+@doc Markdown.doc"""
     elem_type(parent_type)
 Given the type of a parent object return the type of its elements.
 """
