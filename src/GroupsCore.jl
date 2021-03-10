@@ -1,6 +1,7 @@
 module GroupsCore
 
 import Random
+import Markdown
 import AbstractAlgebra
 import AbstractAlgebra: elem_type, gens, ngens, order, parent_type
 import AbstractAlgebra: inv!, mul!
