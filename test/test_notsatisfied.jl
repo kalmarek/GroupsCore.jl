@@ -30,23 +30,25 @@ end
         @test_throws INI iterate(G)
         @test_throws INI iterate(G, 1)
 
-        # Assumption 1: Groups are finite unless claimed otherwise
-        @test Base.IteratorSize(G) == Base.HasLength()
-        @test Base.isfinite(G)
+        # Assumption 1: Groups are of unknown size
+        @test Base.IteratorSize(G) == Base.SizeUnknown()
+        @test !Base.isfinite(G)
+        @test_throws InfO order(G)
 
         Base.IteratorSize(::Type{SomeGroup}) = Base.HasShape{1}()
         @test Base.isfinite(G)
         @test_throws INI order(G)
 
-        Base.IteratorSize(::Type{SomeGroup}) = Base.SizeUnknown()
-        @test !Base.isfinite(G)
+        Base.IteratorSize(::Type{SomeGroup}) = Base.HasLength()
+        @test Base.isfinite(G)
+        @test_throws INI order(G)
 
         Base.IteratorSize(::Type{SomeGroup}) = Base.IsInfinite()
         @test !Base.isfinite(G)
         @test_throws InfO order(G)
 
         # return to the default:
-        Base.IteratorSize(::Type{SomeGroup}) = Base.HasLength()
+        Base.IteratorSize(::Type{SomeGroup}) = Base.SizeUnknown()
 
         # Assumption 2: Groups have generators:
         @test hasgens(G)

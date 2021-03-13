@@ -7,25 +7,8 @@ Base.iterate(G::Group) =
 Base.iterate(G::Group, state) = throw(
     InterfaceNotImplemented(:Iteration, "Base.iterate(::$(typeof(G)), state)"),
 )
-
-#=
-TODO: This is a convention; cannot define length unless Base.IteratorSize returns HasLength or HasShape!
-
-You need to override the default
-> `Base.IteratorSize(::Type{MyGroup}) = Base.HasLength()`
-by
-> `Base.IteratorSize(::Type{MyGroup}) = Base.IsInfinite()`
-if your group is always infinite, or by
-> `Base.IteratorSize(::Type{MyGroup}) = Base.SizeUnknown()`
-if finiteness can not be easily established.
-
-otherwise define
-
-Base.length(G::MyGroup) = order(Int, G)
-
-which is "best effort", cheap computation of length of the group iterator. For practical reasons the largest group you could iterate over in your lifetime is of order ~factorial(19) (assuming 10ns per element).
-=#
-
+Base.IteratorSize(::Type{<:Group}) = Base.SizeUnknown()
+Base.length(G::Group) = order(Int, G)
 
 ## `Group` interface
 

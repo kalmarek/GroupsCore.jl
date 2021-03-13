@@ -1,5 +1,6 @@
 import AbstractAlgebra
 
+Base.IteratorSize(::Type{AbstractAlgebra.Generic.SymmetricGroup}) = Base.HasLength()
 # disambiguation
 GroupsCore.order(
     ::Type{I},

@@ -16,7 +16,7 @@ Base.eltype(::Type{CyclicGroup}) = CyclicGroupElement
 Base.iterate(C::CyclicGroup) = one(C), 1
 Base.iterate(C::CyclicGroup, state) =
     (state < C.order ? (CyclicGroupElement(state, C), state + 1) : nothing)
-Base.length(C::CyclicGroup) = C.order
+Base.IteratorSize(::Type{CyclicGroup}) = Base.HasLength()
 
 GroupsCore.order(::Type{T}, C::CyclicGroup) where {T<:Integer} = T(C.order)
 GroupsCore.gens(C::CyclicGroup) = [CyclicGroupElement(1, C)]
