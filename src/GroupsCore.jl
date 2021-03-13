@@ -12,7 +12,7 @@ const GroupElement = AbstractAlgebra.GroupElem
 # abstract type GroupElement end
 
 export Group, GroupElement
-export comm, istrulyequal, gens, hasorder, hasgens, ngens, order
+export comm, gens, hasgens, isfiniteorder, ngens, order
 # export one!, inv!, mul!, conj!, comm!, div_left!, div_right!
 
 struct InterfaceNotImplemented <: Exception

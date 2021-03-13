@@ -24,11 +24,11 @@ Base.:(==)(g::GEl, h::GEl) where {GEl<:GroupElement} = throw(
 )
 
 @doc Markdown.doc"""
-    hasorder(g::GroupElement)
+    isfiniteorder(g::GroupElement)
 Return `true` if `g` has finite order (without computing it).
 """
-hasorder(g::GroupElement) = throw(
-    InterfaceNotImplemented(:Group, "GroupsCore.hasorder(::$(typeof(g)))"),
+isfiniteorder(g::GroupElement) = throw(
+    InterfaceNotImplemented(:Group, "GroupsCore.isfiniteorder(::$(typeof(g)))"),
 )
 
 @doc Markdown.doc"""
@@ -140,7 +140,7 @@ end
 #### Modification RECOMMENDED for performance reasons
 
 function AbstractAlgebra.order(::Type{I}, g::GroupElement) where {I<:Integer}
-    hasorder(g) || throw("$g does not seem to have finite order")
+    isfiniteorder(g) || throw(InfiniteOrder(g))
     isone(g) && return I(1)
     o = I(1)
     gg = deepcopy(g)

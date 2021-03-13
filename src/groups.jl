@@ -44,12 +44,18 @@ Return the order of `g` as an instance of `I`.
 
 Only arbitrary size integers are required to return mathematically correct answer.
 """
-AbstractAlgebra.order(::Type{<:Integer}, G::Group) = throw(
-    InterfaceNotImplemented(
-        :Group,
-        "GroupsCore.order(::Type{<:Integer}, ::$(typeof(G)))",
-    ),
-)
+function AbstractAlgebra.order(::Type{<:Integer}, G::Group)
+    if !isfinite(G)
+        throw(InfiniteOrder(G))
+    end
+    throw(
+        InterfaceNotImplemented(
+            :Group,
+            "GroupsCore.order(::Type{<:Integer}, ::$(typeof(G)))",
+        )
+    )
+end
+
 @doc Markdown.doc"""
     gens(G::Group)
 

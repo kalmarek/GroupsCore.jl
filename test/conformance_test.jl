@@ -41,7 +41,14 @@ function test_Group_interface(G::Group)
                 @test order(Int16, G) isa Int16
                 @test order(G) isa Integer
                 @test order(G) >= 1
+            else
+                @test try
+                    order(G) isa Integer
+                catch err
+                    err isa GroupsCore.InfiniteOrder
+                end
             end
+
             @test rand(G) isa GroupElement
             @test rand(G, 2) isa AbstractVector{eltype(G)}
             g, h = rand(G, 2)
@@ -150,9 +157,9 @@ function test_GroupElement_interface(g::GEl, h::GEl) where {GEl<:GroupElement}
             @test isone(g) isa Bool
             @test isone(one(g))
 
-            @test hasorder(g) isa Bool
+            @test isfiniteorder(g) isa Bool
 
-            if hasorder(g)
+            if isfiniteorder(g)
                 @test order(g) isa Integer
                 @test order(Int16, g) isa Int16
                 @test order(g) >= 1
@@ -163,6 +170,8 @@ function test_GroupElement_interface(g::GEl, h::GEl) where {GEl<:GroupElement}
                 end
                 @test order(inv(g)) == order(g)
                 @test order(one(g)) == 1
+            else
+                @test_throws InfiniteOrder order(g)
             end
 
             @test similar(g) isa typeof(g)

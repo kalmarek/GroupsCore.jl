@@ -19,6 +19,7 @@ end
     end
 
     INI = GroupsCore.InterfaceNotImplemented
+    InfO = GroupsCore.InfiniteOrder
 
     @testset "Group Interface" begin
 
@@ -35,12 +36,14 @@ end
 
         Base.IteratorSize(::Type{SomeGroup}) = Base.HasShape{1}()
         @test Base.isfinite(G)
+        @test_throws INI order(G)
 
         Base.IteratorSize(::Type{SomeGroup}) = Base.SizeUnknown()
         @test !Base.isfinite(G)
 
         Base.IteratorSize(::Type{SomeGroup}) = Base.IsInfinite()
         @test !Base.isfinite(G)
+        @test_throws InfO order(G)
 
         # return to the default:
         Base.IteratorSize(::Type{SomeGroup}) = Base.HasLength()
@@ -50,7 +53,7 @@ end
 
         # Group Interface
         @test_throws INI one(G)
-        @test_throws INI order(G)
+        @test_throws InfO order(G)
         @test_throws INI gens(G)
 
         Base.eltype(::Type{SomeGroup}) = SomeGroupElement
@@ -71,7 +74,9 @@ end
         @test_throws INI g == g
         @test_throws INI isequal(g, g)
 
-        @test_throws INI hasorder(g)
+        @test_throws INI isfiniteorder(g)
+        GroupsCore.isfiniteorder(::SomeGroupElement) = false
+        @test_throws InfO order(g)
         @test_throws INI deepcopy(g)
 
         @test_throws INI inv(g)

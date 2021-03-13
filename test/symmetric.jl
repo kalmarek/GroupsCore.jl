@@ -26,7 +26,7 @@ GroupsCore.istrulyequal(
     h::AbstractAlgebra.Generic.Perm,
 ) = g.d == h.d
 
-GroupsCore.hasorder(g::AbstractAlgebra.Generic.Perm) = true
+GroupsCore.isfiniteorder(g::AbstractAlgebra.Generic.Perm) = true
 
 Base.deepcopy_internal(g::AbstractAlgebra.Generic.Perm, ::IdDict) =
     AbstractAlgebra.Generic.Perm(deepcopy(g.d), false)

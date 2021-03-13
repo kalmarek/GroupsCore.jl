@@ -34,7 +34,7 @@ GroupsCore.parent_type(::Type{CyclicGroupElement}) = CyclicGroup
 Base.:(==)(g::CyclicGroupElement, h::CyclicGroupElement) =
     parent(g) === parent(h) && g.residual == h.residual
 
-GroupsCore.hasorder(g::CyclicGroupElement) = true
+GroupsCore.isfiniteorder(g::CyclicGroupElement) = true
 
 # since CyclicGroupElement is isbits, there is no need to define
 # Base.deepcopy_internal(g::CyclicGroupElement, ::IdDict) =
