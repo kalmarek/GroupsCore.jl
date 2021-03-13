@@ -44,12 +44,14 @@ Base.deepcopy_internal(g::GroupElement, stackdict::IdDict) = throw(
     ),
 )
 # TODO: Technically, it is not necessary to implement `deepcopy_internal` method if `parent(g)` can be reconstructed exactly from `g` (i.e. either it's cached, or a singleton). However by defining this fallback we force everybody to implement it, except isbits group elements.
+
 @doc Markdown.doc"""
     inv(g::GroupElement)
 Return the group inverse of `g`
 """
 Base.inv(g::GroupElement) =
     throw(InterfaceNotImplemented(:Group, "Base.inv(::$(typeof(g)))"))
+
 @doc Markdown.doc"""
     (*)(g::GEl, h::GEl) where GEl<:GroupElement
 Return the result of group binary operation on `g` and `h`.
@@ -118,7 +120,7 @@ Base.:(/)(g::GEl, h::GEl) where {GEl<:GroupElement} =
 Return an arbitrary (and possibly uninitialized) group element sharing the parent with `g`.
 """
 Base.similar(g::GroupElement) = one(g)
-# optimization: determine triviality of `g` without constructing `one(g)`.
+
 Base.isone(g::GroupElement) = g == one(g)
 
 @doc Markdown.doc"""
