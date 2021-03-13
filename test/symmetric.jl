@@ -21,11 +21,6 @@ function GroupsCore.gens(G::AbstractAlgebra.Generic.SymmetricGroup{I}) where {I}
     return [a, b]
 end
 
-GroupsCore.istrulyequal(
-    g::AbstractAlgebra.Generic.Perm,
-    h::AbstractAlgebra.Generic.Perm,
-) = g.d == h.d
-
 GroupsCore.isfiniteorder(g::AbstractAlgebra.Generic.Perm) = true
 
 Base.deepcopy_internal(g::AbstractAlgebra.Generic.Perm, ::IdDict) =
