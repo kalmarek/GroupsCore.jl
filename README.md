@@ -41,11 +41,10 @@ Due to the fact that hardly any information can be encoded in `Type`, we rely on
  * `Base.rand(rng::Random.AbstractRNG, rs::Random.Sampler{GT}) where GT<:Group`: to enable asking for random group elements treating group as a collection, i.e. calling `rand(G, 2, 2)`.
 
 ## `GroupElement` methods
-##### Obligatory methods
- * `Base.parent(g::GroupElement)`: return the parent object of a given group element. Parent objects of the elements of the same group must be **identical** (i.e. ===).
+#### Obligatory methods
+ * `Base.parent(g::GroupElement)`: return the parent object of a given group element. Parent objects of the elements of the same group must be **identical** (i.e. `===`).
  * `GroupsCore.parent_type(::Type{<:GroupElement})`: given the type of an element return the type of its parent.
- * `GroupsCore.istrulyequal(g::GEl, h::GEl) where GEl<:GroupElement`: return the mathematical equality of group elements; by default the standard equality `==` calls this function.
- * `GroupsCore.hasorder(g::GroupElement)`: return `true` if `g` has finite order (without computing it)`.
+ * `GroupsCore.==(g::GEl, h::GEl) where GEl<:GroupElement`: return the mathematical equality of group elements;
  * `Base.deepcopy_internal(g::GroupElement, ::IdDict)`: return a completely intependent copy of group element `g` **without copying its parent**; `isbits` subtypes of `GroupElement` need not to implement this method.
  * `Base.inv(g::GroupElement)`: return the group inverse of `g`.
  * `Base.:(*)(g::GEl, h::GEl) where GEl<:GroupElement`: the group binary operation on `g` and `h`.
@@ -60,7 +59,7 @@ Based on these methods only, the following functions in `GroupsCore` are impleme
  * `Base.:(/)(g, h)` → `g*inv(h)`
  * `Base.conj(g, h)`, `Base.:(^)(g, h)` → `inv(h)*g*h`
  * `Base.comm(g, h)` → `inv(h)*inv(g)*h*g` and its `Vararg` (`foldl`) version.
- * `Base.:(==)(g,h)` → `GroupsCore.istrulyequal(g, h)`
+ * `Base.isequal(g,h)` → `g == h` (a weaker/cheaper equality)
  * `Base.:(^)(g, n::Integer)` → powering by squaring.
 
 ##### Performance modifications
@@ -68,7 +67,7 @@ For performance reasons one may alter any of the following methods.
 
  * `Base.similar(g::GroupElement)[ = one(g)]`: return an arbitrary (and possibly uninitialized) group element sharing the parent with `g`.
  * `Base.isone(g::GroupElement)[ = g == one(g)]`: to avoid the unnecessary construction of `one(g)`.
- * `Base.:(==)(g::GEl, h::GEl) where GEl<:GroupElement[ = istrulyequal(g, h)]`: to provide cheaper "best effort" equality for group elements.
+ * `Base.isequal(g::GEl, h::GEl) where GEl<:GroupElement[ = g == h]`: to provide cheaper "best effort" equality for group elements.
  * `Base.:^(g::GroupElement, n::Integer) = Base.power_by_squaring(g, n)`
  * `GroupsCore.order(::Type{I}, g::GroupElement)`: to replace the naive implementation.
  * `Base.hash(g::GroupElement, h::UInt)[ = hash(typeof(g), h)]`: a more specific hash function will lead to smaller numer of conflicts.

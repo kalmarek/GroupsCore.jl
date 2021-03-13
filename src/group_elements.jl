@@ -14,13 +14,13 @@ AbstractAlgebra.parent_type(GEl::Type{<:GroupElement}) = throw(
 )
 
 @doc Markdown.doc"""
-    istrulyequal(g::GEl, h::GEl) where {GEl<:GroupElement}
+    ==(g::GEl, h::GEl) where {GEl<:GroupElement}
 Return the mathematical equality of group elements.
 
 This function may not return due to e.g. unsolvable word problem in groups.
 """
-istrulyequal(g::GEl, h::GEl) where {GEl<:GroupElement} = throw(
-    InterfaceNotImplemented(:Group, "GroupsCore.istrulyequal(::$GEl, ::$GEl)"),
+Base.:(==)(g::GEl, h::GEl) where {GEl<:GroupElement} = throw(
+    InterfaceNotImplemented(:Group, "Base.:(==)(::$GEl, ::$GEl)"),
 )
 
 @doc Markdown.doc"""
@@ -121,16 +121,15 @@ Base.similar(g::GroupElement) = one(g)
 # optimization: determine triviality of `g` without constructing `one(g)`.
 Base.isone(g::GroupElement) = g == one(g)
 
-# TODO: semantic clash: isequal is weaker in julia than `==`, we need it the other way round here → istrulyequal
 @doc Markdown.doc"""
-    ==(g::GEl, h::GEl) where {GEl<:GroupElement}
+    isequal(g::GEl, h::GEl) where {GEl<:GroupElement}
 The "best effort" equality for group elements.
 
-Depending on the group this might, or might not be the correct equality, which can be obtained using `Base.isequal`. Nonetheless the implication `g == h` → `istrulyequal(g, h)` must be always satisfied, i.e. "best effort" equality might return `false` even when group elements are equal.
+Depending on the group this might, or might not be the correct equality, which can be obtained using `Base.isequal`. Nonetheless the implication `g == h` → `isequal(g, h)` must be always satisfied, i.e. "best effort" equality might return `false` even when group elements are equal.
 
-For example in a finitely presented group, `==` may return the equality of words.
+For example in a finitely presented group, `isequal` may return the equality of words.
 """
-Base.:(==)(g::GEl, h::GEl) where {GEl<:GroupElement} = istrulyequal(g, h)
+Base.isequal(g::GEl, h::GEl) where {GEl<:GroupElement} = g == h
 
 function Base.:^(g::GroupElement, n::Integer)
     n == 0 && return one(g)

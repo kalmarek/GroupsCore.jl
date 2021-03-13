@@ -84,12 +84,12 @@ function test_GroupElement_interface(g::GEl, h::GEl) where {GEl<:GroupElement}
         @testset "Equality, deepcopy && hash" begin
             @test (g == h) isa Bool
 
-            @test istrulyequal(g, h) isa Bool
-            @test g == g
-            @test istrulyequal(h, h)
+            @test ==(g, h) isa Bool
+            @test isequal(g, g)
+            @test ==(h, h)
 
             if g != h
-                @test !istrulyequal(g, h)
+                @test !isequal(g, h)
             end
 
             @test deepcopy(g) isa typeof(g)
@@ -101,6 +101,10 @@ function test_GroupElement_interface(g::GEl, h::GEl) where {GEl<:GroupElement}
             @test parent(k) === parent(g)
             @test hash(g) isa UInt
             @test hash(g) == hash(k)
+
+            if isequal(g, h)
+                @test hash(g) == hash(h)
+            end
         end
 
         @testset "Group operations" begin

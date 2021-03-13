@@ -68,7 +68,8 @@ end
 
         @test_throws INI parent(g)
         @test_throws INI GroupsCore.parent_type(g)
-        @test_throws INI istrulyequal(g, g)
+        @test_throws INI g == g
+        @test_throws INI isequal(g, g)
 
         @test_throws INI hasorder(g)
         @test_throws INI deepcopy(g)
