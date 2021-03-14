@@ -21,4 +21,6 @@ include("symmetric.jl")
         test_Group_interface(G)
         test_GroupElement_interface(rand(G, 2)...)
     end
+
+    include("extensions.jl")
 end
