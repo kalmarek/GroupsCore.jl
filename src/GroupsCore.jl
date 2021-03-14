@@ -48,4 +48,6 @@ end
 include("groups.jl")
 include("group_elements.jl")
 
+include("extensions.jl")
+
 end

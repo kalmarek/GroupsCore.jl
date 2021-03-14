@@ -84,3 +84,21 @@ All of these functions (possibly) alter only the first argument, and must unalia
  * `GroupsCore.conj!(out::GEl, g::GEl, h::GEl) where GEl<:GroupElement`: return `h^-1*g*h, `possibly modifying `out`.
  * `GroupsCore.comm!(out::GEl, g::GEl, h::GEl) where GEl<:GroupElement`: return `g^-1*h^-1*g*h`, possibly modifying `out`.
 
+#### Extensions
+
+The following functions are defined in `GroupsCore` only to be extended externally:
+```julia
+function isabelian end
+function issolvable end
+function isnilpotent end
+function isperfect end
+
+function derivedsubgroup end
+function center end
+function socle end
+function sylowsubgroup end
+
+function centralizer end
+function normalizer end
+function stabilizer end
+```
