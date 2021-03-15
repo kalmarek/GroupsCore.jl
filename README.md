@@ -54,7 +54,7 @@ Based on these methods only, the following functions in `GroupsCore` are impleme
  * `Base.literal_pow(::typeof(^), g, Val{-1})` → `inv(g)`
  * `Base.:(/)(g, h)` → `g*h^-1`
  * `Base.conj(g, h)`, `Base.:(^)(g, h)` → `h^-1*g*h`
- * `Base.comm(g, h)` → `h^-1*g^-1*h*g` and its `Vararg` (`foldl`) version.
+ * `Base.comm(g, h)` → `g^-1*h^-1*g*h` and its `Vararg` (`foldl`) version.
  * `Base.isequal(g,h)` → `g == h` (a weaker/cheaper equality)
  * `Base.:(^)(g, n::Integer)` → powering by squaring.
 

@@ -95,7 +95,7 @@ Base.:(^)(g::GEl, h::GEl) where {GEl<:GroupElement} = conj(g, h)
 
 @doc Markdown.doc"""
     comm(g::GEl, h::GEl[, Vararg{GEl}...) where GEl<:GroupElement
-Return the commutator `inv(g)*inv(h)*g*h` of `g` and `h`.
+Return the commutator `g^-1*h^-1*g*h` of `g` and `h`.
 
 The `Vararg` version returns the repeated (`foldl`) commutator, i.e.
 `comm(g, h, k) == comm(comm(g, h), k)`.
