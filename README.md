@@ -50,7 +50,7 @@ Due to the fact that hardly any information can be encoded in `Type`, we rely on
  * `Base.inv(g::GroupElement)`: return the group inverse of `g`.
  * `Base.:(*)(g::GEl, h::GEl) where GEl<:GroupElement`: the group binary operation on `g` and `h`.
 
-No further methods are strictly nessesary.
+No further methods are strictly necessary.
 
 ## Implemented methods
 Based on these methods only, the following functions in `GroupsCore` are implemented:
