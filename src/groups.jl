@@ -67,8 +67,11 @@ function Base.isfinite(G::Group)
     IS = Base.IteratorSize(G)
     IS isa Base.HasLength && return true
     IS isa Base.HasShape && return true
+    IS isa Base.IsInfinite && return false
     # else : IS isa (Base.SizeUnknown, Base.IsInfinite, ...)
-    return false
+    throw(ArgumentError(
+    """The finiteness of $G could not be determined based on its iterator type.
+You need to implement `Base.isfinite(::$(typeof(G))) yourself."""))
 end
 
 hasgens(G::Group) = true

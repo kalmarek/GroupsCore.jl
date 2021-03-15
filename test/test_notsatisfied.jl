@@ -32,8 +32,8 @@ end
 
         # Assumption 1: Groups are of unknown size
         @test Base.IteratorSize(G) == Base.SizeUnknown()
-        @test !Base.isfinite(G)
-        @test_throws InfO order(G)
+        @test_throws ArgumentError Base.isfinite(G)
+        @test_throws ArgumentError order(G)
 
         Base.IteratorSize(::Type{SomeGroup}) = Base.HasShape{1}()
         @test Base.isfinite(G)
@@ -55,7 +55,7 @@ end
 
         # Group Interface
         @test_throws INI one(G)
-        @test_throws InfO order(G)
+        @test_throws ArgumentError order(G)
         @test_throws INI gens(G)
 
         Base.eltype(::Type{SomeGroup}) = SomeGroupElement
