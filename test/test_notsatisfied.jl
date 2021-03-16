@@ -19,6 +19,7 @@ end
     end
 
     INI = GroupsCore.InterfaceNotImplemented
+    InfO = GroupsCore.InfiniteOrder
 
     @testset "Group Interface" begin
 
@@ -29,28 +30,32 @@ end
         @test_throws INI iterate(G)
         @test_throws INI iterate(G, 1)
 
-        # Assumption 1: Groups are finite unless claimed otherwise
-        @test Base.IteratorSize(G) == Base.HasLength()
-        @test Base.isfinite(G)
+        # Assumption 1: Groups are of unknown size
+        @test Base.IteratorSize(G) == Base.SizeUnknown()
+        @test_throws ArgumentError Base.isfinite(G)
+        @test_throws ArgumentError order(G)
 
         Base.IteratorSize(::Type{SomeGroup}) = Base.HasShape{1}()
         @test Base.isfinite(G)
+        @test_throws INI order(G)
 
-        Base.IteratorSize(::Type{SomeGroup}) = Base.SizeUnknown()
-        @test !Base.isfinite(G)
+        Base.IteratorSize(::Type{SomeGroup}) = Base.HasLength()
+        @test Base.isfinite(G)
+        @test_throws INI order(G)
 
         Base.IteratorSize(::Type{SomeGroup}) = Base.IsInfinite()
         @test !Base.isfinite(G)
+        @test_throws InfO order(G)
 
         # return to the default:
-        Base.IteratorSize(::Type{SomeGroup}) = Base.HasLength()
+        Base.IteratorSize(::Type{SomeGroup}) = Base.SizeUnknown()
 
         # Assumption 2: Groups have generators:
         @test hasgens(G)
 
         # Group Interface
         @test_throws INI one(G)
-        @test_throws INI order(G)
+        @test_throws ArgumentError order(G)
         @test_throws INI gens(G)
 
         Base.eltype(::Type{SomeGroup}) = SomeGroupElement
@@ -68,9 +73,12 @@ end
 
         @test_throws INI parent(g)
         @test_throws INI GroupsCore.parent_type(g)
-        @test_throws INI istrulyequal(g, g)
+        @test_throws INI g == g
+        @test_throws INI isequal(g, g)
 
-        @test_throws INI hasorder(g)
+        @test_throws INI isfiniteorder(g)
+        GroupsCore.isfiniteorder(::SomeGroupElement) = false
+        @test_throws InfO order(g)
         @test_throws INI deepcopy(g)
 
         @test_throws INI inv(g)

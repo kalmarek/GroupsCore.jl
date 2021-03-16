@@ -14,21 +14,21 @@ AbstractAlgebra.parent_type(GEl::Type{<:GroupElement}) = throw(
 )
 
 @doc Markdown.doc"""
-    istrulyequal(g::GEl, h::GEl) where {GEl<:GroupElement}
+    ==(g::GEl, h::GEl) where {GEl<:GroupElement}
 Return the mathematical equality of group elements.
 
 This function may not return due to e.g. unsolvable word problem in groups.
 """
-istrulyequal(g::GEl, h::GEl) where {GEl<:GroupElement} = throw(
-    InterfaceNotImplemented(:Group, "GroupsCore.istrulyequal(::$GEl, ::$GEl)"),
+Base.:(==)(g::GEl, h::GEl) where {GEl<:GroupElement} = throw(
+    InterfaceNotImplemented(:Group, "Base.:(==)(::$GEl, ::$GEl)"),
 )
 
 @doc Markdown.doc"""
-    hasorder(g::GroupElement)
+    isfiniteorder(g::GroupElement)
 Return `true` if `g` has finite order (without computing it).
 """
-hasorder(g::GroupElement) = throw(
-    InterfaceNotImplemented(:Group, "GroupsCore.hasorder(::$(typeof(g)))"),
+isfiniteorder(g::GroupElement) = throw(
+    InterfaceNotImplemented(:Group, "GroupsCore.isfiniteorder(::$(typeof(g)))"),
 )
 
 @doc Markdown.doc"""
@@ -44,12 +44,14 @@ Base.deepcopy_internal(g::GroupElement, stackdict::IdDict) = throw(
     ),
 )
 # TODO: Technically, it is not necessary to implement `deepcopy_internal` method if `parent(g)` can be reconstructed exactly from `g` (i.e. either it's cached, or a singleton). However by defining this fallback we force everybody to implement it, except isbits group elements.
+
 @doc Markdown.doc"""
     inv(g::GroupElement)
 Return the group inverse of `g`
 """
 Base.inv(g::GroupElement) =
     throw(InterfaceNotImplemented(:Group, "Base.inv(::$(typeof(g)))"))
+
 @doc Markdown.doc"""
     (*)(g::GEl, h::GEl) where GEl<:GroupElement
 Return the result of group binary operation on `g` and `h`.
@@ -93,7 +95,7 @@ Base.:(^)(g::GEl, h::GEl) where {GEl<:GroupElement} = conj(g, h)
 
 @doc Markdown.doc"""
     comm(g::GEl, h::GEl[, Vararg{GEl}...) where GEl<:GroupElement
-Return the commutator `inv(g)*inv(h)*g*h` of `g` and `h`.
+Return the commutator `g^-1*h^-1*g*h` of `g` and `h`.
 
 The `Vararg` version returns the repeated (`foldl`) commutator, i.e.
 `comm(g, h, k) == comm(comm(g, h), k)`.
@@ -118,19 +120,18 @@ Base.:(/)(g::GEl, h::GEl) where {GEl<:GroupElement} =
 Return an arbitrary (and possibly uninitialized) group element sharing the parent with `g`.
 """
 Base.similar(g::GroupElement) = one(g)
-# optimization: determine triviality of `g` without constructing `one(g)`.
+
 Base.isone(g::GroupElement) = g == one(g)
 
-# TODO: semantic clash: isequal is weaker in julia than `==`, we need it the other way round here → istrulyequal
 @doc Markdown.doc"""
-    ==(g::GEl, h::GEl) where {GEl<:GroupElement}
+    isequal(g::GEl, h::GEl) where {GEl<:GroupElement}
 The "best effort" equality for group elements.
 
-Depending on the group this might, or might not be the correct equality, which can be obtained using `Base.isequal`. Nonetheless the implication `g == h` → `istrulyequal(g, h)` must be always satisfied, i.e. "best effort" equality might return `false` even when group elements are equal.
+Depending on the group this might, or might not be the correct equality, which can be obtained using `Base.isequal`. Nonetheless the implication `g == h` → `isequal(g, h)` must be always satisfied, i.e. "best effort" equality might return `false` even when group elements are equal.
 
-For example in a finitely presented group, `==` may return the equality of words.
+For example in a finitely presented group, `isequal` may return the equality of words.
 """
-Base.:(==)(g::GEl, h::GEl) where {GEl<:GroupElement} = istrulyequal(g, h)
+Base.isequal(g::GEl, h::GEl) where {GEl<:GroupElement} = g == h
 
 function Base.:^(g::GroupElement, n::Integer)
     n == 0 && return one(g)
@@ -141,7 +142,7 @@ end
 #### Modification RECOMMENDED for performance reasons
 
 function AbstractAlgebra.order(::Type{I}, g::GroupElement) where {I<:Integer}
-    hasorder(g) || throw("$g does not seem to have finite order")
+    isfiniteorder(g) || throw(InfiniteOrder(g))
     isone(g) && return I(1)
     o = I(1)
     gg = deepcopy(g)
