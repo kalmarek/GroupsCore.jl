@@ -29,7 +29,7 @@ Base.one(G::Group) =
 
 Return the order of $G$ as an instance of $I$.
 """
-function AbstractAlgebra.order(::Type{<:Integer}, G::Group)
+function order(::Type{<:Integer}, G::Group)
     if !isfinite(G)
         throw(InfiniteOrder(G))
     end
@@ -41,7 +41,7 @@ function AbstractAlgebra.order(::Type{<:Integer}, G::Group)
     )
 end
 
-AbstractAlgebra.order(G::Group) = order(BigInt, G)
+order(G::Group) = order(BigInt, G)
 
 @doc Markdown.doc"""
     gens(G::Group)
@@ -49,7 +49,7 @@ AbstractAlgebra.order(G::Group) = order(BigInt, G)
 Return an array of generators of $G$ if they exist and are computable, else
 return error.
 """
-AbstractAlgebra.gens(G::Group) =
+gens(G::Group) =
     throw(InterfaceNotImplemented(:Group, "GroupsCore.gens(::$(typeof(G)))"))
 
 function Base.rand(
@@ -93,7 +93,7 @@ end
 
 hasgens(G::Group) = true
 
-function AbstractAlgebra.gens(G::Group, i::Integer)
+function gens(G::Group, i::Integer)
     hasgens(G) && return gens(G)[i]
     # TODO: throw something more specific
     throw(
@@ -101,7 +101,7 @@ function AbstractAlgebra.gens(G::Group, i::Integer)
     )
 end
 
-function AbstractAlgebra.ngens(G::Group)
+function ngens(G::Group)
     hasgens(G) && return length(gens(G))
     # TODO: throw something more specific
     throw(
