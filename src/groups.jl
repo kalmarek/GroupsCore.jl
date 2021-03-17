@@ -1,31 +1,33 @@
-## Iterator protocol for `Group`
+################################################################################
+#
+#   groups.jl : Interface for group parents
+#
+################################################################################
 
-Base.eltype(::Type{G}) where {G<:Group} =
-    throw(InterfaceNotImplemented(:Iteration, "Base.eltype(::Type{$G})"))
-Base.iterate(G::Group) =
-    throw(InterfaceNotImplemented(:Iteration, "Base.iterate(::$(typeof(G)))"))
-Base.iterate(G::Group, state) = throw(
-    InterfaceNotImplemented(:Iteration, "Base.iterate(::$(typeof(G)), state)"),
-)
-Base.IteratorSize(::Type{<:Group}) = Base.SizeUnknown()
-Base.length(G::Group) = order(Int, G)
+# Creator : Marek Kaluba
 
-## `Group` interface
+################################################################################
+# Parents and elements
+################################################################################
 
-### Obligatory methods for `Group`
 @doc Markdown.doc"""
-    one(G::Group)
-Return the identity of the group.
+    eltype(::Type{G}) where {G <: Group}
+
+Alias for `elem_type`.
 """
+Base.eltype(::Type{G}) where {G <: Group} = elem_type(G)
+
+################################################################################
+# Obligatory methods
+################################################################################
+
 Base.one(G::Group) =
     throw(InterfaceNotImplemented(:Group, "Base.one(::$(typeof(G)))"))
 
 @doc Markdown.doc"""
-    order([BigInt, ]G::Group)
-    order(I::Type{<:Integer}, g::Group)
-Return the order of `g` as an instance of `I`.
+    order(I::Type{Integer} = BigInt, G::Group)
 
-Only arbitrary size integers are required to return mathematically correct answer.
+Return the order of $G$ as an instance of $I$.
 """
 function AbstractAlgebra.order(::Type{<:Integer}, G::Group)
     if !isfinite(G)
@@ -39,12 +41,13 @@ function AbstractAlgebra.order(::Type{<:Integer}, G::Group)
     )
 end
 
+AbstractAlgebra.order(G::Group) = order(BigInt, G)
+
 @doc Markdown.doc"""
     gens(G::Group)
 
-Return a random-accessed collection of generators of `G`.
-
-If a group does not come with a generating set (or it may be prohibitively expensive to compute), one needs to alter `GroupsCore.hasgens(::Group) = false`.
+Return an array of generators of $G$ if they exist and are computable, else
+return error.
 """
 AbstractAlgebra.gens(G::Group) =
     throw(InterfaceNotImplemented(:Group, "GroupsCore.gens(::$(typeof(G)))"))
@@ -61,7 +64,21 @@ function Base.rand(
     )
 end
 
-### Default implementations for `Group`
+################################################################################
+# Iterators
+################################################################################
+
+Base.iterate(G::Group) =
+    throw(InterfaceNotImplemented(:Iteration, "Base.iterate(::$(typeof(G)))"))
+Base.iterate(G::Group, state) = throw(
+    InterfaceNotImplemented(:Iteration, "Base.iterate(::$(typeof(G)), state)"),
+)
+Base.IteratorSize(::Type{<:Group}) = Base.SizeUnknown()
+Base.length(G::Group) = order(Int, G)
+
+################################################################################
+# Default implementations
+################################################################################
 
 function Base.isfinite(G::Group)
     IS = Base.IteratorSize(G)
@@ -75,14 +92,6 @@ You need to implement `Base.isfinite(::$(typeof(G))) yourself."""))
 end
 
 hasgens(G::Group) = true
-
-AbstractAlgebra.order(G::Group) = order(BigInt, G)
-
-@doc Markdown.doc"""
-    elem_type(parent_type)
-Given the type of a parent object return the type of its elements.
-"""
-AbstractAlgebra.elem_type(T::Type{<:Group}) = eltype(T)
 
 function AbstractAlgebra.gens(G::Group, i::Integer)
     hasgens(G) && return gens(G)[i]
