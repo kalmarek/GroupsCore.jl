@@ -1,31 +1,28 @@
-## `GroupElement` interface
+################################################################################
+#
+#   group_elements.jl : Interface for group elements
+#
+################################################################################
 
-### Obligatory methods for `GroupElement`
+# Creator : Marek Kaluba
 
-Base.parent(g::GroupElement) =
-    throw(InterfaceNotImplemented(:Group, "Base.parent(::$(typeof(g)))"))
-
-@doc Markdown.doc"""
-    parent_type(element_type)
-Given the type of an element return the type of its parent.
-"""
-AbstractAlgebra.parent_type(GEl::Type{<:GroupElement}) = throw(
-    InterfaceNotImplemented(:Group, "GroupsCore.parent_type(::Type{$GEl})"),
-)
+################################################################################
+# Obligatory methods
+################################################################################
 
 @doc Markdown.doc"""
-    ==(g::GEl, h::GEl) where {GEl<:GroupElement}
-Return the mathematical equality of group elements.
+    ==(g::G, h::G) where {G <: GroupElement}
 
-This function may not return due to e.g. unsolvable word problem in groups.
+Return true if $g = h$ and it is computable, else return error.
 """
-Base.:(==)(g::GEl, h::GEl) where {GEl<:GroupElement} = throw(
-    InterfaceNotImplemented(:Group, "Base.:(==)(::$GEl, ::$GEl)"),
+Base.:(==)(g::G, h::G) where {G <: GroupElement} = throw(
+    InterfaceNotImplemented(:Group, "Base.:(==)(::$G, ::$G)"),
 )
 
 @doc Markdown.doc"""
     isfiniteorder(g::GroupElement)
-Return `true` if `g` has finite order (without computing it).
+
+Return true if $g$ is of finite order without computing it.
 """
 isfiniteorder(g::GroupElement) = throw(
     InterfaceNotImplemented(:Group, "GroupsCore.isfiniteorder(::$(typeof(g)))"),
@@ -33,9 +30,8 @@ isfiniteorder(g::GroupElement) = throw(
 
 @doc Markdown.doc"""
     deepcopy_internal(g::GroupElement, ::IdDict)
-Return a completely intependent copy of group element `g` **without copying its parent**.
 
-That is `parent(g) === parent(deepcopy(g))` must be satisfied. There is no need to implement this method if `g` is `isbits`.
+Return a deep copy of group element $g$ without copying its parent.
 """
 Base.deepcopy_internal(g::GroupElement, stackdict::IdDict) = throw(
     InterfaceNotImplemented(
@@ -43,105 +39,48 @@ Base.deepcopy_internal(g::GroupElement, stackdict::IdDict) = throw(
         "Base.deepcopy_internal(::$(typeof(g)), ::IdDict)",
     ),
 )
-# TODO: Technically, it is not necessary to implement `deepcopy_internal` method if `parent(g)` can be reconstructed exactly from `g` (i.e. either it's cached, or a singleton). However by defining this fallback we force everybody to implement it, except isbits group elements.
+# TODO: Technically, it is not necessary to implement `deepcopy_internal` method
+# if `parent(g)` can be reconstructed exactly from `g` (i.e. either it's cached,
+# or a singleton). However by defining this fallback we force everybody to
+# implement it, except isbits group elements.
 
 @doc Markdown.doc"""
     inv(g::GroupElement)
-Return the group inverse of `g`
+
+Return the group inverse $g^{-1}$.
 """
 Base.inv(g::GroupElement) =
     throw(InterfaceNotImplemented(:Group, "Base.inv(::$(typeof(g)))"))
 
 @doc Markdown.doc"""
-    (*)(g::GEl, h::GEl) where GEl<:GroupElement
-Return the result of group binary operation on `g` and `h`.
+    *(g::G, h::G) where {G <: GroupElement}
+
+Return the result of group binary operation $g \cdot h$.
 """
-Base.:(*)(g::GEl, h::GEl) where {GEl<:GroupElement} = throw(
+Base.:(*)(g::G, h::G) where {G <: GroupElement} = throw(
     InterfaceNotImplemented(
         :Group,
         "Base.:(*)(::$(typeof(g)), ::$(typeof(g)))",
     ),
 )
 
-### Default implementations for `GroupElement`
+################################################################################
+# Default implementations
+################################################################################
 
-#### Modification not recommended
 @doc Markdown.doc"""
     one(g::GroupElement)
-Return the identity element of the parent group of `g`.
+
+Return the identity element in the group of $g$.
 """
 Base.one(g::GroupElement) = one(parent(g))
 
 @doc Markdown.doc"""
-    order([BigInt, ]g::GroupElement)
-    order(I::Type{<:Integer}, g::GroupElement)
-Return the order of `g` as an instance of `I`.
+    order(::Type{I} = BigInt, g::GroupElement) where {I <: Integer}
 
-Only arbitrary size integers are required to return mathematically correct answer.
+Return the order of $g$ as an instance of $I$.
 """
-AbstractAlgebra.order(g::GroupElement) = order(BigInt, g)
-
-@doc Markdown.doc"""
-    conj(g::GEl, h::GEl) where {GEl<:GroupElement}
-Return conjugation of `g` by `h`, i.e. `h^-1*g*h`.
-"""
-Base.conj(g::GEl, h::GEl) where {GEl<:GroupElement} = conj!(similar(g), g, h)
-
-@doc Markdown.doc"""
-    ^(g::GEl, h::GEl) where {GEl<:GroupElement}
-Conjugation action of `h` on `g`. See `conj`.
-"""
-Base.:(^)(g::GEl, h::GEl) where {GEl<:GroupElement} = conj(g, h)
-
-@doc Markdown.doc"""
-    comm(g::GEl, h::GEl[, Vararg{GEl}...) where GEl<:GroupElement
-Return the commutator `g^-1*h^-1*g*h` of `g` and `h`.
-
-The `Vararg` version returns the repeated (`foldl`) commutator, i.e.
-`comm(g, h, k) == comm(comm(g, h), k)`.
-"""
-function comm(g::GEl, h::GEl, tail::GEl...) where {GEl<:GroupElement}
-    res = comm!(similar(g), g, h)
-    for k in tail
-        res = comm!(res, res, k)
-    end
-    return res
-end
-
-Base.literal_pow(::typeof(^), g::GroupElement, ::Val{-1}) = inv(g)
-
-Base.:(/)(g::GEl, h::GEl) where {GEl<:GroupElement} =
-    div_right!(similar(g), g, h)
-
-#### Modification possible for performance reasons
-
-@doc Markdown.doc"""
-    similar(g::GroupElement)
-Return an arbitrary (and possibly uninitialized) group element sharing the parent with `g`.
-"""
-Base.similar(g::GroupElement) = one(g)
-
-Base.isone(g::GroupElement) = g == one(g)
-
-@doc Markdown.doc"""
-    isequal(g::GEl, h::GEl) where {GEl<:GroupElement}
-The "best effort" equality for group elements.
-
-Depending on the group this might, or might not be the correct equality, which can be obtained using `Base.isequal`. Nonetheless the implication `g == h` → `isequal(g, h)` must be always satisfied, i.e. "best effort" equality might return `false` even when group elements are equal.
-
-For example in a finitely presented group, `isequal` may return the equality of words.
-"""
-Base.isequal(g::GEl, h::GEl) where {GEl<:GroupElement} = g == h
-
-function Base.:^(g::GroupElement, n::Integer)
-    n == 0 && return one(g)
-    n < 0 && return inv(g)^-n
-    return Base.power_by_squaring(g, n)
-end
-
-#### Modification RECOMMENDED for performance reasons
-
-function AbstractAlgebra.order(::Type{I}, g::GroupElement) where {I<:Integer}
+function order(::Type{I}, g::GroupElement) where {I<:Integer}
     isfiniteorder(g) || throw(InfiniteOrder(g))
     isone(g) && return I(1)
     o = I(1)
@@ -153,71 +92,134 @@ function AbstractAlgebra.order(::Type{I}, g::GroupElement) where {I<:Integer}
     end
     return o
 end
+order(g::GroupElement) = order(BigInt, g)
+
+@doc Markdown.doc"""
+    conj(g::G, h::G) where {G <: GroupElement}
+
+Return conjugation of $g$ by $h$, i.e. $h^{-1} g h$.
+"""
+Base.conj(g::G, h::G) where {G <: GroupElement} = conj!(similar(g), g, h)
+
+@doc Markdown.doc"""
+    ^(g::G, h::G) where {G <: GroupElement}
+
+Alias for `conj`.
+"""
+Base.:(^)(g::G, h::G) where {G <: GroupElement} = conj(g, h)
+
+@doc Markdown.doc"""
+    comm(g::G, h::G, k::G...) where {G <: GroupElement}
+
+Return the commutator $[[g, h], ...]$, where $[g, h] = g^{-1} h^{-1} g h$.
+"""
+function comm(g::G, h::G, k::G...) where {G <: GroupElement}
+    res = comm!(similar(g), g, h)
+    for l in k
+        res = comm!(res, res, k)
+    end
+    return res
+end
+
+Base.literal_pow(::typeof(^), g::GroupElement, ::Val{-1}) = inv(g)
+
+@doc Markdown.doc"""
+    /(g::G, h::G) where {G <: GroupElement}
+
+Return $g h^{-1}$.
+"""
+Base.:(/)(g::G, h::G) where {G <: GroupElement} = div_right!(similar(g), g, h)
+
+# NOTE: Modification possible for performance reasons
+
+@doc Markdown.doc"""
+    similar(g::GroupElement)
+
+Return a group element sharing the parent with $g$. Might be arbitrary and
+possibly uninitialized.
+"""
+Base.similar(g::GroupElement) = one(g)
+
+Base.isone(g::GroupElement) = g == one(g)
+
+@doc Markdown.doc"""
+    isequal(g::G, h::G) where {G <: GroupElement}
+
+Return the "best effort" equality for group elements. Always returns true if
+$g = h$, but might also return true if $g$ is not equal to $h$.
+
+For example in a finitely presented group, `isequal` may return the equality
+of words.
+"""
+Base.isequal(g::G, h::G) where {G <: GroupElement} = g == h
+
+function Base.:^(g::GroupElement, n::Integer)
+    n == 0 && return one(g)
+    n < 0 && return inv(g)^-n
+    return Base.power_by_squaring(g, n)
+end
+
+# NOTE: Modification RECOMMENDED for performance reasons
 
 Base.hash(g::GroupElement, h::UInt) = hash(typeof(g), h)
 
 ##### Mutable API
 @doc Markdown.doc"""
     one!(g::GroupElement)
+
 Return `one(g)`, possibly modifying `g`.
 """
 one!(g::GroupElement) = one(parent(g))
 
 @doc Markdown.doc"""
-    inv!(out::GEl, g::GEl) where GEl<:GroupElement
+    inv!(out::G, g::G) where {G <: GroupElement}
+
 Return `inv(g)`, possibly modifying `out`.
-
-Aliasing of `g` with `out` is allowed.
 """
-AbstractAlgebra.inv!(out::GEl, g::GEl) where {GEl<:GroupElement} = inv(g)
+inv!(out::G, g::G) where {G <: GroupElement} = inv(g)
 
 @doc Markdown.doc"""
-    mul!(out::GEl, g::GEl, h::GEl) where GEl<:GroupElement
-Return `g*h`, possibly modifying `out`.
+    mul!(out::G, g::G, h::G) where {G <: GroupElement}
 
-Aliasing of `g` or `h` with `out` is allowed.
+Return $g h$, possibly modifying `out`.
 """
-AbstractAlgebra.mul!(out::GEl, g::GEl, h::GEl) where {GEl<:GroupElement} = g * h
+mul!(out::G, g::G, h::G) where {G <: GroupElement} = g * h
 
 @doc Markdown.doc"""
-    div_right!(out::GEl, g::GEl, h::GEl) where GEl<:GroupElement
-Return `g*h^-1`, possibly modifying `out`.
+    div_right!(out::G, g::G, h::G) where {G <: GroupElement}
 
-Aliasing of `g` or `h` with `out` is allowed;
+Return $g h^{-1}$, possibly modifying `out`.
 """
-div_right!(out::GEl, g::GEl, h::GEl) where {GEl<:GroupElement} =
-    mul!(out, g, inv(h))
+div_right!(out::G, g::G, h::G) where {G <: GroupElement} = mul!(out, g, inv(h))
 
 @doc Markdown.doc"""
-    div_left!(out::GEl, g::GEl, h::GEl) where GEl<:GroupElement
-Return `h^-1*g`, possibly modifying `out`.
+    div_left!(out::G, g::G, h::G) where {G <: GroupElement}
 
-Aliasing of `g` or `h` with `out` is allowed;
+Return $h^{-1} g$, possibly modifying `out`.
 """
-function div_left!(out::GEl, g::GEl, h::GEl) where {GEl<:GroupElement}
+function div_left!(out::G, g::G, h::G) where {G <: GroupElement}
     out = (out === g || out === h) ? inv(h) : inv!(out, h)
     return mul!(out, out, g)
 end
-@doc Markdown.doc"""
-    conj!(out::GEl, g::GEl, h::GEl) where GEl<:GroupElement
-Return `h^-1*g*h, `possibly modifying `out`.
 
-Aliasing of `g` or `h` with `out` is allowed.
+@doc Markdown.doc"""
+    conj!(out::G, g::G, h::G) where {G <: GroupElement}
+
+Return $h^{-1} g h$, `possibly modifying `out`.
 """
-function conj!(out::GEl, g::GEl, h::GEl) where {GEl<:GroupElement}
+function conj!(out::G, g::G, h::G) where {G <: GroupElement}
     out = (out === g || out === h) ? inv(h) : inv!(out, h)
     out = mul!(out, out, g)
     return mul!(out, out, h)
 end
 
 @doc Markdown.doc"""
-    comm!(out::GEl, g::GEl, h::GEl) where GEl<:GroupElement
-Return `g^-1*h^-1*g*h, `possibly modifying `out`.
+    comm!(out::G, g::G, h::G) where {G <: GroupElement}
 
-Aliasing of `g` or `h` with `out` is allowed.
+Return $g^{-1} h^{-1} g h$, possibly modifying `out`.
 """
 # TODO: can we make comm! with 3 arguments without allocation??
-function comm!(out::GEl, g::GEl, h::GEl) where {GEl<:GroupElement}
+function comm!(out::G, g::G, h::G) where {G <: GroupElement}
     out = conj!(out, g, h)
     return div_left!(out, out, g)
 end

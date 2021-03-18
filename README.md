@@ -115,17 +115,21 @@ their arguments when necessary.
 
  * `GroupsCore.one!(g::GroupElement)`: return `one(g)`, possibly modifying `g`.
  * `GroupsCore.inv!(out::GEl, g::GEl) where GEl<:GroupElement`: return `g^-1`,
-possibly modifying `out`.
+possibly modifying `out`. Aliasing of `g` with `out` is allowed.
  * `GroupsCore.mul!(out::GEl, g::GEl, h::GEl) where GEl<:GroupElement`: return
-`g*h`, possibly modifying `out`.
+`g*h`, possibly modifying `out`. Aliasing of `g` or `h` with `out` is allowed.
  * `GroupsCore.div_left!(out::GEl, g::GEl, h::GEl) where GEl<:GroupElement`:
-return `h^-1*g`, possibly modifying `out`.
+return `h^-1*g`, possibly modifying `out`. Aliasing of `g` or `h` with `out` is
+allowed.
  * `GroupsCore.div_right!(out::GEl, g::GEl, h::GEl) where GEl<:GroupElement`:
-return `g*h^-1`, possibly modifying `out`.
+return `g*h^-1`, possibly modifying `out`. Aliasing of `g` or `h` with `out` is
+allowed.
  * `GroupsCore.conj!(out::GEl, g::GEl, h::GEl) where GEl<:GroupElement`: return
-`h^-1*g*h, `possibly modifying `out`.
+`h^-1*g*h, `possibly modifying `out`. Aliasing of `g` or `h` with `out` is
+allowed.
  * `GroupsCore.comm!(out::GEl, g::GEl, h::GEl) where GEl<:GroupElement`: return
-`g^-1*h^-1*g*h`, possibly modifying `out`.
+`g^-1*h^-1*g*h`, possibly modifying `out`. Aliasing of `g` or `h` with `out` is
+allowed.
 
 #### Extensions
 
