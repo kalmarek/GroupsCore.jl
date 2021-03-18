@@ -15,14 +15,16 @@ function stabilizer end
 @doc Markdown.doc"""
     index(subgroup::G, supgroup::G) where {G <: Group}
 
-Return the index $[H : G]$ for a subgroup $G \subseteq H$.
+Return the index of the subgroup compared to the supergroup. If subgroup is not
+contained in supergroup, then it throws an error.
 """
 function index end
 
 @doc Markdown.doc"""
     left_coset_representatives(subgroup::G, supgroup::G) where {G <: Group}
 
-Return the representatives of the left coset $G H$ where $G \subseteq H$.
+Return representatives of the left coset. If subgroup is not contained in
+supergroup, then it throws an error.
 """
 function left_coset_representatives end
 function right_coset_representatives end
