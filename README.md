@@ -149,4 +149,8 @@ function sylowsubgroup end
 function centralizer end
 function normalizer end
 function stabilizer end
+
+function index end
+function left_coset_representatives end
+function right_coset_representatives end
 ```

@@ -13,7 +13,7 @@
 @doc Markdown.doc"""
     ==(g::G, h::G) where {G <: GroupElement}
 
-Return true if $g = h$ and it is computable, else return error.
+Return true if $g = h$ and the equality is computable, else return error.
 """
 Base.:(==)(g::G, h::G) where {G <: GroupElement} = throw(
     InterfaceNotImplemented(:Group, "Base.:(==)(::$G, ::$G)"),
@@ -31,7 +31,8 @@ isfiniteorder(g::GroupElement) = throw(
 @doc Markdown.doc"""
     deepcopy_internal(g::GroupElement, ::IdDict)
 
-Return a deep copy of group element $g$ without copying its parent.
+Return a deep copy of group element $g$ without copying its parent. However,
+`isbits` subtypes do not need to implement this method.
 """
 Base.deepcopy_internal(g::GroupElement, stackdict::IdDict) = throw(
     InterfaceNotImplemented(
@@ -78,7 +79,8 @@ Base.one(g::GroupElement) = one(parent(g))
 @doc Markdown.doc"""
     order(::Type{I} = BigInt, g::GroupElement) where {I <: Integer}
 
-Return the order of $g$ as an instance of $I$.
+Return the order of $g$ as an instance of $I$. If $g$ is of infinite order, then
+it is required to throw `GroupsCore.InfiniteOrder` exception.
 """
 function order(::Type{I}, g::GroupElement) where {I<:Integer}
     isfiniteorder(g) || throw(InfiniteOrder(g))
@@ -130,7 +132,9 @@ Return $g h^{-1}$.
 """
 Base.:(/)(g::G, h::G) where {G <: GroupElement} = div_right!(similar(g), g, h)
 
-# NOTE: Modification possible for performance reasons
+################################################################################
+# Default implementations that (might) need performance modification
+################################################################################
 
 @doc Markdown.doc"""
     similar(g::GroupElement)
@@ -140,6 +144,11 @@ possibly uninitialized.
 """
 Base.similar(g::GroupElement) = one(g)
 
+@doc Markdown.doc"""
+    isone(g::GroupElement)
+
+Return true if $g$ is the identity element.
+"""
 Base.isone(g::GroupElement) = g == one(g)
 
 @doc Markdown.doc"""
@@ -160,10 +169,12 @@ function Base.:^(g::GroupElement, n::Integer)
 end
 
 # NOTE: Modification RECOMMENDED for performance reasons
-
 Base.hash(g::GroupElement, h::UInt) = hash(typeof(g), h)
 
-##### Mutable API
+################################################################################
+# Mutable API where modifications are recommended for performance reasons
+################################################################################
+
 @doc Markdown.doc"""
     one!(g::GroupElement)
 
@@ -174,28 +185,32 @@ one!(g::GroupElement) = one(parent(g))
 @doc Markdown.doc"""
     inv!(out::G, g::G) where {G <: GroupElement}
 
-Return `inv(g)`, possibly modifying `out`.
+Return `inv(g)`, possibly modifying `out`. Aliasing of `g` with `out` is
+allowed.
 """
 inv!(out::G, g::G) where {G <: GroupElement} = inv(g)
 
 @doc Markdown.doc"""
     mul!(out::G, g::G, h::G) where {G <: GroupElement}
 
-Return $g h$, possibly modifying `out`.
+Return $g h$, possibly modifying `out`. Aliasing of `g` or `h` with `out` is
+allowed.
 """
 mul!(out::G, g::G, h::G) where {G <: GroupElement} = g * h
 
 @doc Markdown.doc"""
     div_right!(out::G, g::G, h::G) where {G <: GroupElement}
 
-Return $g h^{-1}$, possibly modifying `out`.
+Return $g h^{-1}$, possibly modifying `out`. Aliasing of `g` or `h` with `out`
+is allowed.
 """
 div_right!(out::G, g::G, h::G) where {G <: GroupElement} = mul!(out, g, inv(h))
 
 @doc Markdown.doc"""
     div_left!(out::G, g::G, h::G) where {G <: GroupElement}
 
-Return $h^{-1} g$, possibly modifying `out`.
+Return $h^{-1} g$, possibly modifying `out`. Aliasing of `g` or `h` with `out`
+is allowed.
 """
 function div_left!(out::G, g::G, h::G) where {G <: GroupElement}
     out = (out === g || out === h) ? inv(h) : inv!(out, h)
@@ -205,7 +220,8 @@ end
 @doc Markdown.doc"""
     conj!(out::G, g::G, h::G) where {G <: GroupElement}
 
-Return $h^{-1} g h$, `possibly modifying `out`.
+Return $h^{-1} g h$, `possibly modifying `out`. Aliasing of `g` or `h` with
+`out` is allowed.
 """
 function conj!(out::G, g::G, h::G) where {G <: GroupElement}
     out = (out === g || out === h) ? inv(h) : inv!(out, h)
@@ -216,7 +232,7 @@ end
 @doc Markdown.doc"""
     comm!(out::G, g::G, h::G) where {G <: GroupElement}
 
-Return $g^{-1} h^{-1} g h$, possibly modifying `out`.
+Return $g^{-1} h^{-1} g h$, possibly modifying `out`. Aliasing of `g` or `h` with `out` is allowed.
 """
 # TODO: can we make comm! with 3 arguments without allocation??
 function comm!(out::G, g::G, h::G) where {G <: GroupElement}

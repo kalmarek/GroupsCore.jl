@@ -32,7 +32,9 @@ Base.one(G::Group) =
 @doc Markdown.doc"""
     order(I::Type{Integer} = BigInt, G::Group)
 
-Return the order of $G$ as an instance of $I$.
+Return the order of $G$ as an instance of $I$. Only arbitrary sized integers are
+required to return a mathematically correct answer. Infinite groups must throw
+`GroupsCore.InfiniteOrder` exception.
 """
 function order(::Type{<:Integer}, G::Group)
     if !isfinite(G)
@@ -59,8 +61,8 @@ gens(G::Group) =
 
 function Base.rand(
     rng::Random.AbstractRNG,
-    rs::Random.SamplerTrivial{G},
-) where {G<:Group}
+    rs::Random.SamplerTrivial{G}
+) where {G <: Group}
     throw(
         InterfaceNotImplemented(
             :Random,
@@ -78,7 +80,15 @@ Base.iterate(G::Group) =
 Base.iterate(G::Group, state) = throw(
     InterfaceNotImplemented(:Iteration, "Base.iterate(::$(typeof(G)), state)"),
 )
-Base.IteratorSize(::Type{<:Group}) = Base.SizeUnknown()
+
+@doc Markdown.doc"""
+    IteratorSize(::Type{G}) where {G <: Group}
+
+Return size of iterator if and only if every instance of $Type{G}$ is either
+finite or infinite. If not every instance can be categorized in only one of
+these, it returns `SizeUnknown`.
+"""
+Base.IteratorSize(::Type{G}) where {G <: Group} = Base.SizeUnknown()
 Base.length(G::Group) = order(Int, G)
 
 ################################################################################
