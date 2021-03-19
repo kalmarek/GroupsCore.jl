@@ -254,7 +254,8 @@ end
 @doc Markdown.doc"""
     comm!(out::G, g::G, h::G) where {G <: GroupElement}
 
-Return $g^{-1} h^{-1} g h$, possibly modifying `out`. Aliasing of `g` or `h` with `out` is allowed.
+Return $g^{-1} h^{-1} g h$, possibly modifying `out`. Aliasing of `g` or `h`
+with `out` is allowed.
 """
 function comm!(out::G, g::G, h::G) where {G <: GroupElement}
     # TODO: can we make comm! with 3 arguments without allocation??
