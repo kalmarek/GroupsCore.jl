@@ -59,7 +59,7 @@ element. Parent objects of the elements of the same group must be **identical**
 (i.e. `===`).
  * `GroupsCore.parent_type(::Type{<:GroupElement})`: given the type of an
 element return the type of its parent.
- * `GroupsCore.==(g::GEl, h::GEl) where GEl<:GroupElement`: return the
+ * `GroupsCore.:(==)(g::GEl, h::GEl) where GEl<:GroupElement`: return the
 mathematical equality of group elements;
  * `GroupsCore.isfiniteorder(g::GroupElement)`: return `true` if `g` has finite
 order (possibly without computing it). If `isfiniteorder(g)` returns `false`,
