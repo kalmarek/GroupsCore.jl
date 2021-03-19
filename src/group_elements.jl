@@ -11,9 +11,30 @@
 ################################################################################
 
 @doc Markdown.doc"""
+    parent(g::GroupElement)
+
+Return the parent of the group element.
+"""
+Base.parent(g::GroupElement) =
+    throw(InterfaceNotImplemented(:Group, "Base.parent(::$(typeof(g)))"))
+
+@doc Markdown.doc"""
+    parent_type(::Type{G}) where {G <: GroupElement}
+    parent_type(::G)       where {G <: GroupElement}
+
+Return the parent type of the group element type $G$.
+"""
+parent_type(::Type{G}) where {G <: GroupElement} =
+    throw(InterfaceNotImplemented(
+        :Group,
+        "GroupsCore.parent_type(::Type{$G})"
+       ))
+
+@doc Markdown.doc"""
     ==(g::G, h::G) where {G <: GroupElement}
 
-Return true if $g = h$ and the equality is computable, else return error.
+Return the mathematical equality $g = h$. May not return, for example due to
+unsolvable word problem in groups.
 """
 Base.:(==)(g::G, h::G) where {G <: GroupElement} = throw(
     InterfaceNotImplemented(:Group, "Base.:(==)(::$G, ::$G)"),
@@ -22,7 +43,7 @@ Base.:(==)(g::G, h::G) where {G <: GroupElement} = throw(
 @doc Markdown.doc"""
     isfiniteorder(g::GroupElement)
 
-Return true if $g$ is of finite order without computing it.
+Return true if $g$ is of finite order, possibly without computing it.
 """
 isfiniteorder(g::GroupElement) = throw(
     InterfaceNotImplemented(:Group, "GroupsCore.isfiniteorder(::$(typeof(g)))"),
@@ -31,8 +52,8 @@ isfiniteorder(g::GroupElement) = throw(
 @doc Markdown.doc"""
     deepcopy_internal(g::GroupElement, ::IdDict)
 
-Return a deep copy of group element $g$ without copying its parent. However,
-`isbits` subtypes do not need to implement this method.
+Return an independent copy of group element $g$ without copying its parent.
+There is no need to implement this method if $g$ is `isbits`.
 """
 Base.deepcopy_internal(g::GroupElement, stackdict::IdDict) = throw(
     InterfaceNotImplemented(
@@ -113,12 +134,13 @@ Base.:(^)(g::G, h::G) where {G <: GroupElement} = conj(g, h)
 @doc Markdown.doc"""
     comm(g::G, h::G, k::G...) where {G <: GroupElement}
 
-Return the commutator $[[g, h], ...]$, where $[g, h] = g^{-1} h^{-1} g h$.
+Return the left associative iterated commutator $[[g, h], ...]$, where
+$[g, h] = g^{-1} h^{-1} g h$.
 """
 function comm(g::G, h::G, k::G...) where {G <: GroupElement}
     res = comm!(similar(g), g, h)
     for l in k
-        res = comm!(res, res, k)
+        res = comm!(res, res, l)
     end
     return res
 end
@@ -154,8 +176,8 @@ Base.isone(g::GroupElement) = g == one(g)
 @doc Markdown.doc"""
     isequal(g::G, h::G) where {G <: GroupElement}
 
-Return the "best effort" equality for group elements. Always returns true if
-$g = h$, but might also return true if $g$ is not equal to $h$.
+Return the "best effort" equality for group elements. If `isequal(g, h)` then
+$g = h$, but might return false even if the group equality $g = h$ holds.
 
 For example in a finitely presented group, `isequal` may return the equality
 of words.
@@ -234,8 +256,8 @@ end
 
 Return $g^{-1} h^{-1} g h$, possibly modifying `out`. Aliasing of `g` or `h` with `out` is allowed.
 """
-# TODO: can we make comm! with 3 arguments without allocation??
 function comm!(out::G, g::G, h::G) where {G <: GroupElement}
+    # TODO: can we make comm! with 3 arguments without allocation??
     out = conj!(out, g, h)
     return div_left!(out, out, g)
 end

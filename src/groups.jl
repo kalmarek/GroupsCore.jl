@@ -7,19 +7,17 @@
 # Creator : Marek Kaluba
 
 ################################################################################
-# Parents and elements
+# Obligatory methods
 ################################################################################
 
 @doc Markdown.doc"""
-    eltype(::Type{G}) where {G <: Group}
+    elem_type(::Type{G}) where {G <: Group}
+    elem_type(::G)       where {G <: Group}
 
-Alias for `elem_type`.
+Alias for `eltype(G)`. Return the element type of the group parent type $G$.
 """
-Base.eltype(::Type{G}) where {G <: Group} = elem_type(G)
-
-################################################################################
-# Obligatory methods
-################################################################################
+elem_type(::Type{G}) where {G <: Group} = eltype(G)
+elem_type(::G) where {G <: Group} = eltype(G)
 
 @doc Markdown.doc"""
     one(G::Group)
@@ -74,6 +72,14 @@ end
 ################################################################################
 # Iterators
 ################################################################################
+
+@doc Markdown.doc"""
+    eltype(::Type{G}) where {G <: Group}
+
+Return the element type for a parent of type $G$.
+"""
+Base.eltype(::Type{G}) where {G <: Group} =
+    throw(InterfaceNotImplemented(:Iteration, "Base.eltype(::$(typeof(G)))"))
 
 Base.iterate(G::Group) =
     throw(InterfaceNotImplemented(:Iteration, "Base.iterate(::$(typeof(G)))"))

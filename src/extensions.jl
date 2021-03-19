@@ -13,18 +13,18 @@ function normalizer end
 function stabilizer end
 
 @doc Markdown.doc"""
-    index(subgroup::G, supgroup::G) where {G <: Group}
+    index(subgroup::G, group::G) where {G <: Group}
 
-Return the index of the subgroup compared to the supergroup. If subgroup is not
-contained in supergroup, then it throws an error.
+Return the index of the subgroup compared to the group. If subgroup is not
+contained in group, an error is thrown.
 """
 function index end
 
 @doc Markdown.doc"""
-    left_coset_representatives(subgroup::G, supgroup::G) where {G <: Group}
+    left_coset_representatives(subgroup::G, group::G) where {G <: Group}
 
 Return representatives of the left coset. If subgroup is not contained in
-supergroup, then it throws an error.
+group, an error is thrown.
 """
 function left_coset_representatives end
 function right_coset_representatives end
