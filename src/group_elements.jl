@@ -45,12 +45,6 @@ isfiniteorder(g::GroupElement) = throw(
     InterfaceNotImplemented(:Group, "GroupsCore.isfiniteorder(::$(typeof(g)))"),
 )
 
-@doc Markdown.doc"""
-    deepcopy_internal(g::GroupElement, ::IdDict)
-
-Return an independent copy of group element $g$ without copying its parent.
-There is no need to implement this method if $g$ is `isbits`.
-"""
 Base.deepcopy_internal(g::GroupElement, stackdict::IdDict) = throw(
     InterfaceNotImplemented(
         :Group,
@@ -143,11 +137,6 @@ end
 
 Base.literal_pow(::typeof(^), g::GroupElement, ::Val{-1}) = inv(g)
 
-@doc Markdown.doc"""
-    /(g::G, h::G) where {G <: GroupElement}
-
-Return $g h^{-1}$.
-"""
 Base.:(/)(g::G, h::G) where {G <: GroupElement} = div_right!(similar(g), g, h)
 
 ################################################################################

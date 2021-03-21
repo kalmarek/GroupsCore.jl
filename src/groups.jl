@@ -70,11 +70,6 @@ end
 # Iterators
 ################################################################################
 
-@doc Markdown.doc"""
-    eltype(::Type{G}) where {G <: Group}
-
-Return the element type for a parent of type $G$.
-"""
 Base.eltype(::Type{G}) where {G <: Group} =
     throw(InterfaceNotImplemented(:Iteration, "Base.eltype(::$(typeof(G)))"))
 
