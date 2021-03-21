@@ -35,7 +35,7 @@ years).
 
 Additionally the following assumptions are placed on the iteration:
  * `first(G)` must be the identity
- * iteration over an infinite group should exhaust every fixed radius ball (in
+ * iteration over a finitely generated group should exhaust every fixed radius ball (in
 word-length metric) around the identity in finite time.
 
 #### Obligatory methods
@@ -46,7 +46,7 @@ return mathematically correct answer. An infinite group must throw
 `GroupsCore.InfiniteOrder` exception.
  * `GroupsCore.gens(G::Group)`: return a random-accessed collection of
 generators of `G`; if a group does not come with a generating set (or it may be
-prohibitively expensive to compute), one needs to alter
+prohibitively expensive to compute, or if the group is not finitely generated ), one needs to alter
 `GroupsCore.hasgens(::Group) = false`.
  * `Base.rand(rng::Random.AbstractRNG, rs::Random.Sampler{GT}) where GT<:Group`:
 to enable asking for random group elements treating group as a collection, i.e.
