@@ -10,7 +10,7 @@
     elem_type(::Type{<:Group})
     elem_type(G::Group)
 
-Alias for `eltype(G)`. Return the type of elements of the group $G$.
+Alias for [`eltype(G)`](@ref).
 """
 elem_type(::Type{Gr}) where {Gr <: Group} = eltype(Gr)
 elem_type(G::Group) = eltype(G)
@@ -26,9 +26,13 @@ Base.one(G::Group) =
 @doc Markdown.doc"""
     order(I::Type{Integer} = BigInt, G::Group)
 
-Return the order of $G$ as an instance of $I$. Only arbitrary sized integers are
-required to return a mathematically correct answer. Infinite groups must throw
-`GroupsCore.InfiniteOrder` exception.
+Return the order of $G$ as an instance of `I`. If $G$ is of infinite order,
+`GroupsCore.InfiniteOrder` exception will be thrown.
+
+!!! warning
+
+    Only arbitrary sized integers are required to return a mathematically
+    correct answer.
 """
 function order(::Type{<:Integer}, G::Group)
     if !isfinite(G)

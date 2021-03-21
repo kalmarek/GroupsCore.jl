@@ -30,8 +30,11 @@ parent_type(g::GroupElement) = parent_type(typeof(g))
 @doc Markdown.doc"""
     ==(g::G, h::G) where {G <: GroupElement}
 
-Return the mathematical equality $g = h$. May not return, for example due to
-unsolvable word problem in groups.
+Return `true` if and only if the mathematical equality $g = h$ holds.
+
+!!! note
+
+    This function may not return, due to unsolvable word problem.
 """
 Base.:(==)(g::G, h::G) where {G <: GroupElement} = throw(
     InterfaceNotImplemented(:Group, "Base.:(==)(::$G, ::$G)"),
@@ -91,8 +94,13 @@ Base.one(g::GroupElement) = one(parent(g))
 @doc Markdown.doc"""
     order(::Type{I} = BigInt, g::GroupElement) where {I <: Integer}
 
-Return the order of $g$ as an instance of $I$. If $g$ is of infinite order, then
-it is required to throw `GroupsCore.InfiniteOrder` exception.
+Return the order of $g$ as an instance of `I`. If $g$ is of infinite order
+`GroupsCore.InfiniteOrder` exception will be thrown.
+
+!!! warning
+
+    Only arbitrary sized integers are required to return a mathematically
+    correct answer.
 """
 function order(::Type{I}, g::GroupElement) where {I<:Integer}
     isfiniteorder(g) || throw(InfiniteOrder(g))
@@ -118,7 +126,7 @@ Base.conj(g::G, h::G) where {G <: GroupElement} = conj!(similar(g), g, h)
 @doc Markdown.doc"""
     ^(g::G, h::G) where {G <: GroupElement}
 
-Alias for `conj`.
+Alias for [`conj`](@ref GroupsCore.conj).
 """
 Base.:(^)(g::G, h::G) where {G <: GroupElement} = conj(g, h)
 
