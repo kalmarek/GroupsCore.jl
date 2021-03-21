@@ -51,9 +51,10 @@ order(G::Group) = order(BigInt, G)
 @doc Markdown.doc"""
     gens(G::Group)
 
-Return a random-accessed collection of generators of $G$. If $G$ does not come
-with a generating set or considered computable by `GroupsCore.hasgens`, an
-error is thrown.
+Return a random-access collection of generators of $G$.
+
+The result of this function is undefined unless `GroupsCore.hasgens(G)` returns
+`true`.
 """
 gens(G::Group) =
     throw(InterfaceNotImplemented(:Group, "GroupsCore.gens(::$(typeof(G)))"))

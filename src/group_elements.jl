@@ -43,7 +43,7 @@ Base.:(==)(g::G, h::G) where {G <: GroupElement} = throw(
 @doc Markdown.doc"""
     isfiniteorder(g::GroupElement)
 
-Return true if $g$ is of finite order, possibly without computing it.
+Return `true` if $g$ is of finite order, possibly without computing it.
 """
 isfiniteorder(g::GroupElement) = throw(
     InterfaceNotImplemented(:Group, "GroupsCore.isfiniteorder(::$(typeof(g)))"),
@@ -63,7 +63,7 @@ Base.deepcopy_internal(g::GroupElement, stackdict::IdDict) = throw(
 @doc Markdown.doc"""
     inv(g::GroupElement)
 
-Return the group inverse $g^{-1}$.
+Return $g^{-1}$, the group inverse.
 """
 Base.inv(g::GroupElement) =
     throw(InterfaceNotImplemented(:Group, "Base.inv(::$(typeof(g)))"))
@@ -71,7 +71,7 @@ Base.inv(g::GroupElement) =
 @doc Markdown.doc"""
     *(g::G, h::G) where {G <: GroupElement}
 
-Return the result of group binary operation $g \cdot h$.
+Return $g h$, the result of group binary operation.
 """
 Base.:(*)(g::G, h::G) where {G <: GroupElement} = throw(
     InterfaceNotImplemented(
@@ -170,10 +170,13 @@ Base.isone(g::GroupElement) = g == one(g)
 @doc Markdown.doc"""
     isequal(g::G, h::G) where {G <: GroupElement}
 
-Return the "best effort" equality for group elements. If `isequal(g, h)` then
-$g = h$, but might return false even if the group equality $g = h$ holds.
+Return the "best effort" equality for group elements.
 
-For example in a finitely presented group, `isequal` may return the equality
+The implication `isequal(g, h)` → $g = h$, must be always satisfied, i.e.
+`isequal(g, h)` might return `false` even if `g == h` holds (i.e. $g$ and $h$
+are mathematically equal).
+
+For example, in a finitely presented group, `isequal` may return the equality
 of words.
 """
 Base.isequal(g::G, h::G) where {G <: GroupElement} = g == h
