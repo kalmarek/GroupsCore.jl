@@ -45,9 +45,12 @@ Base.:(==)(g::G, h::G) where {G <: GroupElement} = throw(
 
 Return `true` if $g$ is of finite order, possibly without computing it.
 """
-isfiniteorder(g::GroupElement) = throw(
-    InterfaceNotImplemented(:Group, "GroupsCore.isfiniteorder(::$(typeof(g)))"),
-)
+function isfiniteorder(g::GroupElement)
+    isfinite(parent(g)) && return true
+    throw(
+        InterfaceNotImplemented(:Group, "GroupsCore.isfiniteorder(::$(typeof(g)))"),
+    )
+end
 
 Base.deepcopy_internal(g::GroupElement, stackdict::IdDict) = throw(
     InterfaceNotImplemented(
