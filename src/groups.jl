@@ -87,9 +87,10 @@ Base.iterate(G::Group, state) = throw(
 @doc Markdown.doc"""
     IteratorSize(::Type{G}) where {G <: Group}
 
-Return size of iterator if and only if every instance of $Type{G}$ is either
-finite or infinite. If not every instance can be categorized in only one of
-these, it returns `SizeUnknown`.
+Given the type of a group, return one of the following values:
+ * `Base.IsInfinite()` if all instances of groups of type `G` are infinite.
+ * `Base.HasLength()` (or `Base.HasShape{N}()`) if all instances are finite.
+ * `Base.SizeUnknown()` otherwise (the default).
 """
 Base.IteratorSize(::Type{G}) where {G <: Group} = Base.SizeUnknown()
 Base.length(G::Group) = order(Int, G)
@@ -103,7 +104,7 @@ function Base.isfinite(G::Group)
     IS isa Base.HasLength && return true
     IS isa Base.HasShape && return true
     IS isa Base.IsInfinite && return false
-    # else : IS isa (Base.SizeUnknown, Base.IsInfinite, ...)
+    # else : IS isa Base.SizeUnknown
     throw(ArgumentError(
     """The finiteness of $G could not be determined based on its iterator type.
 You need to implement `Base.isfinite(::$(typeof(G))) yourself."""))
