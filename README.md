@@ -35,7 +35,7 @@ years).
 
 Additionally the following assumptions are placed on the iteration:
  * `first(G)` must be the identity
- * iteration over an infinite group should exhaust every fixed radius ball (in
+ * iteration over a finitely generated group should exhaust every fixed radius ball (in
 word-length metric) around the identity in finite time.
 
 #### Obligatory methods
