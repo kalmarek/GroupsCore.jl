@@ -1,7 +1,7 @@
 name = "GroupsCore"
 uuid = "d5909c97-4eac-4ecc-a3dc-fdd0858a4120"
 authors = ["Marek Kaluba <kalmar@amu.edu.pl> and contributors"]
-version = "0.1.0"
+version = "0.1.1"
 
 [deps]
 AbstractAlgebra = "c3fe647b-3220-5bb0-a1ea-a7954cac585d"
