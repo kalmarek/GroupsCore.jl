@@ -66,7 +66,7 @@ end
 # Iterators
 ################################################################################
 
-Base.eltype(::Type{G}) where {G <: Group} =
+Base.eltype(::Type{Gr}) where {Gr <: Group} =
     throw(InterfaceNotImplemented(:Iteration, "Base.eltype(::$(typeof(G)))"))
 
 Base.iterate(G::Group) =
@@ -76,14 +76,14 @@ Base.iterate(G::Group, state) = throw(
 )
 
 @doc Markdown.doc"""
-    IteratorSize(::Type{G}) where {G <: Group}
+    IteratorSize(::Type{Gr}) where {Gr <: Group}
 
 Given the type of a group, return one of the following values:
- * `Base.IsInfinite()` if all instances of groups of type `G` are infinite.
+ * `Base.IsInfinite()` if all instances of groups of type `Gr` are infinite.
  * `Base.HasLength()` (or `Base.HasShape{N}()`) if all instances are finite.
  * `Base.SizeUnknown()` otherwise (the default).
 """
-Base.IteratorSize(::Type{G}) where {G <: Group} = Base.SizeUnknown()
+Base.IteratorSize(::Type{Gr}) where {Gr <: Group} = Base.SizeUnknown()
 Base.length(G::Group) = order(Int, G)
 
 ################################################################################
