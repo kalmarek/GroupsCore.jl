@@ -7,15 +7,6 @@
 ################################################################################
 
 @doc Markdown.doc"""
-    elem_type(::Type{<:Group})
-    elem_type(G::Group)
-
-Alias for [`eltype(G)`](@ref).
-"""
-elem_type(::Type{Gr}) where {Gr <: Group} = eltype(Gr)
-elem_type(G::Group) = eltype(G)
-
-@doc Markdown.doc"""
     one(G::Group)
 
 Return the identity element of the group $G$.
@@ -98,6 +89,15 @@ Base.length(G::Group) = order(Int, G)
 ################################################################################
 # Default implementations
 ################################################################################
+
+@doc Markdown.doc"""
+    elem_type(::Type{<:Group})
+    elem_type(G::Group)
+
+Alias for [`eltype(G)`](@ref).
+"""
+elem_type(::Type{Gr}) where {Gr <: Group} = eltype(Gr)
+elem_type(G::Group) = eltype(G)
 
 function Base.isfinite(G::Group)
     IS = Base.IteratorSize(G)
