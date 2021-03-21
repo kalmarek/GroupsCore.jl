@@ -23,7 +23,5 @@ function GroupsCore.gens(G::AbstractAlgebra.Generic.SymmetricGroup{I}) where {I}
     return [a, b]
 end
 
-GroupsCore.isfiniteorder(::AbstractAlgebra.AbstractPerm) = true
-
 Base.deepcopy_internal(g::AbstractAlgebra.Generic.Perm, ::IdDict) =
     AbstractAlgebra.Generic.Perm(deepcopy(g.d), false)
