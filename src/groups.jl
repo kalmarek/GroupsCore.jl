@@ -7,13 +7,13 @@
 ################################################################################
 
 @doc Markdown.doc"""
-    elem_type(::Type{G}) where {G <: Group}
-    elem_type(::G)       where {G <: Group}
+    elem_type(::Type{<:Group})
+    elem_type(G::Group)
 
-Alias for `eltype(G)`. Return the element type of the group parent type $G$.
+Alias for `eltype(G)`. Return the type of elements of the group $G$.
 """
-elem_type(::Type{G}) where {G <: Group} = eltype(G)
-elem_type(::G) where {G <: Group} = eltype(G)
+elem_type(::Type{Gr}) where {Gr <: Group} = eltype(Gr)
+elem_type(G::Group) = eltype(G)
 
 @doc Markdown.doc"""
     one(G::Group)

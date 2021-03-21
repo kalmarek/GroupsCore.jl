@@ -15,16 +15,17 @@ Base.parent(g::GroupElement) =
     throw(InterfaceNotImplemented(:Group, "Base.parent(::$(typeof(g)))"))
 
 @doc Markdown.doc"""
-    parent_type(::Type{G}) where {G <: GroupElement}
-    parent_type(::G)       where {G <: GroupElement}
+    parent_type(::Type{<:GroupElement})
+    parent_type(g::GroupElement)
 
-Return the parent type of the group element type $G$.
+Return the type of parent of the group element $g$.
 """
 parent_type(::Type{G}) where {G <: GroupElement} =
     throw(InterfaceNotImplemented(
         :Group,
         "GroupsCore.parent_type(::Type{$G})"
        ))
+parent_type(g::GroupElement) = parent_type(typeof(g))
 
 @doc Markdown.doc"""
     ==(g::G, h::G) where {G <: GroupElement}
