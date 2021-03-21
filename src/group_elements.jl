@@ -227,8 +227,8 @@ mul!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement} = g * h
 Return $g h^{-1}$, possibly modifying `out`. Aliasing of `g` or `h` with `out`
 is allowed.
 """
-div_right!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement}
-    = mul!(out, g, inv(h))
+div_right!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement} =
+    mul!(out, g, inv(h))
 
 @doc Markdown.doc"""
     div_left!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement}

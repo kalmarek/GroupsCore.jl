@@ -67,7 +67,7 @@ end
 ################################################################################
 
 Base.eltype(::Type{Gr}) where {Gr <: Group} =
-    throw(InterfaceNotImplemented(:Iteration, "Base.eltype(::$(typeof(G)))"))
+    throw(InterfaceNotImplemented(:Iteration, "Base.eltype(::$(typeof(Gr)))"))
 
 Base.iterate(G::Group) =
     throw(InterfaceNotImplemented(:Iteration, "Base.iterate(::$(typeof(G)))"))
