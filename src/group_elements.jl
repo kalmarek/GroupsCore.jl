@@ -20,15 +20,15 @@ Base.parent(g::GroupElement) =
 
 Return the type of parent of the group element $g$.
 """
-parent_type(::Type{G}) where {G <: GroupElement} =
+parent_type(::Type{GEl}) where {GEl <: GroupElement} =
     throw(InterfaceNotImplemented(
         :Group,
-        "GroupsCore.parent_type(::Type{$G})"
+        "GroupsCore.parent_type(::Type{$GEl})"
        ))
 parent_type(g::GroupElement) = parent_type(typeof(g))
 
 @doc Markdown.doc"""
-    ==(g::G, h::G) where {G <: GroupElement}
+    ==(g::GEl, h::GEl) where {GEl <: GroupElement}
 
 Return `true` if and only if the mathematical equality $g = h$ holds.
 
@@ -36,8 +36,8 @@ Return `true` if and only if the mathematical equality $g = h$ holds.
 
     This function may not return, due to unsolvable word problem.
 """
-Base.:(==)(g::G, h::G) where {G <: GroupElement} = throw(
-    InterfaceNotImplemented(:Group, "Base.:(==)(::$G, ::$G)"),
+Base.:(==)(g::GEl, h::GEl) where {GEl <: GroupElement} = throw(
+    InterfaceNotImplemented(:Group, "Base.:(==)(::$GEl, ::$GEl)"),
 )
 
 @doc Markdown.doc"""
@@ -72,11 +72,11 @@ Base.inv(g::GroupElement) =
     throw(InterfaceNotImplemented(:Group, "Base.inv(::$(typeof(g)))"))
 
 @doc Markdown.doc"""
-    *(g::G, h::G) where {G <: GroupElement}
+    *(g::GEl, h::GEl) where {GEl <: GroupElement}
 
 Return $g h$, the result of group binary operation.
 """
-Base.:(*)(g::G, h::G) where {G <: GroupElement} = throw(
+Base.:(*)(g::GEl, h::GEl) where {GEl <: GroupElement} = throw(
     InterfaceNotImplemented(
         :Group,
         "Base.:(*)(::$(typeof(g)), ::$(typeof(g)))",
@@ -120,26 +120,26 @@ end
 order(g::GroupElement) = order(BigInt, g)
 
 @doc Markdown.doc"""
-    conj(g::G, h::G) where {G <: GroupElement}
+    conj(g::GEl, h::GEl) where {GEl <: GroupElement}
 
 Return conjugation of $g$ by $h$, i.e. $h^{-1} g h$.
 """
-Base.conj(g::G, h::G) where {G <: GroupElement} = conj!(similar(g), g, h)
+Base.conj(g::GEl, h::GEl) where {GEl <: GroupElement} = conj!(similar(g), g, h)
 
 @doc Markdown.doc"""
-    ^(g::G, h::G) where {G <: GroupElement}
+    ^(g::GEl, h::GEl) where {GEl <: GroupElement}
 
 Alias for [`conj`](@ref GroupsCore.conj).
 """
-Base.:(^)(g::G, h::G) where {G <: GroupElement} = conj(g, h)
+Base.:(^)(g::GEl, h::GEl) where {GEl <: GroupElement} = conj(g, h)
 
 @doc Markdown.doc"""
-    comm(g::G, h::G, k::G...) where {G <: GroupElement}
+    comm(g::GEl, h::GEl, k::GEl...) where {GEl <: GroupElement}
 
 Return the left associative iterated commutator $[[g, h], ...]$, where
 $[g, h] = g^{-1} h^{-1} g h$.
 """
-function comm(g::G, h::G, k::G...) where {G <: GroupElement}
+function comm(g::GEl, h::GEl, k::GEl...) where {GEl <: GroupElement}
     res = comm!(similar(g), g, h)
     for l in k
         res = comm!(res, res, l)
@@ -149,7 +149,8 @@ end
 
 Base.literal_pow(::typeof(^), g::GroupElement, ::Val{-1}) = inv(g)
 
-Base.:(/)(g::G, h::G) where {G <: GroupElement} = div_right!(similar(g), g, h)
+Base.:(/)(g::GEl, h::GEl) where {GEl <: GroupElement} =
+    div_right!(similar(g), g, h)
 
 ################################################################################
 # Default implementations that (might) need performance modification
@@ -171,7 +172,7 @@ Return true if $g$ is the identity element.
 Base.isone(g::GroupElement) = g == one(g)
 
 @doc Markdown.doc"""
-    isequal(g::G, h::G) where {G <: GroupElement}
+    isequal(g::GEl, h::GEl) where {GEl <: GroupElement}
 
 Return the "best effort" equality for group elements.
 
@@ -182,7 +183,7 @@ are mathematically equal).
 For example, in a finitely presented group, `isequal` may return the equality
 of words.
 """
-Base.isequal(g::G, h::G) where {G <: GroupElement} = g == h
+Base.isequal(g::GEl, h::GEl) where {GEl <: GroupElement} = g == h
 
 function Base.:^(g::GroupElement, n::Integer)
     n == 0 && return one(g)
@@ -205,59 +206,60 @@ Return `one(g)`, possibly modifying `g`.
 one!(g::GroupElement) = one(parent(g))
 
 @doc Markdown.doc"""
-    inv!(out::G, g::G) where {G <: GroupElement}
+    inv!(out::GEl, g::GEl) where {GEl <: GroupElement}
 
 Return `inv(g)`, possibly modifying `out`. Aliasing of `g` with `out` is
 allowed.
 """
-inv!(out::G, g::G) where {G <: GroupElement} = inv(g)
+inv!(out::GEl, g::GEl) where {GEl <: GroupElement} = inv(g)
 
 @doc Markdown.doc"""
-    mul!(out::G, g::G, h::G) where {G <: GroupElement}
+    mul!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement}
 
 Return $g h$, possibly modifying `out`. Aliasing of `g` or `h` with `out` is
 allowed.
 """
-mul!(out::G, g::G, h::G) where {G <: GroupElement} = g * h
+mul!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement} = g * h
 
 @doc Markdown.doc"""
-    div_right!(out::G, g::G, h::G) where {G <: GroupElement}
+    div_right!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement}
 
 Return $g h^{-1}$, possibly modifying `out`. Aliasing of `g` or `h` with `out`
 is allowed.
 """
-div_right!(out::G, g::G, h::G) where {G <: GroupElement} = mul!(out, g, inv(h))
+div_right!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement}
+    = mul!(out, g, inv(h))
 
 @doc Markdown.doc"""
-    div_left!(out::G, g::G, h::G) where {G <: GroupElement}
+    div_left!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement}
 
 Return $h^{-1} g$, possibly modifying `out`. Aliasing of `g` or `h` with `out`
 is allowed.
 """
-function div_left!(out::G, g::G, h::G) where {G <: GroupElement}
+function div_left!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement}
     out = (out === g || out === h) ? inv(h) : inv!(out, h)
     return mul!(out, out, g)
 end
 
 @doc Markdown.doc"""
-    conj!(out::G, g::G, h::G) where {G <: GroupElement}
+    conj!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement}
 
 Return $h^{-1} g h$, `possibly modifying `out`. Aliasing of `g` or `h` with
 `out` is allowed.
 """
-function conj!(out::G, g::G, h::G) where {G <: GroupElement}
+function conj!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement}
     out = (out === g || out === h) ? inv(h) : inv!(out, h)
     out = mul!(out, out, g)
     return mul!(out, out, h)
 end
 
 @doc Markdown.doc"""
-    comm!(out::G, g::G, h::G) where {G <: GroupElement}
+    comm!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement}
 
 Return $g^{-1} h^{-1} g h$, possibly modifying `out`. Aliasing of `g` or `h`
 with `out` is allowed.
 """
-function comm!(out::G, g::G, h::G) where {G <: GroupElement}
+function comm!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement}
     # TODO: can we make comm! with 3 arguments without allocation??
     out = conj!(out, g, h)
     return div_left!(out, out, g)
