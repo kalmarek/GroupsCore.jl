@@ -18,7 +18,8 @@ Base.parent(g::GroupElement) =
     parent_type(::Type{<:GroupElement})
     parent_type(g::GroupElement)
 
-Return the type of parent of the group element $g$.
+Return the type of parent of a subtype of `GroupElement`.
+A shortcut `parent_type(g) = parent_type(typeof(g))` is provided for convenience.
 """
 parent_type(::Type{GEl}) where {GEl <: GroupElement} =
     throw(InterfaceNotImplemented(
