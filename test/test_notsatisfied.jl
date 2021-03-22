@@ -77,6 +77,12 @@ end
         @test_throws INI isequal(g, g)
 
         @test_throws INI isfiniteorder(g)
+
+        Base.IteratorSize(::SomeGroup) = Base.HasLength()
+        Base.parent(::SomeGroupElement) = SomeGroup()
+        @test isfiniteorder(g)
+        Base.IteratorSize(::SomeGroup) = Base.SizeUnknown()
+
         GroupsCore.isfiniteorder(::SomeGroupElement) = false
         @test_throws InfO order(g)
         @test_throws INI deepcopy(g)

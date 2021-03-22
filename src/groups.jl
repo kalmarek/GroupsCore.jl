@@ -1,33 +1,31 @@
-## Iterator protocol for `Group`
+################################################################################
+#
+#   groups.jl : Interface for group parents
+#
+################################################################################
+# Obligatory methods
+################################################################################
 
-Base.eltype(::Type{G}) where {G<:Group} =
-    throw(InterfaceNotImplemented(:Iteration, "Base.eltype(::Type{$G})"))
-Base.iterate(G::Group) =
-    throw(InterfaceNotImplemented(:Iteration, "Base.iterate(::$(typeof(G)))"))
-Base.iterate(G::Group, state) = throw(
-    InterfaceNotImplemented(:Iteration, "Base.iterate(::$(typeof(G)), state)"),
-)
-Base.IteratorSize(::Type{<:Group}) = Base.SizeUnknown()
-Base.length(G::Group) = order(Int, G)
-
-## `Group` interface
-
-### Obligatory methods for `Group`
 @doc Markdown.doc"""
     one(G::Group)
-Return the identity of the group.
+
+Return the identity element of the group $G$.
 """
 Base.one(G::Group) =
     throw(InterfaceNotImplemented(:Group, "Base.one(::$(typeof(G)))"))
 
 @doc Markdown.doc"""
-    order([BigInt, ]G::Group)
-    order(I::Type{<:Integer}, g::Group)
-Return the order of `g` as an instance of `I`.
+    order(I::Type{Integer} = BigInt, G::Group)
 
-Only arbitrary size integers are required to return mathematically correct answer.
+Return the order of $G$ as an instance of `I`. If $G$ is of infinite order,
+`GroupsCore.InfiniteOrder` exception will be thrown.
+
+!!! warning
+
+    Only arbitrary sized integers are required to return a mathematically
+    correct answer.
 """
-function AbstractAlgebra.order(::Type{<:Integer}, G::Group)
+function order(::Type{<:Integer}, G::Group)
     if !isfinite(G)
         throw(InfiniteOrder(G))
     end
@@ -39,20 +37,23 @@ function AbstractAlgebra.order(::Type{<:Integer}, G::Group)
     )
 end
 
+order(G::Group) = order(BigInt, G)
+
 @doc Markdown.doc"""
     gens(G::Group)
 
-Return a random-accessed collection of generators of `G`.
+Return a random-access collection of generators of $G$.
 
-If a group does not come with a generating set (or it may be prohibitively expensive to compute), one needs to alter `GroupsCore.hasgens(::Group) = false`.
+The result of this function is undefined unless `GroupsCore.hasgens(G)` returns
+`true`.
 """
-AbstractAlgebra.gens(G::Group) =
+gens(G::Group) =
     throw(InterfaceNotImplemented(:Group, "GroupsCore.gens(::$(typeof(G)))"))
 
 function Base.rand(
     rng::Random.AbstractRNG,
-    rs::Random.SamplerTrivial{G},
-) where {G<:Group}
+    rs::Random.SamplerTrivial{G}
+) where {G <: Group}
     throw(
         InterfaceNotImplemented(
             :Random,
@@ -61,14 +62,49 @@ function Base.rand(
     )
 end
 
-### Default implementations for `Group`
+################################################################################
+# Iterators
+################################################################################
+
+Base.eltype(::Type{Gr}) where {Gr <: Group} =
+    throw(InterfaceNotImplemented(:Iteration, "Base.eltype(::$(typeof(Gr)))"))
+
+Base.iterate(G::Group) =
+    throw(InterfaceNotImplemented(:Iteration, "Base.iterate(::$(typeof(G)))"))
+Base.iterate(G::Group, state) = throw(
+    InterfaceNotImplemented(:Iteration, "Base.iterate(::$(typeof(G)), state)"),
+)
+
+@doc Markdown.doc"""
+    IteratorSize(::Type{Gr}) where {Gr <: Group}
+
+Given the type of a group, return one of the following values:
+ * `Base.IsInfinite()` if all instances of groups of type `Gr` are infinite.
+ * `Base.HasLength()` (or `Base.HasShape{N}()`) if all instances are finite.
+ * `Base.SizeUnknown()` otherwise (the default).
+"""
+Base.IteratorSize(::Type{Gr}) where {Gr <: Group} = Base.SizeUnknown()
+Base.length(G::Group) = order(Int, G)
+
+################################################################################
+# Default implementations
+################################################################################
+
+@doc Markdown.doc"""
+    elem_type(::Type{<:Group})
+    elem_type(G::Group)
+
+Alias for [`eltype(G)`](@ref).
+"""
+elem_type(::Type{Gr}) where {Gr <: Group} = eltype(Gr)
+elem_type(G::Group) = eltype(G)
 
 function Base.isfinite(G::Group)
     IS = Base.IteratorSize(G)
     IS isa Base.HasLength && return true
     IS isa Base.HasShape && return true
     IS isa Base.IsInfinite && return false
-    # else : IS isa (Base.SizeUnknown, Base.IsInfinite, ...)
+    # else : IS isa Base.SizeUnknown
     throw(ArgumentError(
     """The finiteness of $G could not be determined based on its iterator type.
 You need to implement `Base.isfinite(::$(typeof(G))) yourself."""))
@@ -76,15 +112,7 @@ end
 
 hasgens(G::Group) = true
 
-AbstractAlgebra.order(G::Group) = order(BigInt, G)
-
-@doc Markdown.doc"""
-    elem_type(parent_type)
-Given the type of a parent object return the type of its elements.
-"""
-AbstractAlgebra.elem_type(T::Type{<:Group}) = eltype(T)
-
-function AbstractAlgebra.gens(G::Group, i::Integer)
+function gens(G::Group, i::Integer)
     hasgens(G) && return gens(G)[i]
     # TODO: throw something more specific
     throw(
@@ -92,7 +120,7 @@ function AbstractAlgebra.gens(G::Group, i::Integer)
     )
 end
 
-function AbstractAlgebra.ngens(G::Group)
+function ngens(G::Group)
     hasgens(G) && return length(gens(G))
     # TODO: throw something more specific
     throw(
