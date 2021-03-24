@@ -81,7 +81,7 @@ implemented:
  * `Base.literal_pow(::typeof(^), g, Val{-1})` → `inv(g)`
  * `Base.:(/)(g, h)` → `g*h^-1`
  * `Base.conj(g, h)`, `Base.:(^)(g, h)` → `h^-1*g*h`
- * `Base.comm(g, h)` → `g^-1*h^-1*g*h` and its `Vararg` (`foldl`) version.
+ * `Base.commutator(g, h)` → `g^-1*h^-1*g*h` and its `Vararg` (`foldl`) version.
  * `Base.isequal(g,h)` → `g == h` (a weaker/cheaper equality)
  * `Base.:(^)(g, n::Integer)` → powering by squaring.
 
@@ -127,7 +127,7 @@ allowed.
  * `GroupsCore.conj!(out::GEl, g::GEl, h::GEl) where GEl<:GroupElement`: return
 `h^-1*g*h, `possibly modifying `out`. Aliasing of `g` or `h` with `out` is
 allowed.
- * `GroupsCore.comm!(out::GEl, g::GEl, h::GEl) where GEl<:GroupElement`: return
+ * `GroupsCore.commutator!(out::GEl, g::GEl, h::GEl) where GEl<:GroupElement`: return
 `g^-1*h^-1*g*h`, possibly modifying `out`. Aliasing of `g` or `h` with `out` is
 allowed.
 

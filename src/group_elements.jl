@@ -135,15 +135,15 @@ Alias for [`conj`](@ref GroupsCore.conj).
 Base.:(^)(g::GEl, h::GEl) where {GEl <: GroupElement} = conj(g, h)
 
 @doc Markdown.doc"""
-    comm(g::GEl, h::GEl, k::GEl...) where {GEl <: GroupElement}
+    commutator(g::GEl, h::GEl, k::GEl...) where {GEl <: GroupElement}
 
 Return the left associative iterated commutator $[[g, h], ...]$, where
 $[g, h] = g^{-1} h^{-1} g h$.
 """
-function comm(g::GEl, h::GEl, k::GEl...) where {GEl <: GroupElement}
-    res = comm!(similar(g), g, h)
+function commutator(g::GEl, h::GEl, k::GEl...) where {GEl <: GroupElement}
+    res = commutator!(similar(g), g, h)
     for l in k
-        res = comm!(res, res, l)
+        res = commutator!(res, res, l)
     end
     return res
 end
@@ -255,13 +255,13 @@ function conj!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement}
 end
 
 @doc Markdown.doc"""
-    comm!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement}
+    commutator!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement}
 
 Return $g^{-1} h^{-1} g h$, possibly modifying `out`. Aliasing of `g` or `h`
 with `out` is allowed.
 """
-function comm!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement}
-    # TODO: can we make comm! with 3 arguments without allocation??
+function commutator!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement}
+    # TODO: can we make commutator! with 3 arguments without allocation??
     out = conj!(out, g, h)
     return div_left!(out, out, g)
 end

@@ -139,10 +139,10 @@ function test_GroupElement_interface(g::GEl, h::GEl) where {GEl<:GroupElement}
             @test ^(g, h) == inv(h) * g * h
             @test (g, h) == (old_g, old_h)
 
-            @test comm(g, h) == g^-1 * h^-1 * g * h
+            @test commutator(g, h) == g^-1 * h^-1 * g * h
             @test (g, h) == (old_g, old_h)
 
-            @test comm(g, h, g) == conj(inv(g), h) * conj(conj(g, h), g)
+            @test commutator(g, h, g) == conj(inv(g), h) * conj(conj(g, h), g)
             @test (g, h) == (old_g, old_h)
 
             @test isone(g * inv(g)) && isone(inv(g) * g)
@@ -177,12 +177,12 @@ function test_GroupElement_interface(g::GEl, h::GEl) where {GEl<:GroupElement}
             @test similar(g) isa typeof(g)
         end
 
-        one!, inv!, mul!, conj!, comm!, div_left!, div_right! = (
+        one!, inv!, mul!, conj!, commutator!, div_left!, div_right! = (
             GroupsCore.one!,
             GroupsCore.inv!,
             GroupsCore.mul!,
             GroupsCore.conj!,
-            GroupsCore.comm!,
+            GroupsCore.commutator!,
             GroupsCore.div_left!,
             GroupsCore.div_right!,
         )
@@ -235,20 +235,20 @@ function test_GroupElement_interface(g::GEl, h::GEl) where {GEl<:GroupElement}
                 g = deepcopy(old_g)
             end
 
-            @testset "comm!" begin
+            @testset "commutator!" begin
                 res = old_g^-1 * old_h^-1 * old_g * old_h
 
-                @test comm!(out, g, h) == res
+                @test commutator!(out, g, h) == res
                 @test (g, h) == (old_g, old_h)
 
-                @test comm!(out, g, h) == res
+                @test commutator!(out, g, h) == res
                 @test (g, h) == (old_g, old_h)
 
-                @test comm!(g, g, h) == res
+                @test commutator!(g, g, h) == res
                 @test h == old_h
                 g = deepcopy(old_g)
 
-                @test comm!(h, g, h) == res
+                @test commutator!(h, g, h) == res
                 @test g == old_g
                 h = deepcopy(old_h)
             end
