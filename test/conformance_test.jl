@@ -11,10 +11,12 @@ function test_Group_interface(G::Group)
                 @test GroupsCore.elem_type(typeof(G)) == eltype(G)
                 @test one(G) isa eltype(G)
 
-                @test first(iterate(G)) isa eltype(G)
-                _, s = iterate(G)
-                @test first(iterate(G, s)) isa eltype(G)
-                @test isone(first(G))
+                if GroupsCore.hasgens(G)
+                    @test first(iterate(G)) isa eltype(G)
+                    _, s = iterate(G)
+                    @test first(iterate(G, s)) isa eltype(G)
+                    @test isone(first(G))
+                end
             else
                 @test isfinite(G) == false
             end

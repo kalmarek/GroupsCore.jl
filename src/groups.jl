@@ -67,13 +67,25 @@ end
 ################################################################################
 
 Base.eltype(::Type{Gr}) where {Gr <: Group} =
-    throw(InterfaceNotImplemented(:Iteration, "Base.eltype(::$(typeof(Gr)))"))
+    throw(InterfaceNotImplemented(:Iteration, "Base.eltype(::Type{$Gr})"))
 
-Base.iterate(G::Group) =
-    throw(InterfaceNotImplemented(:Iteration, "Base.iterate(::$(typeof(G)))"))
-Base.iterate(G::Group, state) = throw(
-    InterfaceNotImplemented(:Iteration, "Base.iterate(::$(typeof(G)), state)"),
-)
+function Base.iterate(G::Group)
+    hasgens(G) && throw(
+        InterfaceNotImplemented(:Iteration, "Base.iterate(::$(typeof(G)))")
+    )
+    throw(
+        "Group does not seem to have generators. Did you alter `hasgens(::$(typeof(G)))`?",
+    )
+end
+
+function Base.iterate(G::Group, state)
+    hasgens(G) && throw(
+        InterfaceNotImplemented(:Iteration, "Base.iterate(::$(typeof(G)), state)"),
+    )
+    throw(
+        "Group does not seem to have generators. Did you alter `hasgens(::$(typeof(G)))`?",
+    )
+end
 
 @doc Markdown.doc"""
     IteratorSize(::Type{Gr}) where {Gr <: Group}
