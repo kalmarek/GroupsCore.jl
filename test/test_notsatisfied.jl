@@ -1,3 +1,8 @@
+module TestNotImplemented
+
+using GroupsCore
+using Test
+
 struct SomeGroup <: Group end
 
 struct SomeGroupElement <: GroupElement
@@ -92,3 +97,5 @@ end
     end
 
 end
+
+end # of module TestNotImplemented
