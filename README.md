@@ -18,7 +18,19 @@ i.e. parent objects behave locally as singletons.
 
 ## `Group` methods
 
+### Assumptions
 
+`GroupsCore` implement the following methods with default values, wich may not
+be generally true for all groups.
+The intent of those functions is to limit the extent of the required interface.
+**Special care is needed** when implementing groups to override those which may
+be incorrect.
+ * `GroupsCore.hasgens(::Group) = true` (this is based on the assumption that
+reasonably generic functions manipulating groups can be implemented only with
+access to a generating set)
+ * `Base.length(G) = order(Int, G)` (for finite groups only). If this value is
+incorrect, one needs to redefine it e.g. setting
+`Base.length(G) = convert(Int, order(G))`. See notes on `length` below.
 
 #### Obligatory methods
  * `Base.one(G::Group)`: return the identity of the group
