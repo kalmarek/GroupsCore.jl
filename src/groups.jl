@@ -96,7 +96,14 @@ Given the type of a group, return one of the following values:
  * `Base.SizeUnknown()` otherwise (the default).
 """
 Base.IteratorSize(::Type{Gr}) where {Gr <: Group} = Base.SizeUnknown()
-Base.length(G::Group) = order(Int, G)
+# cheating here, not great, but nobody should use this function except iteration.
+Base.length(G::Group) =
+    isfinite(G) ? order(Int, G) : throw(
+    """You're trying to iterate over an infinite group.
+If you know what you're doing choose an appropriate integer and redefine
+`Base.length(::$(typeof(G)))::Int`.
+"""
+)
 
 ################################################################################
 # Default implementations

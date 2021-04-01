@@ -47,6 +47,18 @@ needs to implement the iterator interface:
    - are finite: `Base.HasLength()` / `Base.HasShape{N}()`,
    - are infinite: `Base.IsInfinite()`.
 
+!!! warning
+`Base.length(G::Group)::Int` should be used only for iteration purposes.
+By default, for finite groups it returns `order(Int, G)`, with the intention of
+providing "best effort", cheap computation of length of the group iterator.
+This might or might not be the correct length (as computed with multiprecision
+integers).
+To obtain correct answer `GroupsCore.order(::Group)` should be used.
+
+For practical reasons the largest group you could iterate over in your lifetime
+is of order that fits into an Int (`factorial(20)` nanoseconds comes to ~77
+years), therefore `typemax(Int)` is a reasonable value, even for infinite groups.
+
 
 Additionally the following assumptions are placed on the iteration:
  * `first(G::Group)` must be the identity
