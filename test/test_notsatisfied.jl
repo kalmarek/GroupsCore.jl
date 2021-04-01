@@ -35,6 +35,15 @@ end
         @test_throws INI iterate(G)
         @test_throws INI iterate(G, 1)
 
+        GroupsCore.hasgens(::SomeGroup) = false
+
+        @test_throws ArgumentError iterate(G)
+        @test_throws ArgumentError iterate(G, 1)
+        @test_throws ArgumentError gens(G, 1)
+
+        # revert to the default
+        GroupsCore.hasgens(::SomeGroup) = true
+
         # Assumption 1: Groups are of unknown size
         @test Base.IteratorSize(G) == Base.SizeUnknown()
         @test_throws ArgumentError Base.isfinite(G)

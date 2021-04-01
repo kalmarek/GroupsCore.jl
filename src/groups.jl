@@ -73,18 +73,18 @@ function Base.iterate(G::Group)
     hasgens(G) && throw(
         InterfaceNotImplemented(:Iteration, "Base.iterate(::$(typeof(G)))")
     )
-    throw(
+    throw(ArgumentError(
         "Group does not seem to have generators. Did you alter `hasgens(::$(typeof(G)))`?",
-    )
+    ))
 end
 
 function Base.iterate(G::Group, state)
     hasgens(G) && throw(
         InterfaceNotImplemented(:Iteration, "Base.iterate(::$(typeof(G)), state)"),
     )
-    throw(
+    throw(ArgumentError(
         "Group does not seem to have generators. Did you alter `hasgens(::$(typeof(G)))`?",
-    )
+    ))
 end
 
 @doc Markdown.doc"""
@@ -134,9 +134,9 @@ hasgens(G::Group) = true
 function gens(G::Group, i::Integer)
     hasgens(G) && return gens(G)[i]
     # TODO: throw something more specific
-    throw(
+    throw(ArgumentError(
         "Group does not seem to have generators. Did you alter `hasgens(::$(typeof(G)))`?",
-    )
+    ))
 end
 
 function ngens(G::Group)
