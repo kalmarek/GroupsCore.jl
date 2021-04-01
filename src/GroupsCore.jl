@@ -8,6 +8,9 @@ import AbstractAlgebra: inv!, mul!
 const Group = AbstractAlgebra.Group
 const GroupElement = AbstractAlgebra.GroupElem
 
+import MutableArithmetics
+const MA = MutableArithmetics
+
 # abstract type Group end
 # abstract type GroupElement end
 

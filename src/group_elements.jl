@@ -108,24 +108,40 @@ Return the order of $g$ as an instance of `I`. If $g$ is of infinite order
 """
 function order(::Type{I}, g::GroupElement) where {I<:Integer}
     isfiniteorder(g) || throw(InfiniteOrder(g))
-    isone(g) && return I(1)
-    o = I(1)
-    gg = deepcopy(g)
-    out = similar(g)
+    o = one(I)
+    isone(g) && return o
+    oo = one(I)
+    gg = MA.copy_if_mutable(g)
     while !isone(gg)
-        o += I(1)
-        gg = mul!(out, gg, g)
+        oo = MA.add!(oo, o)
+        gg = MA.mul!(gg, g)
     end
-    return o
+    return oo
 end
 order(g::GroupElement) = order(BigInt, g)
+
+@doc Markdown.doc"""
+    mul_left(g::GEl, h::GEl) where {GEl <: GroupElement}
+
+Return $h g$.
+"""
+mul_left(g::GEl, h::GEl) where {GEl <: GroupElement} = h * g
+
+function _conj_fallback(::MA.IsMutable, g::GEl, h::GEl) where {GEl <: GroupElement}
+    return MA.mutable_operate_to!(similar(g), conj, g, h)
+end
+function _conj_fallback(::MA.NotMutable, g::GEl, h::GEl) where {GEl <: GroupElement}
+    return inv(h) * g * h
+end
 
 @doc Markdown.doc"""
     conj(g::GEl, h::GEl) where {GEl <: GroupElement}
 
 Return conjugation of $g$ by $h$, i.e. $h^{-1} g h$.
 """
-Base.conj(g::GEl, h::GEl) where {GEl <: GroupElement} = conj!(similar(g), g, h)
+function Base.conj(g::GEl, h::GEl) where {GEl <: GroupElement}
+    _conj_fallback(MA.mutability(GEl), g, h)
+end
 
 @doc Markdown.doc"""
     ^(g::GEl, h::GEl) where {GEl <: GroupElement}
@@ -134,6 +150,13 @@ Alias for [`conj`](@ref GroupsCore.conj).
 """
 Base.:(^)(g::GEl, h::GEl) where {GEl <: GroupElement} = conj(g, h)
 
+function _comm_fallback(::MA.IsMutable, g::GEl, h::GEl, k::GEl...) where {GEl <: GroupElement}
+    return MA.mutable_operate_to!(similar(g), comm, g, h, k...)
+end
+function _comm_fallback(::MA.NotMutable, g::GEl, h::GEl, k::GEl...) where {GEl <: GroupElement}
+    return comm(inv(g) * inv(h) * g * h, k...)
+end
+
 @doc Markdown.doc"""
     comm(g::GEl, h::GEl, k::GEl...) where {GEl <: GroupElement}
 
@@ -141,12 +164,9 @@ Return the left associative iterated commutator $[[g, h], ...]$, where
 $[g, h] = g^{-1} h^{-1} g h$.
 """
 function comm(g::GEl, h::GEl, k::GEl...) where {GEl <: GroupElement}
-    res = comm!(similar(g), g, h)
-    for l in k
-        res = comm!(res, res, l)
-    end
-    return res
+    return _comm_fallback(MA.mutability(GEl), g, h, k...)
 end
+comm(g::GroupElement) = g
 
 Base.literal_pow(::typeof(^), g::GroupElement, ::Val{-1}) = inv(g)
 
@@ -200,46 +220,25 @@ Base.hash(g::GroupElement, h::UInt) = hash(typeof(g), h)
 ################################################################################
 
 @doc Markdown.doc"""
-    one!(g::GroupElement)
+    div_right(g::GEl, h::GEl) where {GEl <: GroupElement}
 
-Return `one(g)`, possibly modifying `g`.
+Return $g h^{-1}$.
 """
-one!(g::GroupElement) = one(parent(g))
+div_right(g::GEl, h::GEl) where {GEl <: GroupElement} = g * inv(h)
+function MA.mutable_operate_to!(out::GEl, ::typeof(div_right), g::GEl, h::GEl) where {GEl <: GroupElement}
+    MA.mutable_operate_to!(out, inv, h)
+    return MA.mutable_operate!(mul_left, out, g)
+end
 
 @doc Markdown.doc"""
-    inv!(out::GEl, g::GEl) where {GEl <: GroupElement}
+    div_left(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement}
 
-Return `inv(g)`, possibly modifying `out`. Aliasing of `g` with `out` is
-allowed.
+Return $h^{-1} g$.
 """
-inv!(out::GEl, g::GEl) where {GEl <: GroupElement} = inv(g)
-
-@doc Markdown.doc"""
-    mul!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement}
-
-Return $g h$, possibly modifying `out`. Aliasing of `g` or `h` with `out` is
-allowed.
-"""
-mul!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement} = g * h
-
-@doc Markdown.doc"""
-    div_right!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement}
-
-Return $g h^{-1}$, possibly modifying `out`. Aliasing of `g` or `h` with `out`
-is allowed.
-"""
-div_right!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement} =
-    mul!(out, g, inv(h))
-
-@doc Markdown.doc"""
-    div_left!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement}
-
-Return $h^{-1} g$, possibly modifying `out`. Aliasing of `g` or `h` with `out`
-is allowed.
-"""
-function div_left!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement}
-    out = (out === g || out === h) ? inv(h) : inv!(out, h)
-    return mul!(out, out, g)
+div_left(g::GEl, h::GEl) where {GEl <: GroupElement} = inv(h) * g
+function MA.mutable_operate_to!(out::GEl, ::typeof(div_left), g::GEl, h::GEl) where {GEl <: GroupElement}
+    MA.mutable_operate_to!(out, inv, h)
+    return MA.mutable_operate!(*, out, g)
 end
 
 @doc Markdown.doc"""
@@ -248,10 +247,10 @@ end
 Return $h^{-1} g h$, `possibly modifying `out`. Aliasing of `g` or `h` with
 `out` is allowed.
 """
-function conj!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement}
-    out = (out === g || out === h) ? inv(h) : inv!(out, h)
-    out = mul!(out, out, g)
-    return mul!(out, out, h)
+function MA.mutable_operate_to!(out::GEl, ::typeof(conj), g::GEl, h::GEl) where {GEl <: GroupElement}
+    MA.mutable_operate_to!(out, inv, h)
+    MA.mutable_operate!(*, out, g)
+    return MA.mutable_operate!(*, out, h)
 end
 
 @doc Markdown.doc"""
@@ -260,7 +259,164 @@ end
 Return $g^{-1} h^{-1} g h$, possibly modifying `out`. Aliasing of `g` or `h`
 with `out` is allowed.
 """
+function MA.mutable_operate_to!(out::GEl, ::typeof(comm), g::GEl, h::GEl) where {GEl <: GroupElement}
+    # TODO: can we make comm! with 3 arguments without allocation??
+    MA.mutable_operate_to!(out, conj, g, h)
+    MA.mutable_operate!(div_left, out, g)
+    return out
+end
+function MA.mutable_operate_to!(out::GEl, ::typeof(comm), g::GEl, h1::GEl, h2::GEl, args::GEl...) where {GEl <: GroupElement}
+    g1 = similar(g)
+    MA.mutable_operate_to!(g1, comm, g, h1)
+    return MA.mutable_operate_to!(out, comm, g1, h2, args...)
+end
+
+# For compatibility with `AbstractAlgebra`'s MutableArithmetics API
+# and the MA API, we define these methods:
+@doc Markdown.doc"""
+    inv!(out::GEl, g::GEl) where {GEl <: GroupElement}
+Return `inv(g)`, possibly modifying `out`. Aliasing of `g` with `out` is
+allowed.
+"""
+function AbstractAlgebra.inv!(out::GEl, g::GEl) where {GEl <: GroupElement}
+    if out === g
+        return MA.operate!(inv, g)
+    else
+        return MA.operate_to!(out, inv, g)
+    end
+end
+function AbstractAlgebra.mul!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement}
+    if out === g
+        return MA.operate!(*, g, h)
+    elseif out === h
+        return MA.operate!(mul_left, h, g)
+    else
+        return MA.operate_to!(out, *, g, h)
+    end
+end
+
+@doc Markdown.doc"""
+    one!(g::GroupElement)
+Return `one(g)`, possibly modifying `g`.
+"""
+one!(g::GroupElement) = MA.operate!(one, g)
+
+const UNARY_FUNCTIONS = Union{typeof(one), typeof(zero), typeof(inv)}
+MA.operate(::typeof(one), g) = one(g)
+MA.operate(op::UNARY_FUNCTIONS, g) = inv(g)
+function MA.promote_operation(::UNARY_FUNCTIONS, ::Type{GEl}) where {GEl <: GroupElement}
+    return GEl
+end
+const BINARY_FUNCTIONS = Union{typeof(mul_left), typeof(conj), typeof(div_right), typeof(div_left)}
+MA.operate(op::BINARY_FUNCTIONS, g, h) = op(g, h)
+function MA.promote_operation(::BINARY_FUNCTIONS, ::Type{GEl}, ::Type{GEl}) where {GEl <: GroupElement}
+    return GEl
+end
+function MA.promote_operation(::typeof(*), ::Type{GEl}, ::Type{GEl}) where {GEl <: GroupElement}
+    return GEl
+end
+MA.operate(op::typeof(comm), args::GEl...) where {GEl <: GroupElement} = op(args...)
+function MA.promote_operation(::typeof(comm), ::Type{GEl}...) where {GEl <: GroupElement}
+    return GEl
+end
+
+MA.mutability(::Type{AbstractAlgebra.Generic.Perm{I}}) where {I} = MA.IsMutable()
+MA.mutable_copy(g::AbstractAlgebra.Generic.Perm) = deepcopy(g)
+function MA.mutable_operate!(::typeof(one), p::AbstractAlgebra.Generic.Perm)
+    for i in eachindex(p.d)
+        p.d[i] = i
+    end
+    p.modified = false
+    #TODO what do we do with the cycles ?
+    return p
+end
+function MA.mutable_operate!(::typeof(inv), p::AbstractAlgebra.Generic.Perm{I}) where I
+    return inv!(p)
+end
+function MA.mutable_operate_to!(out::AbstractAlgebra.Generic.Perm{I}, ::typeof(inv), p::AbstractAlgebra.Generic.Perm{I}) where I
+    for i in eachindex(p.d)
+        out.d[p[i]] = i
+    end
+    out.modified = true
+    #TODO what do we do with the cycles ?
+    return out
+end
+function _copy_to(p::AbstractAlgebra.Generic.Perm{I}, q::AbstractAlgebra.Generic.Perm{I}) where {I}
+    p.d = q.d
+    p.modified = q.modified
+    if isdefined(q, :cycles)
+        p.cycles = q.cycles
+    end
+    return p
+end
+function MA.mutable_operate!(op::Union{typeof(*), typeof(mul_left), typeof(div_right), typeof(div_left), typeof(conj)}, g::GEl, h::GEl) where {GEl <: GroupElement}
+    a = op(g, h)
+    return _copy_to(g, op(g, h))
+end
+function MA.mutable_operate!(::typeof(comm), args::GEl...) where {GEl <: GroupElement}
+    return _copy_to(args[1], comm(args...))
+end
+
+@doc Markdown.doc"""
+    div_right!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement}
+Return $g h^{-1}$, possibly modifying `out`. Aliasing of `g` or `h` with `out`
+is allowed.
+"""
+function div_right!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement}
+    if g === out
+        return MA.operate!(div_right, g, h)
+    elseif h === out
+        return g * MA.operate!(inv, h)
+    else
+        return MA.operate_to!(out, div_right, g, h)
+    end
+end
+
+@doc Markdown.doc"""
+    div_left!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement}
+Return $h^{-1} g$, possibly modifying `out`. Aliasing of `g` or `h` with `out`
+is allowed.
+"""
+function div_left!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement}
+    if g === out
+        return MA.operate!(div_left, g, h)
+    elseif h === out
+        return MA.operate!(inv, h) * g
+    else
+        return MA.operate_to!(out, div_left, g, h)
+    end
+end
+
+@doc Markdown.doc"""
+    conj!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement}
+Return $h^{-1} g h$, `possibly modifying `out`. Aliasing of `g` or `h` with
+`out` is allowed.
+"""
+function conj!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement}
+    if out === g
+        return MA.operate!(conj, g, h)
+    elseif out === h
+        gh = g * h
+        return MA.operate!(*, MA.operate!(inv, h), gh)
+    else
+        return MA.operate_to!(out, conj, g, h)
+    end
+end
+
+@doc Markdown.doc"""
+    comm!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement}
+Return $g^{-1} h^{-1} g h$, possibly modifying `out`. Aliasing of `g` or `h`
+with `out` is allowed.
+"""
 function comm!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement}
+    if out === g
+        return MA.operate!(comm, g, h)
+    elseif out === h
+        out = conj!(out, g, h)
+        return MA.operate!(div_left, out, g)
+    else
+        return MA.operate_to!(out, comm, g, h)
+    end
     # TODO: can we make comm! with 3 arguments without allocation??
     out = conj!(out, g, h)
     return div_left!(out, out, g)
