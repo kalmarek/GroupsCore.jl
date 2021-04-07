@@ -18,25 +18,19 @@ i.e. parent objects behave locally as singletons.
 
 ## `Group` methods
 
-#### Iteration
- * `Base.eltype(::Type{G}) where G<:Group`: return the type of elements
- * `Base.iterate(G::Group[, state])`: iteration functionality
- * `Base.IteratorSize(::Type{MyGroup}) [= Base.SizeUnknown()]` should be
-modified to return the following only if if **all instances of `MyGroup`**
-   - are finite: `Base.HasLength()` / `Base.HasShape{N}()`,
-   - are infinite: `Base.IsInfinite()`.
+### Assumptions
 
-In the first case one should also define `Base.length(G::MyGroup)::Int` to be
-a "best effort", cheap computation of length of the group iterator. For
-practical reasons the largest group you could iterate over in your lifetime
-is of order that fits into an Int (`factorial(20)` nanoseconds comes to ~77
-years).
-
-
-Additionally the following assumptions are placed on the iteration:
- * `first(G)` must be the identity
- * iteration over a finitely generated group should exhaust every fixed radius ball (in
-word-length metric) around the identity in finite time.
+`GroupsCore` implement the following methods with default values, wich may not
+be generally true for all groups.
+The intent of those functions is to limit the extent of the required interface.
+**Special care is needed** when implementing groups to override those which may
+be incorrect.
+ * `GroupsCore.hasgens(::Group) = true` (this is based on the assumption that
+reasonably generic functions manipulating groups can be implemented only with
+access to a generating set)
+ * `Base.length(G) = order(Int, G)` (for finite groups only). If this value is
+incorrect, one needs to redefine it e.g. setting
+`Base.length(G) = convert(Int, order(G))`. See notes on `length` below.
 
 #### Obligatory methods
  * `Base.one(G::Group)`: return the identity of the group
@@ -46,11 +40,41 @@ return mathematically correct answer. An infinite group must throw
 `GroupsCore.InfiniteOrder` exception.
  * `GroupsCore.gens(G::Group)`: return a random-accessed collection of
 generators of `G`; if a group does not come with a generating set (or it may be
-prohibitively expensive to compute, or if the group is not finitely generated ), one needs to alter
-`GroupsCore.hasgens(::Group) = false`.
+prohibitively expensive to compute, or if the group is not finitely generated,
+or... when it doesn't make sense to ask for generators), one needs to redefine
+`GroupsCore.hasgens(::Group)`.
  * `Base.rand(rng::Random.AbstractRNG, rs::Random.Sampler{GT}) where GT<:Group`:
 to enable asking for random group elements treating group as a collection, i.e.
 calling `rand(G, 2, 2)`.
+
+#### Iteration
+ * `Base.eltype(G::Group)`: return the type of elements of `G`
+
+If `GroupsCore.hasgens(::Gr) where Gr<:Group` returns true (the default), one
+needs to implement the iterator interface:
+
+ * `Base.iterate(G::Group[, state])`: iteration functionality
+ * `Base.IteratorSize(::Type{Gr}) where {Gr<:Group} [= Base.SizeUnknown()]`
+ * should be modified to return the following only if **all instances of `Gr`**
+   - are finite: `Base.HasLength()` / `Base.HasShape{N}()`,
+   - are infinite: `Base.IsInfinite()`.
+ * Note: if iterator size is `HasShape{N}()` one needs to implement `size(G::Group)` as well. For `HasLength()` we provide the default `length(G::Group) = order(Int, G).`
+!!! warning
+`Base.length(G::Group)::Int` should be used only for iteration purposes.
+The intention is to provide a "best effort", cheap computation of length of the
+group iterator. This might or might not be the correct length (as computed with
+multiprecision integers).
+To obtain the correct answer `GroupsCore.order(::Group)` should be used.
+
+For practical reasons the largest group you could iterate over in your lifetime
+is of order that fits into an Int (`factorial(20)` nanoseconds comes to ~77
+years), therefore `typemax(Int)` is a reasonable value, even for infinite groups.
+
+
+Additionally the following assumptions are placed on the iteration:
+ * `first(G::Group)` must be the identity
+ * iteration over a finitely generated group should exhaust every fixed radius
+ball (in word-length metric) around the identity in finite time.
 
 ## `GroupElement` methods
 #### Obligatory methods
@@ -81,7 +105,7 @@ implemented:
  * `Base.literal_pow(::typeof(^), g, Val{-1})` → `inv(g)`
  * `Base.:(/)(g, h)` → `g*h^-1`
  * `Base.conj(g, h)`, `Base.:(^)(g, h)` → `h^-1*g*h`
- * `Base.comm(g, h)` → `g^-1*h^-1*g*h` and its `Vararg` (`foldl`) version.
+ * `Base.commutator(g, h)` → `g^-1*h^-1*g*h` and its `Vararg` (`foldl`) version.
  * `Base.isequal(g,h)` → `g == h` (a weaker/cheaper equality)
  * `Base.:(^)(g, n::Integer)` → powering by squaring.
 
@@ -127,7 +151,7 @@ allowed.
  * `GroupsCore.conj!(out::GEl, g::GEl, h::GEl) where GEl<:GroupElement`: return
 `h^-1*g*h, `possibly modifying `out`. Aliasing of `g` or `h` with `out` is
 allowed.
- * `GroupsCore.comm!(out::GEl, g::GEl, h::GEl) where GEl<:GroupElement`: return
+ * `GroupsCore.commutator!(out::GEl, g::GEl, h::GEl) where GEl<:GroupElement`: return
 `g^-1*h^-1*g*h`, possibly modifying `out`. Aliasing of `g` or `h` with `out` is
 allowed.
 
