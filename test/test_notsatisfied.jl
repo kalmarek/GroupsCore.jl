@@ -9,19 +9,38 @@ struct SomeGroupElement <: GroupElement
     elts::Vector{Int} # SomeGroupElement is not isbits anymore
 end
 
-@testset "SomeGroup: No interface implemented" begin
-
+@testset "Exceptions" begin
     @testset "InterfaceNotImplemented exception" begin
         @test GroupsCore.InterfaceNotImplemented(
             :Castle,
             "Aaaaarghhhhh....",
         ) isa Exception
-        ex = GroupsCore.InterfaceNotImplemented(:Castle, "Aaaaarghhhhh....")
+        ex = GroupsCore.InterfaceNotImplemented(:Castle, "Aaargh...")
         @test ex isa GroupsCore.InterfaceNotImplemented
 
         @test sprint(showerror, ex) ==
-              "Missing method from Castle interface: `Aaaaarghhhhh....`"
+              "Missing method from Castle interface: `Aaargh...`"
     end
+
+    @testset "InfiniteOrder" begin
+        G = SomeGroup()
+        @test contains(
+            sprint(showerror, GroupsCore.InfiniteOrder(G)),
+            "isfinite",
+        )
+        g = SomeGroupElement(Int[1, 2, 3])
+        @test contains(
+            sprint(showerror, GroupsCore.InfiniteOrder(g)),
+            "isfiniteorder",
+        )
+        @test contains(
+            sprint(showerror, GroupsCore.InfiniteOrder(g, "Aaargh...")),
+            "Aaargh...",
+        )
+    end
+end
+
+@testset "SomeGroup: No interface implemented" begin
 
     INI = GroupsCore.InterfaceNotImplemented
     InfO = GroupsCore.InfiniteOrder
