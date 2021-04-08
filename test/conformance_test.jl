@@ -175,7 +175,7 @@ function test_GroupElement_interface(g::GEl, h::GEl) where {GEl<:GroupElement}
                 @test order(inv(g)) == order(g)
                 @test order(one(g)) == 1
             else
-                @test_throws InfiniteOrder order(g)
+                @test_throws GroupsCore.InfiniteOrder order(g)
             end
 
             @test similar(g) isa typeof(g)

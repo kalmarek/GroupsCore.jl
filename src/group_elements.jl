@@ -39,18 +39,6 @@ Base.:(==)(g::GEl, h::GEl) where {GEl <: GroupElement} = throw(
     InterfaceNotImplemented(:Group, "Base.:(==)(::$GEl, ::$GEl)"),
 )
 
-@doc Markdown.doc"""
-    isfiniteorder(g::GroupElement)
-
-Return `true` if $g$ is of finite order, possibly without computing it.
-"""
-function isfiniteorder(g::GroupElement)
-    isfinite(parent(g)) && return true
-    throw(
-        InterfaceNotImplemented(:Group, "GroupsCore.isfiniteorder(::$(typeof(g)))"),
-    )
-end
-
 Base.deepcopy_internal(g::GroupElement, stackdict::IdDict) = throw(
     InterfaceNotImplemented(
         :Group,
@@ -81,6 +69,18 @@ Base.:(*)(g::GEl, h::GEl) where {GEl <: GroupElement} = throw(
         "Base.:(*)(::$(typeof(g)), ::$(typeof(g)))",
     ),
 )
+
+@doc Markdown.doc"""
+    isfiniteorder(g::GroupElement)
+
+Return `true` if $g$ is of finite order, possibly without computing it.
+"""
+function isfiniteorder(g::GroupElement)
+    isfinite(parent(g)) && return true
+    throw(
+        InterfaceNotImplemented(:Group, "GroupsCore.isfiniteorder(::$(typeof(g)))"),
+    )
+end
 
 ################################################################################
 # Default implementations
