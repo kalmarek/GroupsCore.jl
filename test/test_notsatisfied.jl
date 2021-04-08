@@ -78,7 +78,7 @@ end
         @test_throws INI gens(G, 1)
         @test_throws INI ngens(G)
 
-        @test_throws INI GroupsCore.pseudo_rand(G, 2, 2)
+        @test_throws INI GroupsCore.rand_pseudo(G, 2, 2)
     end
 
     @testset "GroupElem Interface" begin

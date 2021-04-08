@@ -161,5 +161,5 @@ function ngens(G::Group)
     )
 end
 
-pseudo_rand(G::Group, args...) = pseudo_rand(Random.default_rng(), G, args...)
-pseudo_rand(rng::Random.AbstractRNG, G::Group, args...) = rand(rng, G, args...)
+rand_pseudo(G::Group, args...) = rand_pseudo(Random.default_rng(), G, args...)
+rand_pseudo(rng::Random.AbstractRNG, G::Group, args...) = rand(rng, G, args...)
