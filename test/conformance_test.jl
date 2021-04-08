@@ -169,7 +169,7 @@ function test_GroupElement_interface(g::GEl, h::GEl) where {GEl<:GroupElement}
                 @test order(g) >= 1
                 @test iszero(rem(order(parent(g)), order(g)))
 
-                if g^2 != one(g)
+                if !isone(g) && !isone(g^2)
                     @test order(g) > 2
                 end
                 @test order(inv(g)) == order(g)
