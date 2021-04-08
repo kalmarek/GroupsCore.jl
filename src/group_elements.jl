@@ -94,7 +94,7 @@ Return the identity element in the group of $g$.
 Base.one(g::GroupElement) = one(parent(g))
 
 @doc Markdown.doc"""
-    order(::Type{I} = BigInt, g::GroupElement) where {I <: Integer}
+    order(::Type{T} = BigInt, g::GroupElement) where T
 
 Return the order of $g$ as an instance of `I`. If $g$ is of infinite order
 `GroupsCore.InfiniteOrder` exception will be thrown.
@@ -104,14 +104,14 @@ Return the order of $g$ as an instance of `I`. If $g$ is of infinite order
     Only arbitrary sized integers are required to return a mathematically
     correct answer.
 """
-function order(::Type{I}, g::GroupElement) where {I<:Integer}
+function order(::Type{T}, g::GroupElement) where T
     isfiniteorder(g) || throw(InfiniteOrder(g))
-    isone(g) && return I(1)
-    o = I(1)
+    isone(g) && return T(1)
+    o = T(1)
     gg = deepcopy(g)
     out = similar(g)
     while !isone(gg)
-        o += I(1)
+        o += T(1)
         gg = mul!(out, gg, g)
     end
     return o

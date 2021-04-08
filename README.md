@@ -34,7 +34,7 @@ incorrect, one needs to redefine it e.g. setting
 
 #### Obligatory methods
  * `Base.one(G::Group)`: return the identity of the group
- * `GroupsCore.order(::Type{I}, G::Group) where I<:Integer`: the order of `G`
+ * `GroupsCore.order(::Type{I}, G::Group) where I`: the order of `G`
 returned as an instance of `I`; only arbitrary size integers are required to
 return mathematically correct answer. An infinite group must throw
 `GroupsCore.InfiniteOrder` exception.
@@ -101,7 +101,7 @@ No further methods are strictly necessary.
 Based on these methods only, the following functions in `GroupsCore` are
 implemented:
  * `Base.one(g::GroupElement)` → `one(parent(g))`
- * `GroupsCore.order(g)`, `order(I::Type{<:Integer}, g)` (naive implementation)
+ * `GroupsCore.order(g)`, `order(::Type{T}, g)` (naive implementation)
  * `Base.literal_pow(::typeof(^), g, Val{-1})` → `inv(g)`
  * `Base.:(/)(g, h)` → `g*h^-1`
  * `Base.conj(g, h)`, `Base.:(^)(g, h)` → `h^-1*g*h`
