@@ -131,9 +131,6 @@ function Base.:(*)(g::WreathProductElement, h::WreathProductElement)
     return WreathProductElement(g.n * _act(g.p, h.n), g.p * h.p, parent(g))
 end
 
-GroupsCore.order(::Type{I}, g::WreathProductElement) where {I<:Integer} =
-    convert(I, lcm(order(I, g.n), order(I, g.p)))
-
 Base.isone(g::WreathProductElement) = isone(g.n) && isone(g.p)
 
 Base.show(io::IO, G::WreathProduct) =

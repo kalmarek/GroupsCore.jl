@@ -1,11 +1,12 @@
 using GroupsCore
 using Test
+import AbstractAlgebra
+include("symmetric.jl")
 
 include("conformance_test.jl")
 
 include("cyclic.jl")
 include("infinite_cyclic.jl")
-include("symmetric.jl")
 
 @testset "GroupsCore.jl" begin
 
