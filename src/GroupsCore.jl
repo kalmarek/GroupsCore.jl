@@ -50,4 +50,7 @@ include("group_elements.jl")
 
 include("extensions.jl")
 
+include("constructions/constructions.jl")
+using .Constructions
+
 end
