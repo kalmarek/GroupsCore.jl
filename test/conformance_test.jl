@@ -6,7 +6,7 @@ function test_Group_interface(G::Group)
             IS = Base.IteratorSize(typeof(G))
             if IS isa Base.HasLength || IS isa Base.HasShape
                 @test isfinite(G) == true
-                @test length(G) isa Integer
+                @test length(G) isa Int
                 @test length(G) > 0
 
                 @test eltype(G) <: GroupElement
@@ -43,14 +43,10 @@ function test_Group_interface(G::Group)
         @testset "order, rand" begin
             if isfinite(G)
                 @test order(Int16, G) isa Int16
-                @test order(G) isa Integer
+                @test order(BigInt, G) isa BigInt
                 @test order(G) >= 1
             else
-                @test try
-                    order(G) isa Integer
-                catch err
-                    err isa GroupsCore.InfiniteOrder
-                end
+                @test_throws GroupsCore.InfiniteOrder order(G)
             end
 
             @test rand(G) isa GroupElement
@@ -164,10 +160,10 @@ function test_GroupElement_interface(g::GEl, h::GEl) where {GEl<:GroupElement}
             @test isfiniteorder(g) isa Bool
 
             if isfiniteorder(g)
-                @test order(g) isa Integer
                 @test order(Int16, g) isa Int16
+                @test order(BigInt, g) isa BigInt
                 @test order(g) >= 1
-                @test iszero(rem(order(parent(g)), order(g)))
+                @test iszero(order(parent(g)) % order(g))
 
                 if !isone(g) && !isone(g^2)
                     @test order(g) > 2

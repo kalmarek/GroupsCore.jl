@@ -13,6 +13,9 @@ GroupsCore.order(
 ) where {I<:Integer} =
     I(foldl(lcm, length(c) for c in AbstractAlgebra.cycles(g)))
 
+# correct the AA length:
+Base.length(G::AbstractAlgebra.Generic.SymmetricGroup) = order(Int, G)
+
 # genuinely new methods:
 Base.IteratorSize(::Type{<:AbstractAlgebra.AbstractPermutationGroup}) = Base.HasLength()
 
