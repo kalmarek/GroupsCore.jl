@@ -1,3 +1,8 @@
+module TestNotImplemented
+
+using GroupsCore
+using Test
+
 struct SomeGroup <: Group end
 
 struct SomeGroupElement <: GroupElement
@@ -29,6 +34,15 @@ end
         @test_throws INI eltype(G)
         @test_throws INI iterate(G)
         @test_throws INI iterate(G, 1)
+
+        GroupsCore.hasgens(::SomeGroup) = false
+
+        @test_throws ArgumentError iterate(G)
+        @test_throws ArgumentError iterate(G, 1)
+        @test_throws ArgumentError gens(G, 1)
+
+        # revert to the default
+        GroupsCore.hasgens(::SomeGroup) = true
 
         # Assumption 1: Groups are of unknown size
         @test Base.IteratorSize(G) == Base.SizeUnknown()
@@ -77,6 +91,12 @@ end
         @test_throws INI isequal(g, g)
 
         @test_throws INI isfiniteorder(g)
+
+        Base.IteratorSize(::SomeGroup) = Base.HasLength()
+        Base.parent(::SomeGroupElement) = SomeGroup()
+        @test isfiniteorder(g)
+        Base.IteratorSize(::SomeGroup) = Base.SizeUnknown()
+
         GroupsCore.isfiniteorder(::SomeGroupElement) = false
         @test_throws InfO order(g)
         @test_throws INI deepcopy(g)
@@ -86,3 +106,5 @@ end
     end
 
 end
+
+end # of module TestNotImplemented
