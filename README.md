@@ -20,7 +20,7 @@ i.e. parent objects behave locally as singletons.
 
 ### Assumptions
 
-`GroupsCore` implement the following methods with default values, wich may not
+`GroupsCore` implement the following methods with default values, which may not
 be generally true for all groups.
 The intent of those functions is to limit the extent of the required interface.
 **Special care is needed** when implementing groups to override those which may
@@ -81,7 +81,7 @@ ball (in word-length metric) around the identity in finite time.
  * `Base.parent(g::GroupElement)`: return the parent object of a given group
 element. Parent objects of the elements of the same group must be **identical**
 (i.e. `===`).
- * `GroupsCore.parent_type(::Type{<:GroupElement})`: given the type of an
+ * `AbstractAlgebra.parent_type(::Type{<:GroupElement})`: given the type of an
 element return the type of its parent.
  * `GroupsCore.:(==)(g::GEl, h::GEl) where GEl<:GroupElement`: return the
 mathematical equality of group elements;
