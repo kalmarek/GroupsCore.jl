@@ -9,6 +9,11 @@ An experimental group interface for the
 to standardize the design of such an interface in order for such packages to be
 able to work together more easily.
 
+This interface is based on
+[AbstractAlgebra](https://nemocas.github.io/AbstractAlgebra.jl/latest/). Many of
+the methods described in this documentation are naturally extended from that
+interface.
+
 The protocol consists of two parts:
   * `Group` (parent object) methods,
   * `GroupElement` methods.
