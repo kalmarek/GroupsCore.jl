@@ -1,35 +1,76 @@
 # Groups
 
-#### Iteration
- * `Base.eltype(::Type{G}) where G<:Group`: return the type of elements
- * `Base.iterate(G::Group[, state])`: iteration functionality
- * `Base.IteratorSize(::Type{MyGroup}) [= Base.SizeUnknown()]` should be
-modified to return the following only if if **all instances of `MyGroup`**
-   - are finite: `Base.HasLength()` / `Base.HasShape{N}()`,
-   - are infinite: `Base.IsInfinite()`.
+The abstract type `Group` is defined via
+```julia
+const Group = AbstractAlgebra.Group
+```
 
-In the first case one should also define `Base.length(G::MyGroup)::Int` to be
-a "best effort", cheap computation of length of the group iterator. For
-practical reasons the largest group you could iterate over in your lifetime
-is of order that fits into an Int (`factorial(20)` nanoseconds comes to ~77
-years).
+Be aware that more methods exists than what is listed here. For the natural
+extensions, please see
+[AbstractAlgebra](https://nemocas.github.io/AbstractAlgebra.jl/latest/extending_abstractalgebra/).
 
+## Assumptions
 
-Additionally the following assumptions are placed on the iteration:
- * `first(G)` must be the identity
+GroupsCore implement some methods with default values, which may not be
+generally true for all groups. The intent is to limit the extent of the required
+interface. **This require special care** when implementing groups that need to
+override these default methods.
+
+The methods we currently predefine are:
+
+ * `GroupsCore.hasgens(::Group) = true`
+
+    This is based on the assumption that reasonably generic functions
+    manipulating groups can be implemented only with access to a generating set.
+
+ * `Base.length(G) = order(Int, G)` **for finite groups only**
+
+    If this value is incorrect, one needs to redefine it. For example, one can
+    redefine it to `Base.length(G) = convert(Int, order(G))` (see `length` below).
+
+## Obligatory methods
+
+This is the complete list of the obligatory methods:
+
+```@docs
+one(::Group)
+order(::Type{<:Integer}, ::Group)
+gens(::Group)
+rand
+```
+
+## Implemented methods
+
+```@docs
+elem_type
+```
+
+## Iteration
+
+An important aspect of this interface is to be able to iterate over the group.
+
+In order to be able to iterate, it is mandatory that
+ * the first element in the iterations given by `Base.first` must be the
+   identity,
  * iteration over a finitely generated group should exhaust every fixed radius
-ball (in word-length metric) around the identity in finite time.
+   ball (in word-length metric) around the identity in a finite amount of time,
+ * `Base.eltype(G::Group)` returns the element type of $G$.
 
-#### Obligatory methods
- * `Base.one(G::Group)`: return the identity of the group
- * `GroupsCore.order(::Type{I}, G::Group) where I<:Integer`: the order of `G`
-returned as an instance of `I`; only arbitrary size integers are required to
-return mathematically correct answer. An infinite group must throw
-`GroupsCore.InfiniteOrder` exception.
- * `GroupsCore.gens(G::Group)`: return a random-accessed collection of
-generators of `G`; if a group does not come with a generating set (or it may be
-prohibitively expensive to compute, or if the group is not finitely generated ), one needs to alter
-`GroupsCore.hasgens(::Group) = false`.
- * `Base.rand(rng::Random.AbstractRNG, rs::Random.Sampler{GT}) where GT<:Group`:
-to enable asking for random group elements treating group as a collection, i.e.
-calling `rand(G, 2, 2)`.
+The iterator method that should be extended is
+```julia
+Base.iterate(G::Group[, state])
+```
+with the optional `state`-parameter. The iterator size is then given by:
+
+```@docs
+Base.IteratorSize
+```
+
+!!! note
+    In the case that `IteratorSize(Gr) == IsInfinite()`, one should define
+    `Base.length(Gr)` to be a "best effort", cheap
+    computation of length of the group iterator.
+
+For practical reasons the largest group you could iterate over in your lifetime
+is of order that fits into an `Int`. For example, $2^{63}$ nanoseconds comes to
+290 years.

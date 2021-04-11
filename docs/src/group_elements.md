@@ -1,79 +1,84 @@
 # Group elements
 
-#### Obligatory methods
- * `Base.parent(g::GroupElement)`: return the parent object of a given group
-element. Parent objects of the elements of the same group must be **identical**
-(i.e. `===`).
- * `GroupsCore.parent_type(::Type{<:GroupElement})`: given the type of an
-element return the type of its parent.
- * `GroupsCore.:(==)(g::GEl, h::GEl) where GEl<:GroupElement`: return the
-mathematical equality of group elements;
- * `GroupsCore.isfiniteorder(g::GroupElement)`: return `true` if `g` has finite
-order (possibly without computing it). If `isfiniteorder(g)` returns `false`,
-`order(g)` is required to throw `GroupsCore.InfiniteOrder` exception.
- * `Base.deepcopy_internal(g::GroupElement, ::IdDict)`: return a completely
-intependent copy of group element `g` **without copying its parent**; `isbits`
-subtypes of `GroupElement` need not to implement this method.
- * `Base.inv(g::GroupElement)`: return the group inverse of `g`.
- * `Base.:(*)(g::GEl, h::GEl) where GEl<:GroupElement`: the group binary
-operation on `g` and `h`.
+The abstract type `GroupElement` is defined via
+```julia
+const GroupElement = AbstractAlgebra.GroupElem
+```
 
-No further methods are strictly necessary.
+Be aware that more methods exists than what is listed here. For the natural
+extensions, please see
+[AbstractAlgebra](https://nemocas.github.io/AbstractAlgebra.jl/latest/extending_abstractalgebra/).
 
-### Implemented methods
-Based on these methods only, the following functions in `GroupsCore` are
-implemented:
- * `Base.one(g::GroupElement)` → `one(parent(g))`
- * `GroupsCore.order(g)`, `order(I::Type{<:Integer}, g)` (naive implementation)
- * `Base.literal_pow(::typeof(^), g, Val{-1})` → `inv(g)`
- * `Base.:(/)(g, h)` → `g*h^-1`
- * `Base.conj(g, h)`, `Base.:(^)(g, h)` → `h^-1*g*h`
- * `Base.comm(g, h)` → `g^-1*h^-1*g*h` and its `Vararg` (`foldl`) version.
- * `Base.isequal(g,h)` → `g == h` (a weaker/cheaper equality)
- * `Base.:(^)(g, n::Integer)` → powering by squaring.
+## Obligatory methods
 
-#### Performance modifications
-For performance reasons one may alter any of the following methods.
+The first essential methods one should extend are
+```julia
+Base.deepcopy_internal(g::GroupElement, ::IdDict)
+AbstractAlgebra.parent_type(::Type{<:GroupElement})
+```
 
- * `Base.similar(g::GroupElement)[ = one(g)]`: return an arbitrary (and possibly
-uninitialized) group element sharing the parent with `g`.
- * `Base.isone(g::GroupElement)[ = g == one(g)]`: to avoid the unnecessary
-construction of `one(g)`.
- * `Base.isequal(g::GEl, h::GEl) where GEl<:GroupElement[ = g == h]`: to provide
-cheaper "best effort" equality for group elements.
- * `Base.:^(g::GroupElement, n::Integer) = Base.power_by_squaring(g, n)`
- * `GroupsCore.order(::Type{I}, g::GroupElement)`: to replace the naive
-implementation.
- * `Base.hash(g::GroupElement, h::UInt)[ = hash(typeof(g), h)]`: a more specific
-hash function will lead to smaller numer of conflicts.
+The rest of the obligatory methods are:
 
-#### Mutable API
+```@docs
+parent(::GroupElement)
+:(==)(::GEl, ::GEl) where {GEl <: GroupElement}
+isfiniteorder(::GroupElement)
+inv(::GroupElement)
+:(*)(::GEl, ::GEl) where {GEl <: GroupElement}
+```
 
-**Work in progress**
+## Implemented methods
 
-Additionally, for the purpose of mutable arithmetic the following methods may be
-overloaded to provide more tailored versions for a given type and reduce the
-allocations. These functions should be used when writing libraries, in
-performance critical sections. However one should only **use the returned value**
-and there are no guarantees on in-place modifications actually happening.
+From on the obligatory methods we implement the rest of the functions in
+GroupsCore. For starters, the first of these are:
 
-All of these functions (possibly) alter only the first argument, and must unalias
-their arguments when necessary.
+```@docs
+one(::GroupElement)
+isequal(::GroupElement, ::GroupElement)
+:(^)(::GroupElement, ::Integer)
+:(/)(::GroupElement, ::GroupElement)
+order(::Type{<:Integer}, ::GroupElement)
+conj(::GroupElement, ::GroupElement)
+:(^)(::GroupElement, ::GroupElement)
+commutator(::GroupElement, ::GroupElement)
+```
 
- * `GroupsCore.one!(g::GroupElement)`: return `one(g)`, possibly modifying `g`.
- * `GroupsCore.inv!(out::GEl, g::GEl) where GEl<:GroupElement`: return `g^-1`,
-possibly modifying `out`. Aliasing of `g` with `out` is allowed.
- * `GroupsCore.mul!(out::GEl, g::GEl, h::GEl) where GEl<:GroupElement`: return
-`g*h`, possibly modifying `out`. Aliasing of `g` or `h` with `out` is allowed.
- * `GroupsCore.div_left!(out::GEl, g::GEl, h::GEl) where GEl<:GroupElement`:
-return `h^-1*g`, possibly modifying `out`. Aliasing of `g` or `h` with `out` is
-allowed.
- * `GroupsCore.div_right!(out::GEl, g::GEl, h::GEl) where GEl<:GroupElement`:
-return `g*h^-1`, possibly modifying `out`. Aliasing of `g` or `h` with `out` is
-allowed.
- * `GroupsCore.conj!(out::GEl, g::GEl, h::GEl) where GEl<:GroupElement`: return
-`h^-1*g*h, `possibly modifying `out`. Aliasing of `g` or `h` with `out` is
-allowed.
- * `GroupsCore.comm!(out::GEl, g::GEl, h::GEl) where GEl<:GroupElement`: return
-`g^-1*h^-1*g*h`, possibly modifying `out`. Aliasing of `g` or `h` with `out` is
-allowed.
+### Performance modifications
+
+Some of the mentioned implemented methods may be altered for performance
+reasons:
+```julia
+isequal(g::GEl, h::GEl) where {GEl <: GroupElement}
+:(^)(g::GroupElement, n::Integer)
+order(::Type{I}, g::GroupElement)
+```
+
+Further methods are also implemented. However, for performance reasons one may
+alter any of the following methods:
+
+```@docs
+similar(::GroupElement)
+isone(::GroupElement)
+hash(::GroupElement, ::UInt)
+```
+
+### Mutable API
+
+For the purpose of mutable arithmetic the following methods may be overloaded
+to provide more tailored versions for a given type and reduce the allocations.
+These functions should be used when writing libraries, in performance critical
+sections. However one should only **use the returned value** and there are no
+guarantees on in-place modifications actually happening.
+
+All of these functions (possibly) alter only the first argument, and must
+unalias their arguments when necessary.
+
+```@docs
+one!
+inv!
+mul!
+div_left!
+div_right!
+conj!
+commutator!
+```
