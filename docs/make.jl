@@ -29,4 +29,5 @@ makedocs(
 
 deploydocs(;
     repo="github.com/kalmarek/GroupsCore.jl",
+    devbranch = "main",
 )
