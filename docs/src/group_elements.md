@@ -1,4 +1,4 @@
-# Group elements
+# [Group elements](@id H1_group_elements)
 
 The abstract type `GroupElement` is defined via
 ```julia

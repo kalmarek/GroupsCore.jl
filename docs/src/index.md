@@ -5,18 +5,14 @@ CurrentModule = GroupsCore
 # GroupsCore
 
 An experimental group interface for the
-[OSCAR](https://oscar.computeralgebra.de/) project. The aim of this project is
-to standardize the design of such an interface in order for such packages to be
-able to work together more easily.
-
-This interface is based on
-[AbstractAlgebra](https://nemocas.github.io/AbstractAlgebra.jl/latest/). Many of
-the methods described in this documentation are naturally extended from that
-interface.
+[OSCAR](https://oscar.computeralgebra.de/) project. The aim of this package is
+to standardize the common assumptions and functions on group i.e. to create
+Group interface.
+This should standardize the groups within and outside of the OSCAR project.
 
 The protocol consists of two parts:
-  * `Group` (parent object) methods,
-  * `GroupElement` methods.
+  * [`Group`](@ref H1_groups) (parent object) methods,
+  * [`GroupElement`](@ref H1_group_elements) methods.
 
 This is due to the fact that hardly any information can be encoded in `Type`, we
 rely on parent objects that represent groups, as well as ordinary group

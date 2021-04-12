@@ -1,4 +1,4 @@
-# Groups
+# [Groups](@id H1_groups)
 
 The abstract type `Group` is defined via
 ```julia
