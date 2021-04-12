@@ -81,7 +81,7 @@ ball (in word-length metric) around the identity in finite time.
  * `Base.parent(g::GroupElement)`: return the parent object of a given group
 element. Parent objects of the elements of the same group must be **identical**
 (i.e. `===`).
- * `AbstractAlgebra.parent_type(::Type{<:GroupElement})`: given the type of an
+ * `GroupsCore.parent_type(::Type{<:GroupElement})`: given the type of an
 element return the type of its parent.
  * `GroupsCore.:(==)(g::GEl, h::GEl) where GEl<:GroupElement`: return the
 mathematical equality of group elements;
