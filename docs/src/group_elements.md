@@ -5,10 +5,15 @@ of group elements should subtype.
 
 ## Obligatory methods
 
-The first essential methods one should extend are
+The elements which are not `isbits` should extend
 ```julia
 Base.deepcopy_internal(g::GroupElement, ::IdDict)
 ```
+according to
+[`Base.deepcopy`](https://docs.julialang.org/en/v1/base/base/#Base.deepcopy)
+docstring. Due to our assumption on parents of group elements (acting as local
+singleton objects), a group element and its `deepcopy` should have identical
+(i.e. `===`) parents.
 
 The rest of the obligatory methods are:
 
