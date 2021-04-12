@@ -20,7 +20,7 @@ i.e. parent objects behave locally as singletons.
 
 ### Assumptions
 
-`GroupsCore` implement the following methods with default values, wich may not
+`GroupsCore` implement the following methods with default values, which may not
 be generally true for all groups.
 The intent of those functions is to limit the extent of the required interface.
 **Special care is needed** when implementing groups to override those which may

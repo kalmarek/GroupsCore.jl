@@ -44,20 +44,25 @@ order(G::Group) = order(BigInt, G)
 
 Return a random-access collection of generators of $G$.
 
-The result of this function is undefined unless `GroupsCore.hasgens(G)` returns
+The result of this function is undefined unless `GroupsCore.hasgens(G)` return
 `true`.
 """
 gens(G::Group) =
     throw(InterfaceNotImplemented(:Group, "GroupsCore.gens(::$(typeof(G)))"))
 
+@doc Markdown.doc"""
+    Base.rand(rng::Random.AbstractRNG, rs::Random.SamplerTrivial{Gr}) where {Gr <: Group}
+
+Return a random group element, treating the group as a collection.
+"""
 function Base.rand(
     rng::Random.AbstractRNG,
-    rs::Random.SamplerTrivial{G}
-) where {G <: Group}
+    rs::Random.SamplerTrivial{Gr}
+) where {Gr <: Group}
     throw(
         InterfaceNotImplemented(
             :Random,
-            "Base.rand(::Random.AbstractRNG, ::Random.SamplerTrivial{$G}))",
+            "Base.rand(::Random.AbstractRNG, ::Random.SamplerTrivial{$Gr}))",
         ),
     )
 end
@@ -92,15 +97,17 @@ end
 
 Given the type of a group, return one of the following values:
  * `Base.IsInfinite()` if all instances of groups of type `Gr` are infinite.
- * `Base.HasLength()` (or `Base.HasShape{N}()`) if all instances are finite.
- * `Base.SizeUnknown()` otherwise (the default).
+ * `Base.HasLength()` or `Base.HasShape{N}()` if all instances are finite.
+ * `Base.SizeUnknown()` otherwise, [the default].
 """
-Base.IteratorSize(::Type{Gr}) where {Gr <: Group} = Base.SizeUnknown()
-# cheating here, not great, but nobody should use this function except iteration.
+Base.IteratorSize(::Type{<:Group}) = Base.SizeUnknown()
+
+# NOTE: cheating here, not great, but nobody should use this function except
+# iteration.
 Base.length(G::Group) =
     isfinite(G) ? order(Int, G) : throw(
     """You're trying to iterate over an infinite group.
-If you know what you're doing choose an appropriate integer and redefine
+If you know what you're doing, choose an appropriate integer and redefine
 `Base.length(::$(typeof(G)))::Int`.
 """
 )
@@ -113,11 +120,18 @@ If you know what you're doing choose an appropriate integer and redefine
     elem_type(::Type{<:Group})
     elem_type(G::Group)
 
-Alias for [`eltype(G)`](@ref).
+Alias for [`eltype`](@ref GroupsCore.eltype).
 """
 elem_type(::Type{Gr}) where {Gr <: Group} = eltype(Gr)
 elem_type(G::Group) = eltype(G)
 
+@doc Markdown.doc"""
+    isfinite(G::Group)
+Test whether group $G$ is finite.
+
+The default implementation is based on `Base.IteratorSize`. Only groups of
+returning `Base.SizeUnknown()` should extend this method.
+"""
 function Base.isfinite(G::Group)
     IS = Base.IteratorSize(G)
     IS isa Base.HasLength && return true

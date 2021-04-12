@@ -9,17 +9,15 @@
 @doc Markdown.doc"""
     parent(g::GroupElement)
 
-Return the parent of the group element.
+Return the parent object of the group element.
 """
 Base.parent(g::GroupElement) =
     throw(InterfaceNotImplemented(:Group, "Base.parent(::$(typeof(g)))"))
 
 @doc Markdown.doc"""
     parent_type(::Type{<:GroupElement})
-    parent_type(g::GroupElement)
 
-Return the type of parent of a subtype of `GroupElement`.
-A shortcut `parent_type(g) = parent_type(typeof(g))` is provided for convenience.
+Return the type of parent object, based on the type of its elements.
 """
 parent_type(::Type{GEl}) where {GEl <: GroupElement} =
     throw(InterfaceNotImplemented(
@@ -186,7 +184,7 @@ of words.
 """
 Base.isequal(g::GEl, h::GEl) where {GEl <: GroupElement} = g == h
 
-function Base.:^(g::GroupElement, n::Integer)
+function Base.:(^)(g::GroupElement, n::Integer)
     n == 0 && return one(g)
     n < 0 && return inv(g)^-n
     return Base.power_by_squaring(g, n)
@@ -245,7 +243,7 @@ end
 @doc Markdown.doc"""
     conj!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement}
 
-Return $h^{-1} g h$, `possibly modifying `out`. Aliasing of `g` or `h` with
+Return $h^{-1} g h$, possibly modifying `out`. Aliasing of `g` or `h` with
 `out` is allowed.
 """
 function conj!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement}
