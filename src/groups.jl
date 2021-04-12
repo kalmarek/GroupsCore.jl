@@ -17,7 +17,7 @@ Base.one(G::Group) =
 @doc Markdown.doc"""
     order(I::Type{Integer} = BigInt, G::Group)
 
-Return the order of $G$ as an instance of $I$. If $G$ is of infinite order,
+Return the order of $G$ as an instance of `I`. If $G$ is of infinite order,
 `GroupsCore.InfiniteOrder` exception will be thrown.
 
 !!! warning
@@ -71,6 +71,11 @@ end
 # Iterators
 ################################################################################
 
+@doc Markdown.doc"""
+    eltype(::Type{Gr}) where {Gr <: Group}
+
+I need a docstring
+"""
 Base.eltype(::Type{Gr}) where {Gr <: Group} =
     throw(InterfaceNotImplemented(:Iteration, "Base.eltype(::Type{$Gr})"))
 
@@ -120,7 +125,7 @@ If you know what you're doing, choose an appropriate integer and redefine
     elem_type(::Type{<:Group})
     elem_type(G::Group)
 
-Alias for [`eltype(G)`](@ref).
+Alias for [`eltype`](@ref GroupsCore.eltype).
 """
 elem_type(::Type{Gr}) where {Gr <: Group} = eltype(Gr)
 elem_type(G::Group) = eltype(G)

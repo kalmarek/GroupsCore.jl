@@ -19,6 +19,6 @@ right_coset_representatives
 ```
 
 ```@docs
-index
-left_coset_representatives
+GroupsCore.index
+GroupsCore.left_coset_representatives
 ```

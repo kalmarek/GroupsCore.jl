@@ -37,12 +37,13 @@ one(::Group)
 order(::Type{<:Integer}, ::Group)
 gens(::Group)
 rand
+eltype(::Type{Gr}) where {Gr <: Group}
 ```
 
 ## Implemented methods
 
 ```@docs
-elem_type
+GroupsCore.elem_type
 ```
 
 ## Iteration

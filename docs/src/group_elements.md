@@ -31,16 +31,18 @@ inv(::GroupElement)
 
 From on the obligatory methods we implement the rest of the functions in
 GroupsCore. For starters, the first of these are:
-
+```julia
+:(^)(::GroupElement, ::Integer)
+:(/)(::GEl, ::GEl) where {GEl <: GroupElement}
+```
+and
 ```@docs
 one(::GroupElement)
-isequal(::GroupElement, ::GroupElement)
-:(^)(::GroupElement, ::Integer)
-:(/)(::GroupElement, ::GroupElement)
+isequal(::GEl, ::GEl) where {GEl <: GroupElement}
 order(::Type{<:Integer}, ::GroupElement)
-conj(::GroupElement, ::GroupElement)
-:(^)(::GroupElement, ::GroupElement)
-commutator(::GroupElement, ::GroupElement)
+conj
+:(^)(::GEl, ::GEl) where {GEl <: GroupElement}
+commutator
 ```
 
 ### Performance modifications
@@ -74,11 +76,11 @@ All of these functions (possibly) alter only the first argument, and must
 unalias their arguments when necessary.
 
 ```@docs
-one!
-inv!
-mul!
-div_left!
-div_right!
-conj!
-commutator!
+GroupsCore.one!
+GroupsCore.inv!
+GroupsCore.mul!
+GroupsCore.div_left!
+GroupsCore.div_right!
+GroupsCore.conj!
+GroupsCore.commutator!
 ```
