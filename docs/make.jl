@@ -28,5 +28,5 @@ makedocs(
 )
 
 deploydocs(;
-    repo="github.com/kalmar@amu.edu.pl/GroupsCore.jl",
+    repo="github.com/kalmarek/GroupsCore.jl",
 )
