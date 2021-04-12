@@ -13,14 +13,13 @@ override these default methods.
 The methods we currently predefine are:
 
  * `GroupsCore.hasgens(::Group) = true`
+This is based on the assumption that reasonably generic functions
+manipulating groups can be implemented only with access to a generating set.
 
-    This is based on the assumption that reasonably generic functions
-    manipulating groups can be implemented only with access to a generating set.
-
- * `Base.length(G) = order(Int, G)` **for finite groups only**
-
-    If this value is incorrect, one needs to redefine it. For example, one can
-    redefine it to `Base.length(G) = convert(Int, order(G))` (see `length` below).
+ * **For finite groups only** we define `Base.length(G) = order(Int, G)`
+In general `length` is used **for iteration purposes only**. If this value is
+incorrect (due to e.g. integer overflow), one needs to redefine it
+(see note on `length` below).
 
 ## Obligatory methods
 
