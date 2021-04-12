@@ -237,7 +237,7 @@ end
 @doc Markdown.doc"""
     conj!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement}
 
-Return $h^{-1} g h$, `possibly modifying `out`. Aliasing of `g` or `h` with
+Return $h^{-1} g h$, possibly modifying `out`. Aliasing of `g` or `h` with
 `out` is allowed.
 """
 function conj!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement}
