@@ -62,7 +62,7 @@ function Base.rand(
     throw(
         InterfaceNotImplemented(
             :Random,
-            "Base.rand(::Random.AbstractRNG, ::Random.SamplerTrivial{$G}))",
+            "Base.rand(::Random.AbstractRNG, ::Random.SamplerTrivial{$Gr}))",
         ),
     )
 end
