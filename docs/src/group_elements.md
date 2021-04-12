@@ -8,13 +8,13 @@ of group elements should subtype.
 The first essential methods one should extend are
 ```julia
 Base.deepcopy_internal(g::GroupElement, ::IdDict)
-AbstractAlgebra.parent_type(::Type{<:GroupElement})
 ```
 
 The rest of the obligatory methods are:
 
 ```@docs
 parent(::GroupElement)
+parent_type(::Type{<:GroupElement})
 :(==)(::GEl, ::GEl) where {GEl <: GroupElement}
 isfiniteorder(::GroupElement)
 inv(::GroupElement)

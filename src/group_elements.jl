@@ -14,11 +14,17 @@ Return the parent object of the group element.
 Base.parent(g::GroupElement) =
     throw(InterfaceNotImplemented(:Group, "Base.parent(::$(typeof(g)))"))
 
+@doc Markdown.doc"""
+    parent_type(::Type{<:GroupElement})
+
+Return the type of parent object, based on the type of its elements.
+"""
 parent_type(::Type{GEl}) where {GEl <: GroupElement} =
     throw(InterfaceNotImplemented(
         :Group,
         "GroupsCore.parent_type(::Type{$GEl})"
        ))
+parent_type(g::GroupElement) = parent_type(typeof(g))
 
 @doc Markdown.doc"""
     ==(g::GEl, h::GEl) where {GEl <: GroupElement}
