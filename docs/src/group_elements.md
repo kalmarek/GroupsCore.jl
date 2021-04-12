@@ -48,18 +48,10 @@ commutator
 
 Some of the mentioned implemented methods may be altered for performance
 reasons:
-```julia
-isequal(g::GEl, h::GEl) where {GEl <: GroupElement}
-:(^)(g::GroupElement, n::Integer)
-order(::Type{I}, g::GroupElement)
-```
-
-Further methods are also implemented. However, for performance reasons one may
-alter any of the following methods:
-
-```julia
-hash(::GroupElement, ::UInt)
-```
+ * [`isequal`](@ref)
+ * `Base.:(^)(g::GroupElement, n::Integer)`
+ * [`order(::Type{<:Integer}, g::GroupElement)`](@ref)
+ * `Base.hash(::GroupElement, ::UInt)`
 
 ```@docs
 similar(::GroupElement)
