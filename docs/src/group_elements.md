@@ -15,7 +15,7 @@ docstring. Due to our assumption on parents of group elements (acting as local
 singleton objects), a group element and its `deepcopy` should have identical
 (i.e. `===`) parents.
 
-The rest of the obligatory methods are:
+The remaining obligatory methods are:
 
 ```@docs
 parent(::GroupElement)
@@ -25,11 +25,14 @@ isfiniteorder(::GroupElement)
 inv(::GroupElement)
 :(*)(::GEl, ::GEl) where {GEl <: GroupElement}
 ```
+!!! note
+    If finiteness of a group can be decided based on its type there is no need
+    to extend `isfiniteorder`.
 
 ## Implemented methods
 
-From on the obligatory methods we implement the rest of the functions in
-GroupsCore. For starters, the first of these are:
+Using the obligatory methods we implement the rest of the functions in
+`GroupsCore`. For starters, the first of these are:
 ```julia
 :(^)(::GroupElement, ::Integer)
 :(/)(::GEl, ::GEl) where {GEl <: GroupElement}
@@ -59,6 +62,12 @@ isone(::GroupElement)
 ```
 
 ### Mutable API
+
+!!! warning
+    Work-in-progress.
+
+    Mutable API is considered private and hence may change between versions
+    without warning.
 
 For the purpose of mutable arithmetic the following methods may be overloaded
 to provide more tailored versions for a given type and reduce the allocations.

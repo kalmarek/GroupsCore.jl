@@ -5,7 +5,7 @@ abstract, we skip the `Abstract` prefix.
 
 ## Assumptions
 
-GroupsCore implement some methods with default values, which may not be
+`GroupsCore` implement some methods with default values, which may not be
 generally true for all groups. The intent is to limit the extent of the required
 interface. **This require special care** when implementing groups that need to
 override these default methods.
@@ -24,8 +24,10 @@ manipulating groups can be implemented only with access to a generating set.
     [`order(::Type{<:Integer}, ::Group)`](@ref). For more information see
     [Iteration](@ref).
 
-This is the complete list of the obligatory methods:
+## Obligatory methods
 
+Here we list the minimal set of functions that a group object must extend to
+implement the `Group` interface.
 
 ```@docs
 one(::Group)
