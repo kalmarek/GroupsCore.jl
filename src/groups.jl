@@ -98,9 +98,9 @@ end
 Given the type of a group, return one of the following values:
  * `Base.IsInfinite()` if all instances of groups of type `Gr` are infinite.
  * `Base.HasLength()` or `Base.HasShape{N}()` if all instances are finite.
- * `Base.SizeUnknown()` otherwise, which is the default.
+ * `Base.SizeUnknown()` otherwise, [the default].
 """
-Base.IteratorSize(::Type{Gr}) where {Gr <: Group} = Base.SizeUnknown()
+Base.IteratorSize(::Type{<:Group}) = Base.SizeUnknown()
 
 # NOTE: cheating here, not great, but nobody should use this function except
 # iteration.
@@ -125,6 +125,13 @@ Alias for [`eltype`](@ref GroupsCore.eltype).
 elem_type(::Type{Gr}) where {Gr <: Group} = eltype(Gr)
 elem_type(G::Group) = eltype(G)
 
+@doc Markdown.doc"""
+    isfinite(G::Group)
+Test whether group $G$ is finite.
+
+The default implementation is based on `Base.IteratorSize`. Only groups of
+returning `Base.SizeUnknown()` should extend this method.
+"""
 function Base.isfinite(G::Group)
     IS = Base.IteratorSize(G)
     IS isa Base.HasLength && return true

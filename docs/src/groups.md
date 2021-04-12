@@ -25,9 +25,6 @@ incorrect (due to e.g. integer overflow), one needs to redefine it
 
 This is the complete list of the obligatory methods:
 
-```julia
-eltype(::Type{Gr}) where {Gr <: Group}
-```
 
 ```@docs
 one(::Group)
@@ -36,38 +33,53 @@ gens(::Group)
 rand
 ```
 
-## Implemented methods
+### Iteration
 
-```@docs
-GroupsCore.elem_type
+If a group is defined by generators (i.e. `hasgens(G)` returns `true`) an
+important aspect of this interface is the iteration over a group.
+
+Iteration over infinite objects seem to be useful only when the returned
+elements explore the whole group. To be precise, for the free group
+``F_2 = ⟨a,b⟩``, one could implement iteration by sequence
+```math
+a, a^2, a^3, \ldots,
+```
+which is arguably less useful than
+```math
+a, b, a^{-1}, b^{-1}, ab, \ldots.
 ```
 
-## Iteration
+Therefore we put the following assumptions on iteration.
+ * Iteration is mandatory only if `hasgens(G)` returns `true`.
+ * The first element of the iteration (e.g. given by `Base.first`) is the
+   group identity.
+ * Iteration over a finitely generated group should exhaust every fixed radius
+   ball around the identity (in word-length metric) in finite time.
 
-An important aspect of this interface is to be able to iterate over the group.
+These are just the conventions, the iteration interface consists of standard
+julia methods:
 
-In order to be able to iterate, it is mandatory that
- * the first element in the iterations given by `Base.first` must be the
-   identity,
- * iteration over a finitely generated group should exhaust every fixed radius
-   ball (in word-length metric) around the identity in a finite amount of time,
- * `Base.eltype(G::Group)` returns the element type of $G$.
-
-The iterator method that should be extended is
-```julia
-Base.iterate(G::Group[, state])
-```
-with the optional `state`-parameter. The iterator size is then given by:
+ * [`Base.iterate`](https://docs.julialang.org/en/v1/base/collections/#Base.iterate)
+ * [`Base.eltype`](https://docs.julialang.org/en/v1/base/collections/#Base.eltype)
 
 ```@docs
-Base.IteratorSize
+Base.IteratorSize(::Type{<:Group})
+```
+In contrast to julia we default to `Base.SizeUnknown()` to provide a
+mathematically correct fallback. If your group is finite by definition,
+implementing the correct `IteratorSize` (i.e. `Base.HasLength()`, or
+`Base.HasShape{N}()`) will simplify several other methods, which will be then
+optimized to work only based on the type of the group. In particular when the
+information is derivable from the type, there is no need to extend
+
+```@docs
+Base.isfinite(G::Group)
 ```
 
 !!! note
     In the case that `IteratorSize(Gr) == IsInfinite()`, one should define
-    `Base.length(Gr)` to be a "best effort", cheap
-    computation of length of the group iterator.
+    `Base.length(Gr)` to be a "best effort", length of the group iterator.
 
-For practical reasons the largest group you could iterate over in your lifetime
-is of order that fits into an `Int`. For example, $2^{63}$ nanoseconds comes to
-290 years.
+    For practical reasons the largest group you could iterate over in your
+    lifetime is of order that fits into an `Int`. For example, $2^{63}$
+    nanoseconds comes to 290 years.
