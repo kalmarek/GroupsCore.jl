@@ -1,13 +1,7 @@
 # [Groups](@id H1_groups)
 
-The abstract type `Group` is defined via
-```julia
-const Group = AbstractAlgebra.Group
-```
-
-Be aware that more methods exists than what is listed here. For the natural
-extensions, please see
-[AbstractAlgebra](https://nemocas.github.io/AbstractAlgebra.jl/latest/extending_abstractalgebra/).
+The abstract type `Group` encompasses all groups. Since these are already
+abstract, we skip the `Abstract` prefix.
 
 ## Assumptions
 

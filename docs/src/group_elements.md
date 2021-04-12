@@ -1,13 +1,7 @@
 # [Group elements](@id H1_group_elements)
 
-The abstract type `GroupElement` is defined via
-```julia
-const GroupElement = AbstractAlgebra.GroupElem
-```
-
-Be aware that more methods exists than what is listed here. For the natural
-extensions, please see
-[AbstractAlgebra](https://nemocas.github.io/AbstractAlgebra.jl/latest/extending_abstractalgebra/).
+`GroupsCore` defines abstract type `GroupElement`, which all implementations
+of group elements should subtype.
 
 ## Obligatory methods
 
