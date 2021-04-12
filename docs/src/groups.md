@@ -17,11 +17,12 @@ This is based on the assumption that reasonably generic functions
 manipulating groups can be implemented only with access to a generating set.
 
  * **For finite groups only** we define `Base.length(G) = order(Int, G)`
-In general `length` is used **for iteration purposes only**. If this value is
-incorrect (due to e.g. integer overflow), one needs to redefine it
-(see note on `length` below).
 
-## Obligatory methods
+!!! danger
+    In general `length` is used **for iteration purposes only**.
+    If you are interested in the number of distinct elements of a group, use
+    [`order(::Type{<:Integer}, ::Group)`](@ref). For more information see
+    [Iteration](@ref).
 
 This is the complete list of the obligatory methods:
 
