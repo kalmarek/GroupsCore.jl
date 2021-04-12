@@ -32,12 +32,15 @@ The methods we currently predefine are:
 
 This is the complete list of the obligatory methods:
 
+```julia
+eltype(::Type{Gr}) where {Gr <: Group}
+```
+
 ```@docs
 one(::Group)
 order(::Type{<:Integer}, ::Group)
 gens(::Group)
 rand
-eltype(::Type{Gr}) where {Gr <: Group}
 ```
 
 ## Implemented methods

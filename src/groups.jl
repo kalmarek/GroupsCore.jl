@@ -71,11 +71,6 @@ end
 # Iterators
 ################################################################################
 
-@doc Markdown.doc"""
-    eltype(::Type{Gr}) where {Gr <: Group}
-
-I need a docstring
-"""
 Base.eltype(::Type{Gr}) where {Gr <: Group} =
     throw(InterfaceNotImplemented(:Iteration, "Base.eltype(::Type{$Gr})"))
 

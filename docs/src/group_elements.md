@@ -58,10 +58,13 @@ order(::Type{I}, g::GroupElement)
 Further methods are also implemented. However, for performance reasons one may
 alter any of the following methods:
 
+```julia
+hash(::GroupElement, ::UInt)
+```
+
 ```@docs
 similar(::GroupElement)
 isone(::GroupElement)
-hash(::GroupElement, ::UInt)
 ```
 
 ### Mutable API

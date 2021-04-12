@@ -185,11 +185,6 @@ function Base.:(^)(g::GroupElement, n::Integer)
 end
 
 # NOTE: Modification RECOMMENDED for performance reasons
-@doc Markdown.doc"""
-    hash(g::GroupElement, h::UInt)
-
-Make me a docstring! :)
-"""
 Base.hash(g::GroupElement, h::UInt) = hash(typeof(g), h)
 
 ################################################################################
