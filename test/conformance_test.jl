@@ -65,12 +65,11 @@ end
 
 function test_GroupElement_interface(g::GEl, h::GEl) where {GEl<:GroupElement}
 
-    @assert parent(g) === parent(h)
-
     @testset "GroupElement interface" begin
 
         @testset "Parent methods" begin
             @test parent(g) isa Group
+            @test parent(g) === parent(h)
             G = parent(g)
 
             @test eltype(G) == typeof(g)
