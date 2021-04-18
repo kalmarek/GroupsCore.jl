@@ -5,7 +5,7 @@ of group elements should subtype.
 
 ## Obligatory methods
 
-The elements which are not `isbits` should extend
+The elements which are not of `isbitstype` should extend
 ```julia
 Base.deepcopy_internal(g::GroupElement, ::IdDict)
 ```
@@ -41,7 +41,7 @@ and
 ```@docs
 one(::GroupElement)
 isequal(::GEl, ::GEl) where {GEl <: GroupElement}
-order(::Type{<:Integer}, ::GroupElement)
+order(::Type{T}, ::GroupElement) where T
 conj
 :(^)(::GEl, ::GEl) where {GEl <: GroupElement}
 commutator
@@ -53,7 +53,7 @@ Some of the mentioned implemented methods may be altered for performance
 reasons:
  * [`isequal`](@ref)
  * `Base.:(^)(g::GroupElement, n::Integer)`
- * [`order(::Type{<:Integer}, g::GroupElement)`](@ref)
+ * [`order(::Type{T}, g::GroupElement) where T`](@ref)
  * `Base.hash(::GroupElement, ::UInt)`
 
 ```@docs

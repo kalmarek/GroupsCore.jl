@@ -6,7 +6,7 @@ function test_Group_interface(G::Group)
             IS = Base.IteratorSize(typeof(G))
             if IS isa Base.HasLength || IS isa Base.HasShape
                 @test isfinite(G) == true
-                @test length(G) isa Integer
+                @test length(G) isa Int
                 @test length(G) > 0
 
                 @test eltype(G) <: GroupElement
@@ -43,14 +43,10 @@ function test_Group_interface(G::Group)
         @testset "order, rand" begin
             if isfinite(G)
                 @test order(Int16, G) isa Int16
-                @test order(G) isa Integer
+                @test order(BigInt, G) isa BigInt
                 @test order(G) >= 1
             else
-                @test try
-                    order(G) isa Integer
-                catch err
-                    err isa GroupsCore.InfiniteOrder
-                end
+                @test_throws GroupsCore.InfiniteOrder order(G)
             end
 
             @test rand(G) isa GroupElement
@@ -58,10 +54,10 @@ function test_Group_interface(G::Group)
             g, h = rand(G, 2)
             @test parent(g) === parent(h) === G
 
-            @test GroupsCore.pseudo_rand(G) isa eltype(G)
-            @test GroupsCore.pseudo_rand(G, 2, 2) isa AbstractMatrix{eltype(G)}
+            @test GroupsCore.rand_pseudo(G) isa eltype(G)
+            @test GroupsCore.rand_pseudo(G, 2, 2) isa AbstractMatrix{eltype(G)}
 
-            g, h = GroupsCore.pseudo_rand(G, 2)
+            g, h = GroupsCore.rand_pseudo(G, 2)
             @test parent(g) === parent(h) === G
         end
     end
@@ -69,12 +65,11 @@ end
 
 function test_GroupElement_interface(g::GEl, h::GEl) where {GEl<:GroupElement}
 
-    @assert parent(g) === parent(h)
-
     @testset "GroupElement interface" begin
 
         @testset "Parent methods" begin
             @test parent(g) isa Group
+            @test parent(g) === parent(h)
             G = parent(g)
 
             @test eltype(G) == typeof(g)
@@ -85,7 +80,7 @@ function test_GroupElement_interface(g::GEl, h::GEl) where {GEl<:GroupElement}
 
             @test one(G) == one(g) == one(h)
 
-            if !isbits(g)
+            if GroupsCore._is_deepcopiable(g)
                 @test one(G) !== one(g)
             end
 
@@ -105,7 +100,7 @@ function test_GroupElement_interface(g::GEl, h::GEl) where {GEl<:GroupElement}
 
             @test deepcopy(g) isa typeof(g)
             @test deepcopy(g) == g
-            if !isbits(g)
+            if GroupsCore._is_deepcopiable(g)
                 @test deepcopy(g) !== g
             end
             k = deepcopy(g)
@@ -164,18 +159,18 @@ function test_GroupElement_interface(g::GEl, h::GEl) where {GEl<:GroupElement}
             @test isfiniteorder(g) isa Bool
 
             if isfiniteorder(g)
-                @test order(g) isa Integer
                 @test order(Int16, g) isa Int16
+                @test order(BigInt, g) isa BigInt
                 @test order(g) >= 1
-                @test iszero(rem(order(parent(g)), order(g)))
+                @test iszero(order(parent(g)) % order(g))
 
-                if g^2 != one(g)
+                if !isone(g) && !isone(g^2)
                     @test order(g) > 2
                 end
                 @test order(inv(g)) == order(g)
                 @test order(one(g)) == 1
             else
-                @test_throws InfiniteOrder order(g)
+                @test_throws GroupsCore.InfiniteOrder order(g)
             end
 
             @test similar(g) isa typeof(g)

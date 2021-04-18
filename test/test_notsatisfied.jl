@@ -9,19 +9,41 @@ struct SomeGroupElement <: GroupElement
     elts::Vector{Int} # SomeGroupElement is not isbits anymore
 end
 
-@testset "SomeGroup: No interface implemented" begin
+if VERSION < v"1.5.0"
+    contains(haystack, needle) = occursin(needle, haystack)
+end
 
+@testset "Exceptions" begin
     @testset "InterfaceNotImplemented exception" begin
         @test GroupsCore.InterfaceNotImplemented(
             :Castle,
             "Aaaaarghhhhh....",
         ) isa Exception
-        ex = GroupsCore.InterfaceNotImplemented(:Castle, "Aaaaarghhhhh....")
+        ex = GroupsCore.InterfaceNotImplemented(:Castle, "Aaargh...")
         @test ex isa GroupsCore.InterfaceNotImplemented
 
         @test sprint(showerror, ex) ==
-              "Missing method from Castle interface: `Aaaaarghhhhh....`"
+              "Missing method from Castle interface: `Aaargh...`"
     end
+    @testset "InfiniteOrder" begin
+        G = SomeGroup()
+        @test contains(
+            sprint(showerror, GroupsCore.InfiniteOrder(G)),
+            "isfinite",
+        )
+        g = SomeGroupElement(Int[1, 2, 3])
+        @test contains(
+            sprint(showerror, GroupsCore.InfiniteOrder(g)),
+            "isfiniteorder",
+        )
+        @test contains(
+            sprint(showerror, GroupsCore.InfiniteOrder(g, "Aaargh...")),
+            "Aaargh...",
+        )
+    end
+end
+
+@testset "SomeGroup: No interface implemented" begin
 
     INI = GroupsCore.InterfaceNotImplemented
     InfO = GroupsCore.InfiniteOrder
@@ -78,7 +100,7 @@ end
         @test_throws INI gens(G, 1)
         @test_throws INI ngens(G)
 
-        @test_throws INI GroupsCore.pseudo_rand(G, 2, 2)
+        @test_throws INI GroupsCore.rand_pseudo(G, 2, 2)
     end
 
     @testset "GroupElem Interface" begin

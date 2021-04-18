@@ -31,7 +31,7 @@ implement the `Group` interface.
 
 ```@docs
 one(::Group)
-order(::Type{<:Integer}, ::Group)
+order(::Type{T}, ::Group) where T
 gens(::Group)
 rand
 ```

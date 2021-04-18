@@ -15,9 +15,9 @@ Base.one(G::Group) =
     throw(InterfaceNotImplemented(:Group, "Base.one(::$(typeof(G)))"))
 
 @doc Markdown.doc"""
-    order(I::Type{Integer} = BigInt, G::Group)
+    order(::Type{T} = BigInt, G::Group) where T
 
-Return the order of $G$ as an instance of `I`. If $G$ is of infinite order,
+Return the order of $G$ as an instance of `T`. If $G$ is of infinite order,
 `GroupsCore.InfiniteOrder` exception will be thrown.
 
 !!! warning
@@ -25,14 +25,14 @@ Return the order of $G$ as an instance of `I`. If $G$ is of infinite order,
     Only arbitrary sized integers are required to return a mathematically
     correct answer.
 """
-function order(::Type{<:Integer}, G::Group)
+function order(::Type{T}, G::Group) where T
     if !isfinite(G)
         throw(InfiniteOrder(G))
     end
     throw(
         InterfaceNotImplemented(
             :Group,
-            "GroupsCore.order(::Type{<:Integer}, ::$(typeof(G)))",
+            "GroupsCore.order(::Type{$T}, ::$(typeof(G)))",
         )
     )
 end
@@ -161,5 +161,5 @@ function ngens(G::Group)
     )
 end
 
-pseudo_rand(G::Group, args...) = pseudo_rand(Random.default_rng(), G, args...)
-pseudo_rand(rng::Random.AbstractRNG, G::Group, args...) = rand(rng, G, args...)
+rand_pseudo(G::Group, args...) = rand_pseudo(Random.default_rng(), G, args...)
+rand_pseudo(rng::Random.AbstractRNG, G::Group, args...) = rand(rng, G, args...)
