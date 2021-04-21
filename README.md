@@ -18,6 +18,9 @@ This should standardize the groups within and outside of the OSCAR project.
 For an implemented interface please have a look at `/test` folder, where several
 example implementations are tested against the conformance test suite:
   * [`CyclicGroup`](https://github.com/kalmarek/GroupsCore.jl/blob/main/test/cyclic.jl)
+  * [`InfCyclicGroup`](https://github.com/kalmarek/GroupsCore.jl/blob/main/test/infinite_cyclic.jl)
+  * [`DirectProduct`](https://github.com/kalmarek/GroupsCore.jl/blob/main/src/constructions/direct_product.jl)
+  * [`WreathProduct`](https://github.com/kalmarek/GroupsCore.jl/blob/main/src/constructions/wreath_product.jl)
 
 To test the conformance of a group implementation one can run
 
