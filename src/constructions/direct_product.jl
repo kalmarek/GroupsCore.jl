@@ -26,7 +26,7 @@ Base.eltype(::Type{<:DirectProduct{Gt,Ht,GEl,HEl}}) where {Gt,Ht,GEl,HEl} =
 function Base.iterate(G::DirectProduct)
     itr = Iterators.product(G.first, G.last)
     res = iterate(itr)
-    @assert !isnothing(res)
+    @assert res !== nothing 
     elt = DirectProductElement(first(res), G)
     return elt, (iterator = itr, state = last(res))
 end

@@ -34,7 +34,7 @@ Base.eltype(::Type{<:DirectPower{Gr,N,GEl}}) where {Gr,N,GEl} =
 function Base.iterate(G::DirectPower)
     itr = Iterators.ProductIterator(ntuple(i -> G.group, _nfold(G)))
     res = iterate(itr)
-    @assert !isnothing(res)
+    @assert res !== nothing
     elt = DirectPowerElement(first(res), G)
     return elt, (iterator = itr, state = last(res))
 end

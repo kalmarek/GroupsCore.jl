@@ -56,7 +56,7 @@ Base.eltype(::Type{<:WreathProduct{DP,PGr}}) where {DP,PGr} =
 function Base.iterate(G::WreathProduct)
     itr = Iterators.product(G.N, G.P)
     res = iterate(itr)
-    @assert !isnothing(res)
+    @assert res !== nothing
     elt = WreathProductElement(first(res)..., G)
     return elt, (iterator = itr, state = last(res))
 end
