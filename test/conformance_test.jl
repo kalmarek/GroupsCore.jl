@@ -162,8 +162,9 @@ function test_GroupElement_interface(g::GEl, h::GEl) where {GEl<:GroupElement}
                 @test order(Int16, g) isa Int16
                 @test order(BigInt, g) isa BigInt
                 @test order(g) >= 1
-                @test iszero(order(parent(g)) % order(g))
-
+                if isfinite(parent(g))
+                    @test iszero(order(parent(g)) % order(g))
+                end
                 if !isone(g) && !isone(g^2)
                     @test order(g) > 2
                 end
