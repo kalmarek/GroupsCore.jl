@@ -25,7 +25,6 @@ function Base.rand(
 end
 
 GroupsCore.parent(c::InfCyclicGroupElement) = InfCyclicGroup()
-GroupsCore.parent_type(::Type{InfCyclicGroupElement}) = InfCyclicGroup
 Base.:(==)(g::InfCyclicGroupElement, h::InfCyclicGroupElement) = g.val == h.val
 
 # since InfCyclicGroupElement is NOT isbits, we need to define

@@ -30,7 +30,6 @@ function Base.rand(
 end
 
 GroupsCore.parent(c::CyclicGroupElement) = c.parent
-GroupsCore.parent_type(::Type{CyclicGroupElement}) = CyclicGroup
 Base.:(==)(g::CyclicGroupElement, h::CyclicGroupElement) =
     parent(g) === parent(h) && g.residual == h.residual
 

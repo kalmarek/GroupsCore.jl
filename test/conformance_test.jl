@@ -10,7 +10,6 @@ function test_Group_interface(G::Group)
                 @test length(G) > 0
 
                 @test eltype(G) <: GroupElement
-                @test GroupsCore.elem_type(typeof(G)) == eltype(G)
                 @test one(G) isa eltype(G)
 
                 if GroupsCore.hasgens(G)
@@ -73,8 +72,6 @@ function test_GroupElement_interface(g::GEl, h::GEl) where {GEl<:GroupElement}
             G = parent(g)
 
             @test eltype(G) == typeof(g)
-            @test GroupsCore.parent_type(typeof(g)) == typeof(G)
-            @test GroupsCore.elem_type(GroupsCore.parent_type(g)) == typeof(g)
 
             @test one(g) isa eltype(G)
 
