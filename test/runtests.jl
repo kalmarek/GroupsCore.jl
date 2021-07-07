@@ -1,7 +1,6 @@
 using GroupsCore
 using Test
 import AbstractAlgebra
-include("symmetric.jl")
 
 include("conformance_test.jl")
 

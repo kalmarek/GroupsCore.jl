@@ -2,14 +2,9 @@ module GroupsCore
 
 import Random
 import Markdown
-import AbstractAlgebra
-import AbstractAlgebra: elem_type, gens, ngens, order, parent_type
-import AbstractAlgebra: inv!, mul!
-const Group = AbstractAlgebra.Group
-const GroupElement = AbstractAlgebra.GroupElem
 
-# abstract type Group end
-# abstract type GroupElement end
+abstract type Group end
+abstract type GroupElement end
 
 export Group, GroupElement
 export commutator, gens, hasgens, isfiniteorder, ngens, order
