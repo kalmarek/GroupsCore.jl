@@ -19,7 +19,6 @@ The remaining obligatory methods are:
 
 ```@docs
 parent(::GroupElement)
-GroupsCore.parent_type(::Type{<:GroupElement})
 :(==)(::GEl, ::GEl) where {GEl <: GroupElement}
 isfiniteorder(::GroupElement)
 inv(::GroupElement)
