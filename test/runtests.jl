@@ -23,11 +23,11 @@ include("infinite_cyclic.jl")
         test_GroupElement_interface(rand(G, 2)...)
     end
 
-    @testset "Symmetric(5)" begin
-        G = AbstractAlgebra.SymmetricGroup(5)
-        test_Group_interface(G)
-        test_GroupElement_interface(rand(G, 2)...)
-    end
+    # @testset "Symmetric(5)" begin
+    #     G = AbstractAlgebra.SymmetricGroup(5)
+    #     test_Group_interface(G)
+    #     test_GroupElement_interface(rand(G, 2)...)
+    # end
 
     include("extensions.jl")
 end
