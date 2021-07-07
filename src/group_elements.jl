@@ -178,8 +178,13 @@ function Base.:(^)(g::GroupElement, n::Integer)
     return Base.power_by_squaring(g, n)
 end
 
-# NOTE: Modification RECOMMENDED for performance reasons
-Base.hash(g::GroupElement, h::UInt) = hash(typeof(g), h)
+function Base.hash(g::GroupElement, h::UInt)
+    h = hash(typeof(g), h)
+    for fn in fieldnames(typeof(g))
+        h = hash(getfield(g, fn), h)
+    end
+    return h
+end
 
 ################################################################################
 # Mutable API where modifications are recommended for performance reasons
