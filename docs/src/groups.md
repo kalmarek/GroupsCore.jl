@@ -73,11 +73,7 @@ mathematically correct fallback. If your group is finite by definition,
 implementing the correct `IteratorSize` (i.e. `Base.HasLength()`, or
 `Base.HasShape{N}()`) will simplify several other methods, which will be then
 optimized to work only based on the type of the group. In particular when the
-information is derivable from the type, there is no need to extend
-
-```@docs
-Base.isfinite(G::Group)
-```
+information is derivable from the type, there is no need to extend `Base.isfinite`
 
 !!! note
     In the case that `IteratorSize(Gr) == IsInfinite()`, one should define
@@ -86,3 +82,10 @@ Base.isfinite(G::Group)
     For practical reasons the largest group you could iterate over in your
     lifetime is of order that fits into an `Int`. For example, $2^{63}$
     nanoseconds comes to 290 years.
+
+## Additional methods
+
+```@docs
+Base.isfinite(G::Group)
+istrivial(G::Group)
+```
