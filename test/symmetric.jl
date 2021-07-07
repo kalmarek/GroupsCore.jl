@@ -15,6 +15,12 @@ Base.length(G::SymmetricGroup) = order(Int, G)
 Base.IteratorSize(::Type{<:AbstractAlgebra.AbstractPermutationGroup}) = Base.HasLength()
 
 function GroupsCore.gens(G::SymmetricGroup{I}) where {I}
+    G.n == 1 && return eltype(G)[]
+    if G.n == 2
+        a = one(G)
+        a.d[1], a.d[2] = 2, 1
+        return [a]
+    end
     a, b = one(G), one(G)
     circshift!(a.d, b.d, -1)
     b.d[1], b.d[2] = 2, 1

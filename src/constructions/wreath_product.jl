@@ -87,8 +87,11 @@ Base.size(G::WreathProduct) = (length(G.N), length(G.P))
 GroupsCore.order(::Type{I}, G::WreathProduct) where {I<:Integer} =
     convert(I, order(I, G.N) * order(I, G.P))
 
-GroupsCore.gens(G::WreathProduct) =
-    [WreathProductElement(n, p, G) for n in gens(G.N) for p in gens(G.P)]
+function GroupsCore.gens(G::WreathProduct)
+    N_gens = [WreathProductElement(n, one(G.P), G) for n in gens(G.N)]
+    P_gens = [WreathProductElement(one(G.N), p, G) for p in gens(G.P)]
+    return [N_gens; P_gens]
+end
 
 Base.isfinite(G::WreathProduct) = isfinite(G.N) && isfinite(G.P)
 

@@ -26,7 +26,7 @@ Base.eltype(::Type{<:DirectProduct{Gt,Ht,GEl,HEl}}) where {Gt,Ht,GEl,HEl} =
 function Base.iterate(G::DirectProduct)
     itr = Iterators.product(G.first, G.last)
     res = iterate(itr)
-    @assert res !== nothing 
+    @assert res !== nothing
     elt = DirectProductElement(first(res), G)
     return elt, (iterator = itr, state = last(res))
 end
@@ -56,10 +56,14 @@ Base.size(G::DirectProduct) = (length(G.first), length(G.last))
 GroupsCore.order(::Type{I}, G::DirectProduct) where {I<:Integer} =
     convert(I, order(I, G.first) * order(I, G.last))
 
+GroupsCore.ngens(G::DirectProduct) = ngens(G.first) + ngens(G.last)
+
 function GroupsCore.gens(G::DirectProduct)
-    itr = Iterators.product(gens(G.first), gens(G.last))
-    generators = [DirectProductElement(elts, G) for elts in itr]
-    return reshape(generators, (length(generators),))
+    gens_first = [DirectProductElement((g, one(G.last)), G) for g in gens(G.first)]
+
+    gens_last = [DirectProductElement((one(G.first), g), G) for g in gens(G.last)]
+
+    return [gens_first; gens_last]
 end
 
 Base.isfinite(G::DirectProduct) = isfinite(G.first) && isfinite(G.last)
