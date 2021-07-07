@@ -1,3 +1,4 @@
+using GroupsCore
 using Test
 
 function test_Group_interface(G::Group)
