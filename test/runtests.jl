@@ -54,8 +54,7 @@ end
         test_GroupElement_interface(rand(GGG, 2)...)
     end
     @testset "WreathProduct" begin
-        W =
-            let G = AbstractAlgebra.SymmetricGroup(2),
+        W = let G = AbstractAlgebra.SymmetricGroup(2),
                 P = AbstractAlgebra.SymmetricGroup(4)
 
                 GroupsCore.Constructions.WreathProduct(G, P)

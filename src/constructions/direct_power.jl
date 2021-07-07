@@ -20,9 +20,6 @@ DirectPowerElement(
     G::DirectPower,
 ) = DirectPowerElement(ntuple(i -> elts[i], _nfold(G)), G)
 
-# (G::DirectPower{Gr, N, GEl})(elts::NTuple{GEl}) where {Gr, N, GEl} =
-#     DirectPowerElement(elts, G)
-
 _nfold(::DirectPower{Gr,N}) where {Gr,N} = N
 
 Base.one(G::DirectPower) =
@@ -58,10 +55,23 @@ Base.size(G::DirectPower) = ntuple(_ -> length(G.group), _nfold(G))
 GroupsCore.order(::Type{I}, G::DirectPower) where {I<:Integer} =
     convert(I, order(I, G.group)^_nfold(G))
 
+GroupsCore.ngens(G::DirectPower) = _nfold(G)*ngens(G.group)
+
+function GroupsCore.gens(G::DirectPower, i::Integer)
+    k = ngens(G.group)
+    ci = CartesianIndices((k, _nfold(G)))
+    @boundscheck checkbounds(ci, i)
+    r, c = Tuple(ci[i])
+    tup = ntuple(j -> j == c ? gens(G.group, r) : one(G.group), _nfold(G))
+    return DirectPowerElement(tup, G)
+end
+
 function GroupsCore.gens(G::DirectPower)
-    itr = Iterators.ProductIterator(ntuple(i -> gens(G.group), _nfold(G)))
-    generators = [DirectPowerElement(elts, G) for elts in itr]
-    return reshape(generators, (length(generators),))
+    N = _nfold(G)
+    S = gens(G.group)
+    tups = [ntuple(j->(i == j ? s : one(s)), N) for i in 1:N for s in S]
+
+    return [DirectPowerElement(elts, G) for elts in tups]
 end
 
 Base.isfinite(G::DirectPower) = isfinite(G.group)
