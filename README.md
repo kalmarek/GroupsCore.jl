@@ -7,11 +7,12 @@
 
 ----
 
-An experimental group interface for the
-[OSCAR](https://oscar.computeralgebra.de/) project. The aim of this package is
-to standardize the common assumptions and functions on group i.e. to create
+The aim of this package is to standardize common assumptions on and functions for groups, i.e. to create
 Group interface.
-This should standardize the groups within and outside of the OSCAR project.
+Packages using it include:
+* [Groups.jl](https://github.com/kalmarek/Groups.jl),
+* [SymbolicWedderburn.jl](https://github.com/kalmarek/SymbolicWedderburn.jl),
+* [Oscar](https://github.com/oscar-system/Oscar.jl) project.
 
 ## Examples and Conformance testing
 
@@ -28,7 +29,7 @@ To test the conformance of a group implementation one can run
 using GroupsCore
 include(joinpath(pathof(GroupsCore), "..", "..", "test", "conformance_test.jl"))
 include("my_group.jl")
-let G = MyFancyGroup(15, 37, 42)
+let G = MyFancyGroup(...)
     test_Group_interface(G)
     test_GroupElement_interface(rand(G, 2)...)
     nothing

@@ -117,15 +117,6 @@ If you know what you're doing, choose an appropriate integer and redefine
 ################################################################################
 
 @doc Markdown.doc"""
-    elem_type(::Type{<:Group})
-    elem_type(G::Group)
-
-Alias for [`eltype`](@ref GroupsCore.eltype).
-"""
-elem_type(::Type{Gr}) where {Gr <: Group} = eltype(Gr)
-elem_type(G::Group) = eltype(G)
-
-@doc Markdown.doc"""
     isfinite(G::Group)
 Test whether group $G$ is finite.
 

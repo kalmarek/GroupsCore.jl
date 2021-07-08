@@ -15,18 +15,6 @@ Base.parent(g::GroupElement) =
     throw(InterfaceNotImplemented(:Group, "Base.parent(::$(typeof(g)))"))
 
 @doc Markdown.doc"""
-    parent_type(::Type{<:GroupElement})
-
-Return the type of parent object, based on the type of its elements.
-"""
-parent_type(::Type{GEl}) where {GEl <: GroupElement} =
-    throw(InterfaceNotImplemented(
-        :Group,
-        "GroupsCore.parent_type(::Type{$GEl})"
-       ))
-parent_type(g::GroupElement) = parent_type(typeof(g))
-
-@doc Markdown.doc"""
     ==(g::GEl, h::GEl) where {GEl <: GroupElement}
 
 Return `true` if and only if the mathematical equality $g = h$ holds.
@@ -190,8 +178,13 @@ function Base.:(^)(g::GroupElement, n::Integer)
     return Base.power_by_squaring(g, n)
 end
 
-# NOTE: Modification RECOMMENDED for performance reasons
-Base.hash(g::GroupElement, h::UInt) = hash(typeof(g), h)
+function Base.hash(g::GroupElement, h::UInt)
+    h = hash(typeof(g), h)
+    for fn in fieldnames(typeof(g))
+        h = hash(getfield(g, fn), h)
+    end
+    return h
+end
 
 ################################################################################
 # Mutable API where modifications are recommended for performance reasons

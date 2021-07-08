@@ -4,11 +4,8 @@ CurrentModule = GroupsCore
 
 # GroupsCore
 
-An experimental group interface for the
-[OSCAR](https://oscar.computeralgebra.de/) project. The aim of this package is
-to standardize the common assumptions and functions on group i.e. to create
+The aim of this package is to standardize the common assumptions and functions on group i.e. to create
 Group interface.
-This should standardize the groups within and outside of the OSCAR project.
 
 The protocol consists of two parts:
   * [`Group`](@ref H1_groups) (parent object) methods,
@@ -39,3 +36,8 @@ let C = CyclicGroup(15)
     nothing
 end
 ```
+
+## Users
+* [Groups.jl](https://github.com/kalmarek/Groups.jl),
+* [SymbolicWedderburn.jl](https://github.com/kalmarek/SymbolicWedderburn.jl),
+* [Oscar](https://github.com/oscar-system/Oscar.jl) project.

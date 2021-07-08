@@ -5,7 +5,7 @@ abstract, we skip the `Abstract` prefix.
 
 ## Assumptions
 
-`GroupsCore` implement some methods with default values, which may not be
+`GroupsCore` implements some methods with default values, which may not be
 generally true for all groups. The intent is to limit the extent of the required
 interface. **This require special care** when implementing groups that need to
 override these default methods.
@@ -57,7 +57,7 @@ Therefore we put the following assumptions on iteration.
  * The first element of the iteration (e.g. given by `Base.first`) is the
    group identity.
  * Iteration over a finitely generated group should exhaust every fixed radius
-   ball around the identity (in word-length metric) in finite time.
+   ball around the identity (in word-length metric associated to `gens(G)`) in finite time.
 
 These are just the conventions, the iteration interface consists of standard
 julia methods:

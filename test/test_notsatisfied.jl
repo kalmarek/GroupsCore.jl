@@ -108,7 +108,6 @@ end
         g = SomeGroupElement(Int[])
 
         @test_throws INI parent(g)
-        @test_throws INI GroupsCore.parent_type(g)
         @test_throws INI g == g
         @test_throws INI isequal(g, g)
 
