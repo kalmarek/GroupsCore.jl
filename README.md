@@ -9,7 +9,7 @@
 
 The aim of this package is to standardize common assumptions on and functions for groups, i.e. to create
 Group interface.
-Users include:
+Packages using it include:
 * [Groups.jl](https://github.com/kalmarek/Groups.jl),
 * [SymbolicWedderburn.jl](https://github.com/kalmarek/SymbolicWedderburn.jl),
 * [Oscar](https://github.com/oscar-system/Oscar.jl) project.
