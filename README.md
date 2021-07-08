@@ -7,7 +7,7 @@
 
 ----
 
-The aim of this package is to standardize the common assumptions and functions on group i.e. to create
+The aim of this package is to standardize common assumptions on and functions for groups, i.e. to create
 Group interface.
 Users include:
 * [Groups.jl](https://github.com/kalmarek/Groups.jl),
