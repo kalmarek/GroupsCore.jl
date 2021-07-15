@@ -45,8 +45,10 @@ function test_Group_interface(G::Group)
                 @test order(Int16, G) isa Int16
                 @test order(BigInt, G) isa BigInt
                 @test order(G) >= 1
+                @test istrivial(G) == (order(G) == 1)
             else
                 @test_throws GroupsCore.InfiniteOrder order(G)
+                @test !istrivial(G)
             end
 
             @test rand(G) isa GroupElement

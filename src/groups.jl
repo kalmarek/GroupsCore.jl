@@ -134,6 +134,19 @@ function Base.isfinite(G::Group)
 You need to implement `Base.isfinite(::$(typeof(G))) yourself."""))
 end
 
+
+@doc Markdown.doc"""
+    istrivial(G::Group)
+Test whether group $G$ is trivial.
+
+The default implementation is based on `isfinite` and `order`.
+"""
+function istrivial(G::Group)
+    hasgens(G) && return all(isone, gens(G))
+    isfinite(G) && return isone(order(G))
+    return false
+end
+
 hasgens(G::Group) = true
 
 function gens(G::Group, i::Integer)
