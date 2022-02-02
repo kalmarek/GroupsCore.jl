@@ -31,8 +31,10 @@ function test_Group_interface(G::Group)
                 @test ngens(G) isa Int
                 @test gens(G) isa AbstractVector{eltype(G)}
                 @test length(gens(G)) == ngens(G)
-                @test first(gens(G)) == gens(G, 1)
-                @test last(gens(G)) == gens(G, ngens(G))
+                if ngens(G) > 0
+                    @test first(gens(G)) == gens(G, 1)
+                    @test last(gens(G)) == gens(G, ngens(G))
+                end
             else
                 # TODO: throw something more specific
                 @test_throws ErrorException gens(G)
