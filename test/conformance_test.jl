@@ -80,10 +80,6 @@ function test_GroupElement_interface(g::GEl, h::GEl) where {GEl<:GroupElement}
 
             @test one(G) == one(g) == one(h)
 
-            if GroupsCore._is_deepcopiable(g)
-                @test one(G) !== one(g)
-            end
-
             @test isone(one(G))
         end
 
@@ -100,9 +96,6 @@ function test_GroupElement_interface(g::GEl, h::GEl) where {GEl<:GroupElement}
 
             @test deepcopy(g) isa typeof(g)
             @test deepcopy(g) == g
-            if GroupsCore._is_deepcopiable(g)
-                @test deepcopy(g) !== g
-            end
             k = deepcopy(g)
             @test parent(k) === parent(g)
             @test hash(g) isa UInt
