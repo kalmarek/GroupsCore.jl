@@ -5,22 +5,38 @@ function test_Group_interface(G::Group)
     @testset "Group interface" begin
         @testset "Iteration protocol" begin
             IS = Base.IteratorSize(typeof(G))
-            if IS isa Base.HasLength || IS isa Base.HasShape
-                @test isfinite(G) == true
-                @test length(G) isa Int
-                @test length(G) > 0
-
-                @test eltype(G) <: GroupElement
-                @test one(G) isa eltype(G)
-
-                if GroupsCore.hasgens(G)
-                    @test first(iterate(G)) isa eltype(G)
-                    _, s = iterate(G)
-                    @test first(iterate(G, s)) isa eltype(G)
-                    @test isone(first(G))
-                end
-            else
+            if IS isa Base.IsInfinite
                 @test isfinite(G) == false
+            else
+                isfiniteG = false
+                if IS isa Base.HasLength || IS isa Base.HasShape
+                    @test isfinite(G) == true
+                    isfiniteG = true
+                else
+                    @test IS isa Base.SizeUnknown
+                    try
+                        @test isfinite(G) isa Bool
+                        isfiniteG = isfinite(G)
+                    catch e
+                        @test e isa GroupsCore.InfiniteOrder
+                        isfiniteG = false
+                    end
+                end
+
+                if isfiniteG
+                    @test length(G) isa Int
+                    @test length(G) > 0
+
+                    @test eltype(G) <: GroupElement
+                    @test one(G) isa eltype(G)
+
+                    if GroupsCore.hasgens(G)
+                        @test first(iterate(G)) isa eltype(G)
+                        _, s = iterate(G)
+                        @test first(iterate(G, s)) isa eltype(G)
+                        @test isone(first(G))
+                    end
+                end
             end
         end
 
