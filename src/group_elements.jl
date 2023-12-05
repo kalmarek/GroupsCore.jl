@@ -38,6 +38,8 @@ Base.deepcopy_internal(g::GroupElement, stackdict::IdDict) = throw(
 # or a singleton). However by defining this fallback we force everybody to
 # implement it, except isbits group elements.
 
+Base.copy(g::GroupElement) = deepcopy(g)
+
 @doc Markdown.doc"""
     inv(g::GroupElement)
 

@@ -147,6 +147,12 @@ function test_GroupElement_interface(g::GEl, h::GEl) where {GEl<:GroupElement}
             @test g^-3 == inv(g) * inv(g) * inv(g)
             @test (g, h) == (old_g, old_h)
 
+            pow(g,n) = g^n
+
+            @test pow(g, 6) isa GroupElement
+            @test pow(g, 1) isa GroupElement
+            @test (g, h) == (old_g, old_h)
+
             @test (g * h)^-1 == inv(h) * inv(g)
             @test (g, h) == (old_g, old_h)
 
