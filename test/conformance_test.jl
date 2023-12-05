@@ -33,7 +33,11 @@ function test_Group_interface(G::Group)
                     if GroupsCore.hasgens(G)
                         @test first(iterate(G)) isa eltype(G)
                         _, s = iterate(G)
-                        @test first(iterate(G, s)) isa eltype(G)
+                        if length(G) == 1
+                            @test isnothing(iterate(G, s))
+                        else
+                            @test first(iterate(G, s)) isa eltype(G)
+                        end
                         @test isone(first(G))
                     end
                 end
