@@ -26,7 +26,7 @@ function Base.rand(
     rs::Random.SamplerTrivial{<:CyclicGroup},
 )
     C = rs[]
-    return CyclicGroupElement(rand(0:C.order-1), C)
+    return CyclicGroupElement(rand(rng, 0:C.order-1), C)
 end
 
 GroupsCore.parent(c::CyclicGroupElement) = c.parent
