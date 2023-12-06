@@ -9,10 +9,6 @@ struct SomeGroupElement <: GroupElement
     elts::Vector{Int} # SomeGroupElement is not isbits anymore
 end
 
-if VERSION < v"1.5.0"
-    contains(haystack, needle) = occursin(needle, haystack)
-end
-
 @testset "Exceptions" begin
     @testset "InterfaceNotImplemented exception" begin
         @test GroupsCore.InterfaceNotImplemented(
