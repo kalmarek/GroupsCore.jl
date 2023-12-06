@@ -26,18 +26,12 @@ function Base.rand(
     rs::Random.SamplerTrivial{<:CyclicGroup},
 )
     C = rs[]
-    return CyclicGroupElement(rand(0:C.order-1), C)
+    return CyclicGroupElement(rand(rng, 0:C.order-1), C)
 end
 
 GroupsCore.parent(c::CyclicGroupElement) = c.parent
 Base.:(==)(g::CyclicGroupElement, h::CyclicGroupElement) =
     parent(g) === parent(h) && g.residual == h.residual
-
-# since CyclicGroupElement is isbits, there is no need to define for julia>=1.3.0
-if VERSION < v"1.3.0"
-    Base.deepcopy_internal(g::CyclicGroupElement, ::IdDict) =
-        CyclicGroupElement(deepcopy(g.residual), parent(g))
-end
 
 Base.inv(g::CyclicGroupElement) =
     (C = parent(g); CyclicGroupElement(order(UInt, C) - g.residual, C))

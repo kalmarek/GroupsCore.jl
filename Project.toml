@@ -8,11 +8,10 @@ Markdown = "d6f4376e-aef5-505a-96c1-9c027394607a"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 
 [compat]
-julia = "1"
+julia = "1.6"
 
 [extras]
-AbstractAlgebra = "c3fe647b-3220-5bb0-a1ea-a7954cac585d"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["Test", "AbstractAlgebra"]
+test = ["Test"]
