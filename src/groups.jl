@@ -147,6 +147,3 @@ function ngens(G::Group)
         "Group does not seem to have generators. Did you alter `hasgens(::$(typeof(G)))`?",
     )
 end
-
-rand_pseudo(G::Group, args...) = rand_pseudo(Random.GLOBAL_RNG, G, args...)
-rand_pseudo(rng::Random.AbstractRNG, G::Group, args...) = rand(rng, G, args...)
