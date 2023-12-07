@@ -50,23 +50,6 @@ The result of this function is undefined unless `GroupsCore.hasgens(G)` return
 gens(G::Group) =
     throw(InterfaceNotImplemented(:Group, "GroupsCore.gens(::$(typeof(G)))"))
 
-@doc Markdown.doc"""
-    Base.rand(rng::Random.AbstractRNG, rs::Random.SamplerTrivial{Gr}) where {Gr <: Group}
-
-Return a random group element, treating the group as a collection.
-"""
-function Base.rand(
-    rng::Random.AbstractRNG,
-    rs::Random.SamplerTrivial{Gr}
-) where {Gr <: Group}
-    throw(
-        InterfaceNotImplemented(
-            :Random,
-            "Base.rand(::Random.AbstractRNG, ::Random.SamplerTrivial{$Gr}))",
-        ),
-    )
-end
-
 ################################################################################
 # Iterators
 ################################################################################

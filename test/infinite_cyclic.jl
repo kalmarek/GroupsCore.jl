@@ -17,13 +17,6 @@ Base.IteratorSize(::Type{InfCyclicGroup}) = Base.IsInfinite()
 
 GroupsCore.gens(C::InfCyclicGroup) = [InfCyclicGroupElement(1)]
 
-function Base.rand(
-    rng::Random.AbstractRNG,
-    rs::Random.SamplerTrivial{<:InfCyclicGroup},
-)
-    return InfCyclicGroupElement(rand(rng, Int))
-end
-
 GroupsCore.parent(c::InfCyclicGroupElement) = InfCyclicGroup()
 Base.:(==)(g::InfCyclicGroupElement, h::InfCyclicGroupElement) = g.val == h.val
 

@@ -91,7 +91,6 @@ end
         @test_throws INI gens(G)
 
         Base.eltype(::Type{SomeGroup}) = SomeGroupElement
-        @test_throws INI rand(G, 2)
 
         @test_throws INI gens(G, 1)
         @test_throws INI ngens(G)
