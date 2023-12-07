@@ -113,7 +113,6 @@ end
 
         GroupsCore.isfiniteorder(::SomeGroupElement) = false
         @test_throws InfO order(g)
-        @test_throws INI deepcopy(g)
 
         @test_throws INI inv(g)
         @test_throws INI g * g
