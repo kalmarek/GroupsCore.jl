@@ -6,15 +6,14 @@
 # Obligatory methods
 ################################################################################
 
-@doc Markdown.doc"""
+"""
     parent(g::GroupElement)
-
 Return the parent object of the group element.
 """
 Base.parent(g::GroupElement) =
     throw(InterfaceNotImplemented(:Group, "Base.parent(::$(typeof(g)))"))
 
-@doc Markdown.doc"""
+"""
     ==(g::GEl, h::GEl) where {GEl <: GroupElement}
 
 Return `true` if and only if the mathematical equality $g = h$ holds.
@@ -39,10 +38,13 @@ Base.:(*)(g::GEl, h::GEl) where {GEl <: GroupElement} = throw(
     ),
 )
 
-@doc Markdown.doc"""
+"""
     isfiniteorder(g::GroupElement)
+Return `true` if `g` is of finite order, possibly without computing it.
 
-Return `true` if $g$ is of finite order, possibly without computing it.
+!!! note
+    If finiteness of a group can be decided based on its type there is no need
+    to extend `isfiniteorder` for its elements.
 """
 function isfiniteorder(g::GroupElement)
     isfinite(parent(g)) && return true
@@ -57,14 +59,12 @@ end
 
 Base.one(g::GroupElement) = one(parent(g))
 
-@doc Markdown.doc"""
-    order(::Type{T} = BigInt, g::GroupElement) where T
-
-Return the order of $g$ as an instance of `I`. If $g$ is of infinite order
+"""
+    order([::Type{T} = BigInt, ]g::GroupElement) where T
+Return the order of `g` as an instance of `T`. If `g` is of infinite order
 `GroupsCore.InfiniteOrder` exception will be thrown.
 
 !!! warning
-
     Only arbitrary sized integers are required to return a mathematically
     correct answer.
 """
@@ -82,25 +82,22 @@ function order(::Type{T}, g::GroupElement) where T
 end
 order(g::GroupElement) = order(BigInt, g)
 
-@doc Markdown.doc"""
+"""
     conj(g::GEl, h::GEl) where {GEl <: GroupElement}
-
-Return conjugation of $g$ by $h$, i.e. $h^{-1} g h$.
+Return the conjugation of `g` by `h`, i.e. `inv(h)*g*h`.
 """
 Base.conj(g::GEl, h::GEl) where {GEl <: GroupElement} = conj!(similar(g), g, h)
 
-@doc Markdown.doc"""
+"""
     ^(g::GEl, h::GEl) where {GEl <: GroupElement}
-
 Alias for [`conj`](@ref GroupsCore.conj).
 """
 Base.:(^)(g::GEl, h::GEl) where {GEl <: GroupElement} = conj(g, h)
 
-@doc Markdown.doc"""
+"""
     commutator(g::GEl, h::GEl, k::GEl...) where {GEl <: GroupElement}
-
-Return the left associative iterated commutator $[[g, h], ...]$, where
-$[g, h] = g^{-1} h^{-1} g h$.
+Return the left associative iterated commutator ``[[g, h], ...]``, where
+``[g, h] = g^{-1} h^{-1} g h``.
 """
 function commutator(g::GEl, h::GEl, k::GEl...) where {GEl <: GroupElement}
     res = commutator!(similar(g), g, h)
@@ -154,42 +151,37 @@ end
 # Mutable API where modifications are recommended for performance reasons
 ################################################################################
 
-@doc Markdown.doc"""
+"""
     one!(g::GroupElement)
-
 Return `one(g)`, possibly modifying `g`.
 """
 one!(g::GroupElement) = one(parent(g))
 
-@doc Markdown.doc"""
+"""
     inv!(out::GEl, g::GEl) where {GEl <: GroupElement}
-
 Return `inv(g)`, possibly modifying `out`. Aliasing of `g` with `out` is
 allowed.
 """
 inv!(out::GEl, g::GEl) where {GEl <: GroupElement} = inv(g)
 
-@doc Markdown.doc"""
+"""
     mul!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement}
-
-Return $g h$, possibly modifying `out`. Aliasing of `g` or `h` with `out` is
+Return `g*h`, possibly modifying `out`. Aliasing of `g` or `h` with `out` is
 allowed.
 """
 mul!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement} = g * h
 
-@doc Markdown.doc"""
+"""
     div_right!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement}
-
-Return $g h^{-1}$, possibly modifying `out`. Aliasing of `g` or `h` with `out`
+Return `g*inv(h)`, possibly modifying `out`. Aliasing of `g` or `h` with `out`
 is allowed.
 """
 div_right!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement} =
     mul!(out, g, inv(h))
 
-@doc Markdown.doc"""
+"""
     div_left!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement}
-
-Return $h^{-1} g$, possibly modifying `out`. Aliasing of `g` or `h` with `out`
+Return `inv(h)*g`, possibly modifying `out`. Aliasing of `g` or `h` with `out`
 is allowed.
 """
 function div_left!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement}
@@ -197,10 +189,9 @@ function div_left!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement}
     return mul!(out, out, g)
 end
 
-@doc Markdown.doc"""
+"""
     conj!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement}
-
-Return $h^{-1} g h$, possibly modifying `out`. Aliasing of `g` or `h` with
+Return `inv(h)*g*h`, possibly modifying `out`. Aliasing of `g` or `h` with
 `out` is allowed.
 """
 function conj!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement}
@@ -209,10 +200,9 @@ function conj!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement}
     return mul!(out, out, h)
 end
 
-@doc Markdown.doc"""
+"""
     commutator!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement}
-
-Return $g^{-1} h^{-1} g h$, possibly modifying `out`. Aliasing of `g` or `h`
+Return `inv(g)*inv(h)*g*h`, possibly modifying `out`. Aliasing of `g` or `h`
 with `out` is allowed.
 """
 function commutator!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement}

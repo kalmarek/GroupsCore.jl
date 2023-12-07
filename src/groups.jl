@@ -9,14 +9,12 @@
 Base.one(G::Group) =
     throw(InterfaceNotImplemented(:Group, "Base.one(::$(typeof(G)))"))
 
-@doc Markdown.doc"""
-    order(::Type{T} = BigInt, G::Group) where T
-
-Return the order of $G$ as an instance of `T`. If $G$ is of infinite order,
+"""
+    order([::Type{T} = BigInt, ]G::Group) where T
+Return the order of `G` as an instance of `T`. If `G` is of infinite order,
 `GroupsCore.InfiniteOrder` exception will be thrown.
 
 !!! warning
-
     Only arbitrary sized integers are required to return a mathematically
     correct answer.
 """
@@ -31,16 +29,11 @@ function order(::Type{T}, G::Group) where T
         )
     )
 end
-
 order(G::Group) = order(BigInt, G)
 
-@doc Markdown.doc"""
+"""
     gens(G::Group)
-
-Return a random-access collection of generators of $G$.
-
-The result of this function is undefined unless `GroupsCore.hasgens(G)` return
-`true`.
+Return a random-access collection of generators of `G`.
 """
 gens(G::Group) =
     throw(InterfaceNotImplemented(:Group, "GroupsCore.gens(::$(typeof(G)))"))
@@ -70,9 +63,8 @@ function Base.iterate(G::Group, state)
     ))
 end
 
-@doc Markdown.doc"""
+"""
     IteratorSize(::Type{Gr}) where {Gr <: Group}
-
 Given the type of a group, return one of the following values:
  * `Base.IsInfinite()` if all instances of groups of type `Gr` are infinite.
  * `Base.HasLength()` or `Base.HasShape{N}()` if all instances are finite.
@@ -94,9 +86,9 @@ If you know what you're doing, choose an appropriate integer and redefine
 # Default implementations
 ################################################################################
 
-@doc Markdown.doc"""
+"""
     isfinite(G::Group)
-Test whether group $G$ is finite.
+Test whether group `G` is finite.
 
 The default implementation is based on `Base.IteratorSize`. Only groups of
 returning `Base.SizeUnknown()` should extend this method.
@@ -113,9 +105,9 @@ You need to implement `Base.isfinite(::$(typeof(G))) yourself."""))
 end
 
 
-@doc Markdown.doc"""
+"""
     istrivial(G::Group)
-Test whether group $G$ is trivial.
+Test whether group `G` is trivial.
 
 The default implementation is based on `isfinite` and `order`.
 """
