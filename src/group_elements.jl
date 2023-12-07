@@ -27,21 +27,23 @@ of words.
 !!! note
     This function may not return due to unsolvable word problem.
 """
-Base.:(==)(g::GEl, h::GEl) where {GEl <: GroupElement} = throw(
-    InterfaceNotImplemented(:Group, "Base.:(==)(::$GEl, ::$GEl)"),
-)
+Base.:(==)(g::GEl, h::GEl) where {GEl<:GroupElement} =
+    throw(InterfaceNotImplemented(:Group, "Base.:(==)(::$GEl, ::$GEl)"))
 
 Base.copy(g::GroupElement) = deepcopy(g)
 
-Base.inv(g::GroupElement) =
+function Base.inv(g::GroupElement)
     throw(InterfaceNotImplemented(:Group, "Base.inv(::$(typeof(g)))"))
+end
 
-Base.:(*)(g::GEl, h::GEl) where {GEl <: GroupElement} = throw(
-    InterfaceNotImplemented(
-        :Group,
-        "Base.:(*)(::$(typeof(g)), ::$(typeof(g)))",
-    ),
-)
+function Base.:(*)(g::GEl, h::GEl) where {GEl<:GroupElement}
+    throw(
+        InterfaceNotImplemented(
+            :Group,
+            "Base.:(*)(::$(typeof(g)), ::$(typeof(g)))",
+        ),
+    )
+end
 
 """
     isfiniteorder(g::GroupElement)
@@ -54,7 +56,10 @@ Return `true` if `g` is of finite order, possibly without computing it.
 function isfiniteorder(g::GroupElement)
     isfinite(parent(g)) && return true
     throw(
-        InterfaceNotImplemented(:Group, "GroupsCore.isfiniteorder(::$(typeof(g)))"),
+        InterfaceNotImplemented(
+            :Group,
+            "GroupsCore.isfiniteorder(::$(typeof(g)))",
+        ),
     )
 end
 
@@ -73,7 +78,7 @@ Return the order of `g` as an instance of `T`. If `g` is of infinite order
     Only arbitrary sized integers are required to return a mathematically
     correct answer.
 """
-function order(::Type{T}, g::GroupElement) where T
+function order(::Type{T}, g::GroupElement) where {T}
     isfiniteorder(g) || throw(InfiniteOrder(g))
     isone(g) && return T(1)
     o = T(1)
@@ -91,20 +96,20 @@ order(g::GroupElement) = order(BigInt, g)
     conj(g::GEl, h::GEl) where {GEl <: GroupElement}
 Return the conjugation of `g` by `h`, i.e. `inv(h)*g*h`.
 """
-Base.conj(g::GEl, h::GEl) where {GEl <: GroupElement} = conj!(similar(g), g, h)
+Base.conj(g::GEl, h::GEl) where {GEl<:GroupElement} = conj!(similar(g), g, h)
 
 """
     ^(g::GEl, h::GEl) where {GEl <: GroupElement}
 Alias for [`conj`](@ref GroupsCore.conj).
 """
-Base.:(^)(g::GEl, h::GEl) where {GEl <: GroupElement} = conj(g, h)
+Base.:(^)(g::GEl, h::GEl) where {GEl<:GroupElement} = conj(g, h)
 
 """
     commutator(g::GEl, h::GEl, k::GEl...) where {GEl <: GroupElement}
 Return the left associative iterated commutator ``[[g, h], ...]``, where
 ``[g, h] = g^{-1} h^{-1} g h``.
 """
-function commutator(g::GEl, h::GEl, k::GEl...) where {GEl <: GroupElement}
+function commutator(g::GEl, h::GEl, k::GEl...) where {GEl<:GroupElement}
     res = commutator!(similar(g), g, h)
     for l in k
         res = commutator!(res, res, l)
@@ -114,8 +119,9 @@ end
 
 Base.literal_pow(::typeof(^), g::GroupElement, ::Val{-1}) = inv(g)
 
-Base.:(/)(g::GEl, h::GEl) where {GEl <: GroupElement} =
-    div_right!(similar(g), g, h)
+function Base.:(/)(g::GEl, h::GEl) where {GEl<:GroupElement}
+    return div_right!(similar(g), g, h)
+end
 
 ################################################################################
 # Default implementations that (might) need performance modification
@@ -125,7 +131,6 @@ Base.similar(g::GroupElement) = one(g)
 Base.isone(g::GroupElement) = g == one(g)
 
 function Base.:(^)(g::GroupElement, n::Integer)
-    n == 0 && return one(g)
     n < 0 && return inv(g)^-n
     return Base.power_by_squaring(g, n)
 end
@@ -153,21 +158,21 @@ one!(g::GroupElement) = one(parent(g))
 Return `inv(g)`, possibly modifying `out`. Aliasing of `g` with `out` is
 allowed.
 """
-inv!(out::GEl, g::GEl) where {GEl <: GroupElement} = inv(g)
+inv!(out::GEl, g::GEl) where {GEl<:GroupElement} = inv(g)
 
 """
     mul!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement}
 Return `g*h`, possibly modifying `out`. Aliasing of `g` or `h` with `out` is
 allowed.
 """
-mul!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement} = g * h
+mul!(out::GEl, g::GEl, h::GEl) where {GEl<:GroupElement} = g * h
 
 """
     div_right!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement}
 Return `g*inv(h)`, possibly modifying `out`. Aliasing of `g` or `h` with `out`
 is allowed.
 """
-div_right!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement} =
+div_right!(out::GEl, g::GEl, h::GEl) where {GEl<:GroupElement} =
     mul!(out, g, inv(h))
 
 """
@@ -175,7 +180,7 @@ div_right!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement} =
 Return `inv(h)*g`, possibly modifying `out`. Aliasing of `g` or `h` with `out`
 is allowed.
 """
-function div_left!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement}
+function div_left!(out::GEl, g::GEl, h::GEl) where {GEl<:GroupElement}
     out = (out === g || out === h) ? inv(h) : inv!(out, h)
     return mul!(out, out, g)
 end
@@ -185,7 +190,7 @@ end
 Return `inv(h)*g*h`, possibly modifying `out`. Aliasing of `g` or `h` with
 `out` is allowed.
 """
-function conj!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement}
+function conj!(out::GEl, g::GEl, h::GEl) where {GEl<:GroupElement}
     out = (out === g || out === h) ? inv(h) : inv!(out, h)
     out = mul!(out, out, g)
     return mul!(out, out, h)
@@ -196,7 +201,7 @@ end
 Return `inv(g)*inv(h)*g*h`, possibly modifying `out`. Aliasing of `g` or `h`
 with `out` is allowed.
 """
-function commutator!(out::GEl, g::GEl, h::GEl) where {GEl <: GroupElement}
+function commutator!(out::GEl, g::GEl, h::GEl) where {GEl<:GroupElement}
     # TODO: can we make commutator! with 3 arguments without allocation??
     out = conj!(out, g, h)
     return div_left!(out, out, g)

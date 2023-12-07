@@ -11,7 +11,7 @@ Base.eltype(::Type{InfCyclicGroup}) = InfCyclicGroupElement
 Base.iterate(C::InfCyclicGroup) = one(C), 0
 function Base.iterate(C::InfCyclicGroup, state)
     state > 0 && return InfCyclicGroupElement(-state), -state
-    return InfCyclicGroupElement(state+1), state+1
+    return InfCyclicGroupElement(state + 1), state + 1
 end
 Base.IteratorSize(::Type{InfCyclicGroup}) = Base.IsInfinite()
 
@@ -22,8 +22,9 @@ Base.:(==)(g::InfCyclicGroupElement, h::InfCyclicGroupElement) = g.val == h.val
 
 Base.inv(g::InfCyclicGroupElement) = InfCyclicGroupElement(-g.val)
 
-Base.:(*)(g::InfCyclicGroupElement, h::InfCyclicGroupElement) =
-    InfCyclicGroupElement(g.val + h.val)
+function Base.:(*)(g::InfCyclicGroupElement, h::InfCyclicGroupElement)
+    return InfCyclicGroupElement(g.val + h.val)
+end
 
 GroupsCore.isfiniteorder(g::InfCyclicGroupElement) = isone(g) ? true : false
 
