@@ -20,10 +20,6 @@ GroupsCore.gens(C::InfCyclicGroup) = [InfCyclicGroupElement(1)]
 GroupsCore.parent(c::InfCyclicGroupElement) = InfCyclicGroup()
 Base.:(==)(g::InfCyclicGroupElement, h::InfCyclicGroupElement) = g.val == h.val
 
-# since InfCyclicGroupElement is NOT isbits, we need to define
-Base.deepcopy_internal(g::InfCyclicGroupElement, ::IdDict) =
-    InfCyclicGroupElement(deepcopy(g.val))
-
 Base.inv(g::InfCyclicGroupElement) = InfCyclicGroupElement(-g.val)
 
 Base.:(*)(g::InfCyclicGroupElement, h::InfCyclicGroupElement) =
