@@ -15,12 +15,17 @@ Base.parent(g::GroupElement) =
 
 """
     ==(g::GEl, h::GEl) where {GEl <: GroupElement}
+Return the _best effort_ equality for group elements.
 
-Return `true` if and only if the mathematical equality $g = h$ holds.
+If `==(g, h)` returns `true`` then the mathematical equality `g == h` holds.
+However `==(g, h)` may return `false` even if `g` and `h` represent
+mathematically equal group elements.
+
+For example, in a finitely presented group, `==` may return the equality
+of words.
 
 !!! note
-
-    This function may not return, due to unsolvable word problem.
+    This function may not return due to unsolvable word problem.
 """
 Base.:(==)(g::GEl, h::GEl) where {GEl <: GroupElement} = throw(
     InterfaceNotImplemented(:Group, "Base.:(==)(::$GEl, ::$GEl)"),
@@ -118,20 +123,6 @@ Base.:(/)(g::GEl, h::GEl) where {GEl <: GroupElement} =
 
 Base.similar(g::GroupElement) = one(g)
 Base.isone(g::GroupElement) = g == one(g)
-
-@doc Markdown.doc"""
-    isequal(g::GEl, h::GEl) where {GEl <: GroupElement}
-
-Return the "best effort" equality for group elements.
-
-The implication `isequal(g, h)` → $g = h$, must be always satisfied, i.e.
-`isequal(g, h)` might return `false` even if `g == h` holds (i.e. $g$ and $h$
-are mathematically equal).
-
-For example, in a finitely presented group, `isequal` may return the equality
-of words.
-"""
-Base.isequal(g::GEl, h::GEl) where {GEl <: GroupElement} = g == h
 
 function Base.:(^)(g::GroupElement, n::Integer)
     n == 0 && return one(g)

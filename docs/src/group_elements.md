@@ -46,7 +46,6 @@ Base.one(::GroupElement)
 and
 
 ```@docs
-isequal(::GEl, ::GEl) where {GEl <: GroupElement}
 order(::Type{T}, ::GroupElement) where T
 conj
 :(^)(::GEl, ::GEl) where {GEl <: GroupElement}
