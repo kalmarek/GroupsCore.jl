@@ -18,19 +18,19 @@ Base.inv(::GroupElement)
 Base.:(*)(::GEl, ::GEl) where {GEl <: GroupElement}
 ```
 
+### A note on `deepcopy`
+
 The elements which are not of `isbitstype` should extend
+
 ```julia
 Base.deepcopy_internal(g::GroupElement, ::IdDict)
 ```
+
 according to
 [`Base.deepcopy`](https://docs.julialang.org/en/v1/base/base/#Base.deepcopy)
 docstring. Due to our assumption on parents of group elements (acting as local
 singleton objects), a group element and its `deepcopy` should have identical
 (i.e. `===`) parents.
-
-!!! note
-    If finiteness of a group can be decided based on its type there is no need
-    to extend `isfiniteorder`.
 
 ## Implemented methods
 
@@ -52,9 +52,7 @@ conj
 commutator
 ```
 
-### Performance modifications
-
-Some of the mentioned implemented methods may be altered for performance
+Moreover we provide basic implementation which should be altered for performance
 reasons:
 ```julia
 Base.:(^)(g::GroupElement, n::Integer)
@@ -66,7 +64,6 @@ Base.hash(::GroupElement, ::UInt)
 
 !!! warning
     Work-in-progress.
-
     Mutable API is considered private and hence may change between versions
     without warning.
 
