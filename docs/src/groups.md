@@ -27,13 +27,13 @@ manipulating groups can be implemented only with access to a generating set.
 ## Obligatory methods
 
 Here we list the minimal set of functions that a group object must extend to
-implement the `Group` interface.
+implement the `Group` interface:
+
+* `Base.one(::Group)` and
 
 ```@docs
-one(::Group)
 order(::Type{T}, ::Group) where T
 gens(::Group)
-rand
 ```
 
 ### Iteration

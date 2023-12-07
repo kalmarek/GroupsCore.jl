@@ -29,19 +29,9 @@ Base.:(==)(g::GEl, h::GEl) where {GEl <: GroupElement} = throw(
 
 Base.copy(g::GroupElement) = deepcopy(g)
 
-@doc Markdown.doc"""
-    inv(g::GroupElement)
-
-Return $g^{-1}$, the group inverse.
-"""
 Base.inv(g::GroupElement) =
     throw(InterfaceNotImplemented(:Group, "Base.inv(::$(typeof(g)))"))
 
-@doc Markdown.doc"""
-    *(g::GEl, h::GEl) where {GEl <: GroupElement}
-
-Return $g h$, the result of group binary operation.
-"""
 Base.:(*)(g::GEl, h::GEl) where {GEl <: GroupElement} = throw(
     InterfaceNotImplemented(
         :Group,
@@ -65,11 +55,6 @@ end
 # Default implementations
 ################################################################################
 
-@doc Markdown.doc"""
-    one(g::GroupElement)
-
-Return the identity element in the group of $g$.
-"""
 Base.one(g::GroupElement) = one(parent(g))
 
 @doc Markdown.doc"""
@@ -134,19 +119,7 @@ Base.:(/)(g::GEl, h::GEl) where {GEl <: GroupElement} =
 # Default implementations that (might) need performance modification
 ################################################################################
 
-@doc Markdown.doc"""
-    similar(g::GroupElement)
-
-Return a group element sharing the parent with $g$. Might be arbitrary and
-possibly uninitialized.
-"""
 Base.similar(g::GroupElement) = one(g)
-
-@doc Markdown.doc"""
-    isone(g::GroupElement)
-
-Return true if $g$ is the identity element.
-"""
 Base.isone(g::GroupElement) = g == one(g)
 
 @doc Markdown.doc"""

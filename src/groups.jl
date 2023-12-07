@@ -6,11 +6,6 @@
 # Obligatory methods
 ################################################################################
 
-@doc Markdown.doc"""
-    one(G::Group)
-
-Return the identity element of the group $G$.
-"""
 Base.one(G::Group) =
     throw(InterfaceNotImplemented(:Group, "Base.one(::$(typeof(G)))"))
 
