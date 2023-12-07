@@ -15,9 +15,7 @@ The protocol consists of two parts:
 This is due to the fact that hardly any information can be encoded in `Type`, we
 rely on parent objects that represent groups, as well as ordinary group
 elements. It is assumed that all elements of a group have **identical** parent
-(i.e.  `===`) so that parent objects behave locally as singletons. More on this
-can be read under
-[AbstractAlgebra.jl](https://nemocas.github.io/AbstractAlgebra.jl/latest/types/).
+(i.e.  `===`) so that parent objects behave locally as singletons.
 
 ## Examples and Conformance testing
 
@@ -42,5 +40,4 @@ end
 ## Users
 * [PermutationGroups.jl](https://github.com/kalmarek/PermutationGroups.jl)
 * [Groups.jl](https://github.com/kalmarek/Groups.jl),
-* [SymbolicWedderburn.jl](https://github.com/kalmarek/SymbolicWedderburn.jl),
-* [Oscar](https://github.com/oscar-system/Oscar.jl) project.
+* [SymbolicWedderburn.jl](https://github.com/kalmarek/SymbolicWedderburn.jl).
