@@ -40,12 +40,10 @@ end
 end
 
 @testset "SomeGroup: No interface implemented" begin
-
     INI = GroupsCore.InterfaceNotImplemented
     InfO = GroupsCore.InfiniteOrder
 
     @testset "Group Interface" begin
-
         G = SomeGroup()
 
         # Iteration
@@ -97,7 +95,6 @@ end
     end
 
     @testset "GroupElem Interface" begin
-
         g = SomeGroupElement(Int[])
 
         @test_throws INI parent(g)
@@ -117,7 +114,6 @@ end
         @test_throws INI inv(g)
         @test_throws INI g * g
     end
-
 end
 
 end # of module TestNotImplemented

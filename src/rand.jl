@@ -12,14 +12,18 @@ mutable struct PRASampler{T} <: Random.Sampler{T}
 end
 
 # constants taken from GAP
-function PRASampler(G, n::Integer=2ngens(G) + 10, scramble_time::Integer=10max(n, 10))
+function PRASampler(
+    G,
+    n::Integer = 2ngens(G) + 10,
+    scramble_time::Integer = 10max(n, 10),
+)
     return PRASampler(Random.default_rng(), G, n, scramble_time)
 end
 
 function Random.Sampler(
     RNG::Type{<:Random.AbstractRNG},
     G::Group,
-    repetition::Random.Repetition=Val(Inf)
+    repetition::Random.Repetition = Val(Inf),
 )
     return PRASampler(RNG(), G)
 end
@@ -27,8 +31,8 @@ end
 function PRASampler(
     rng::Random.AbstractRNG,
     G::Group,
-    n::Integer=2ngens(G) + 10,
-    scramble_time::Integer=10max(n, 10)
+    n::Integer = 2ngens(G) + 10,
+    scramble_time::Integer = 10max(n, 10),
 )
     if istrivial(G)
         return PRASampler(fill(one(G), n), one(G), one(G))

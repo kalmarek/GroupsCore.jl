@@ -5,66 +5,65 @@ of group elements should subtype.
 
 ## Obligatory methods
 
+```@docs
+parent(::GroupElement)
+:(==)(::GEl, ::GEl) where {GEl <: GroupElement}
+isfiniteorder(::GroupElement)
+```
+
+As well as the two arithmetic operations:
+
+```julia
+Base.inv(::GroupElement)
+Base.:(*)(::GEl, ::GEl) where {GEl <: GroupElement}
+```
+
+### A note on `deepcopy`
+
 The elements which are not of `isbitstype` should extend
+
 ```julia
 Base.deepcopy_internal(g::GroupElement, ::IdDict)
 ```
+
 according to
 [`Base.deepcopy`](https://docs.julialang.org/en/v1/base/base/#Base.deepcopy)
 docstring. Due to our assumption on parents of group elements (acting as local
 singleton objects), a group element and its `deepcopy` should have identical
 (i.e. `===`) parents.
 
-The remaining obligatory methods are:
-
-```@docs
-parent(::GroupElement)
-:(==)(::GEl, ::GEl) where {GEl <: GroupElement}
-isfiniteorder(::GroupElement)
-inv(::GroupElement)
-:(*)(::GEl, ::GEl) where {GEl <: GroupElement}
-```
-!!! note
-    If finiteness of a group can be decided based on its type there is no need
-    to extend `isfiniteorder`.
-
 ## Implemented methods
 
 Using the obligatory methods we implement the rest of the functions in
 `GroupsCore`. For starters, the first of these are:
+
 ```julia
-:(^)(::GroupElement, ::Integer)
-:(/)(::GEl, ::GEl) where {GEl <: GroupElement}
+Base.:(^)(::GroupElement, ::Integer)
+Base.:(/)(::GEl, ::GEl) where {GEl <: GroupElement}
+Base.one(::GroupElement)
 ```
+
 and
+
 ```@docs
-one(::GroupElement)
-isequal(::GEl, ::GEl) where {GEl <: GroupElement}
 order(::Type{T}, ::GroupElement) where T
 conj
 :(^)(::GEl, ::GEl) where {GEl <: GroupElement}
 commutator
 ```
 
-### Performance modifications
-
-Some of the mentioned implemented methods may be altered for performance
+Moreover we provide basic implementation which should be altered for performance
 reasons:
- * [`isequal`](@ref)
- * `Base.:(^)(g::GroupElement, n::Integer)`
- * [`order(::Type{T}, g::GroupElement) where T`](@ref)
- * `Base.hash(::GroupElement, ::UInt)`
-
-```@docs
-similar(::GroupElement)
-isone(::GroupElement)
+```julia
+Base.:(^)(g::GroupElement, n::Integer)
+Groups.Core.order([::Type{T}], g::GroupElement) where T
+Base.hash(::GroupElement, ::UInt)
 ```
 
 ### Mutable API
 
 !!! warning
     Work-in-progress.
-
     Mutable API is considered private and hence may change between versions
     without warning.
 

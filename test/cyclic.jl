@@ -14,19 +14,24 @@ Base.one(C::CyclicGroup) = CyclicGroupElement(0, C)
 
 Base.eltype(::Type{CyclicGroup}) = CyclicGroupElement
 Base.iterate(C::CyclicGroup) = one(C), 1
-Base.iterate(C::CyclicGroup, state) =
-    (state < C.order ? (CyclicGroupElement(state, C), state + 1) : nothing)
+function Base.iterate(C::CyclicGroup, state)
+    return (
+        state < C.order ? (CyclicGroupElement(state, C), state + 1) : nothing
+    )
+end
 Base.IteratorSize(::Type{CyclicGroup}) = Base.HasLength()
 
 GroupsCore.order(::Type{T}, C::CyclicGroup) where {T<:Integer} = T(C.order)
 GroupsCore.gens(C::CyclicGroup) = [CyclicGroupElement(1, C)]
 
 GroupsCore.parent(c::CyclicGroupElement) = c.parent
-Base.:(==)(g::CyclicGroupElement, h::CyclicGroupElement) =
-    parent(g) === parent(h) && g.residual == h.residual
+function Base.:(==)(g::CyclicGroupElement, h::CyclicGroupElement)
+    return parent(g) === parent(h) && g.residual == h.residual
+end
 
-Base.inv(g::CyclicGroupElement) =
-    (C = parent(g); CyclicGroupElement(order(UInt, C) - g.residual, C))
+function Base.inv(g::CyclicGroupElement)
+    return (C = parent(g); CyclicGroupElement(order(UInt, C) - g.residual, C))
+end
 
 function Base.:(*)(g::CyclicGroupElement, h::CyclicGroupElement)
     @assert parent(g) === parent(h)
@@ -56,7 +61,9 @@ Base.hash(g::CyclicGroupElement, h::UInt) = hash(g.residual, hash(parent(g), h))
 ### end of Group[Element] methods
 
 # Some eye-candy if you please
-Base.show(io::IO, C::CyclicGroup) =
-    print(io, "Group of residues modulo $(order(Int, C))")
-Base.show(io::IO, c::CyclicGroupElement) =
-    print(io, Int(c.residual), " (mod ", order(Int, parent(c)), ")")
+function Base.show(io::IO, C::CyclicGroup)
+    return print(io, "Group of residues modulo $(order(Int, C))")
+end
+function Base.show(io::IO, c::CyclicGroupElement)
+    return print(io, Int(c.residual), " (mod ", order(Int, parent(c)), ")")
+end

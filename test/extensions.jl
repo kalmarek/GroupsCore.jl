@@ -1,5 +1,4 @@
 @testset "Functions to extend" begin
-
     @testset "predicates" begin
         @test GroupsCore.isabelian isa Function
         @test GroupsCore.issolvable isa Function

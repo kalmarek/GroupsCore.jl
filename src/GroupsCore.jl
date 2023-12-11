@@ -1,7 +1,6 @@
 module GroupsCore
 
 import Random
-import Markdown
 
 abstract type Group end
 abstract type GroupElement end

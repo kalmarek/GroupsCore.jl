@@ -82,9 +82,7 @@ function test_Group_interface(G::Group)
 end
 
 function test_GroupElement_interface(g::GEl, h::GEl) where {GEl<:GroupElement}
-
     @testset "GroupElement interface" begin
-
         @testset "Parent methods" begin
             @test parent(g) isa Group
             @test parent(g) === parent(h)
@@ -145,7 +143,7 @@ function test_GroupElement_interface(g::GEl, h::GEl) where {GEl<:GroupElement}
             @test g^-3 == inv(g) * inv(g) * inv(g)
             @test (g, h) == (old_g, old_h)
 
-            pow(g,n) = g^n
+            pow(g, n) = g^n
 
             @test pow(g, 6) isa GroupElement
             @test pow(g, 1) isa GroupElement
@@ -290,7 +288,6 @@ function test_GroupElement_interface(g::GEl, h::GEl) where {GEl<:GroupElement}
 
                 @test div_right!(g, g, g) == one(g)
                 g = deepcopy(old_g)
-
 
                 res = h^-1 * g
                 @test div_left!(out, g, h) == res

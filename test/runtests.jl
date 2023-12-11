@@ -7,7 +7,6 @@ include("cyclic.jl")
 include("infinite_cyclic.jl")
 
 @testset "GroupsCore.jl" begin
-
     include("test_notsatisfied.jl")
 
     @testset "Cyclic(1)" begin

@@ -1,6 +1,6 @@
 # Extensions
 
-The following functions are defined in `GroupsCore` only to be extended
+The following (empty) functions are defined in `GroupsCore` only to be extended
 externally:
 
 ```julia
