@@ -77,12 +77,6 @@ function test_Group_interface(G::Group)
             @test rand(G, 2) isa AbstractVector{eltype(G)}
             g, h = rand(G, 2)
             @test parent(g) === parent(h) === G
-
-            @test GroupsCore.rand_pseudo(G) isa eltype(G)
-            @test GroupsCore.rand_pseudo(G, 2, 2) isa AbstractMatrix{eltype(G)}
-
-            g, h = GroupsCore.rand_pseudo(G, 2)
-            @test parent(g) === parent(h) === G
         end
     end
 end

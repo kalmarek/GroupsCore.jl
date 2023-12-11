@@ -21,14 +21,6 @@ Base.IteratorSize(::Type{CyclicGroup}) = Base.HasLength()
 GroupsCore.order(::Type{T}, C::CyclicGroup) where {T<:Integer} = T(C.order)
 GroupsCore.gens(C::CyclicGroup) = [CyclicGroupElement(1, C)]
 
-function Base.rand(
-    rng::Random.AbstractRNG,
-    rs::Random.SamplerTrivial{<:CyclicGroup},
-)
-    C = rs[]
-    return CyclicGroupElement(rand(rng, 0:C.order-1), C)
-end
-
 GroupsCore.parent(c::CyclicGroupElement) = c.parent
 Base.:(==)(g::CyclicGroupElement, h::CyclicGroupElement) =
     parent(g) === parent(h) && g.residual == h.residual

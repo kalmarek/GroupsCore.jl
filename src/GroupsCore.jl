@@ -15,6 +15,7 @@ include("exceptions.jl")
 include("groups.jl")
 include("group_elements.jl")
 
+include("rand.jl")
 include("extensions.jl")
 
 end

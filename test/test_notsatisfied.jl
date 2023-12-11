@@ -91,12 +91,9 @@ end
         @test_throws INI gens(G)
 
         Base.eltype(::Type{SomeGroup}) = SomeGroupElement
-        @test_throws INI rand(G, 2)
 
         @test_throws INI gens(G, 1)
         @test_throws INI ngens(G)
-
-        @test_throws INI GroupsCore.rand_pseudo(G, 2, 2)
     end
 
     @testset "GroupElem Interface" begin
@@ -116,7 +113,6 @@ end
 
         GroupsCore.isfiniteorder(::SomeGroupElement) = false
         @test_throws InfO order(g)
-        @test_throws INI deepcopy(g)
 
         @test_throws INI inv(g)
         @test_throws INI g * g

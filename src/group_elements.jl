@@ -27,17 +27,6 @@ Base.:(==)(g::GEl, h::GEl) where {GEl <: GroupElement} = throw(
     InterfaceNotImplemented(:Group, "Base.:(==)(::$GEl, ::$GEl)"),
 )
 
-Base.deepcopy_internal(g::GroupElement, stackdict::IdDict) = throw(
-    InterfaceNotImplemented(
-        :Group,
-        "Base.deepcopy_internal(::$(typeof(g)), ::IdDict)",
-    ),
-)
-# TODO: Technically, it is not necessary to implement `deepcopy_internal` method
-# if `parent(g)` can be reconstructed exactly from `g` (i.e. either it's cached,
-# or a singleton). However by defining this fallback we force everybody to
-# implement it, except isbits group elements.
-
 Base.copy(g::GroupElement) = deepcopy(g)
 
 @doc Markdown.doc"""
