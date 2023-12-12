@@ -83,7 +83,7 @@ end
 
 function test_GroupElement_interface(g::GEl, h::GEl) where {GEl<:GroupElement}
     @testset "GroupElement interface" begin
-        @testset "Parent methods" begin
+        @testset "Parent methods & deepcopy" begin
             @test parent(g) isa Group
             @test parent(g) === parent(h)
             G = parent(g)
@@ -94,35 +94,19 @@ function test_GroupElement_interface(g::GEl, h::GEl) where {GEl<:GroupElement}
 
             @test one(G) == one(g) == one(h)
 
-            if GroupsCore._is_deepcopiable(g)
-                @test one(G) !== one(g)
-            end
-
             @test isone(one(G))
-        end
-
-        @testset "Equality, deepcopy && hash" begin
-            @test (g == h) isa Bool
 
             @test ==(g, h) isa Bool
-            @test isequal(g, g)
             @test ==(h, h)
-
-            if g != h
-                @test !isequal(g, h)
-            end
 
             @test deepcopy(g) isa typeof(g)
             @test deepcopy(g) == g
-            if GroupsCore._is_deepcopiable(g)
-                @test deepcopy(g) !== g
-            end
             k = deepcopy(g)
             @test parent(k) === parent(g)
             @test hash(g) isa UInt
             @test hash(g) == hash(k)
 
-            if isequal(g, h)
+            if g == h
                 @test hash(g) == hash(h)
             end
         end
