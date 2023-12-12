@@ -41,3 +41,8 @@ end
 * [PermutationGroups.jl](https://github.com/kalmarek/PermutationGroups.jl)
 * [Groups.jl](https://github.com/kalmarek/Groups.jl),
 * [SymbolicWedderburn.jl](https://github.com/kalmarek/SymbolicWedderburn.jl).
+
+The [`Oscar.jl`](https://github.com/oscar-system/Oscar.jl) project no longer
+supports `GroupsCore.jl` interface at version `0.5`. See
+[these](https://github.com/oscar-system/Oscar.jl/pull/3070#issuecomment-1841742705)
+[comments](https://github.com/oscar-system/Oscar.jl/pull/3070#issuecomment-1841865387).

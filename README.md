@@ -7,13 +7,14 @@
 
 ----
 
-The aim of this package is to standardize common assumptions on and functions for groups, i.e. to create
-Group interface.
-Packages using it include:
+The aim of this package is to standardize common assumptions on and functions
+for groups, i.e. to create Group interface. Packages using it include:
 * [PermutationGroups.jl](https://github.com/kalmarek/PermutationGroups.jl)
 * [Groups.jl](https://github.com/kalmarek/Groups.jl),
 * [SymbolicWedderburn.jl](https://github.com/kalmarek/SymbolicWedderburn.jl),
-* [Oscar](https://github.com/oscar-system/Oscar.jl) project.
+
+The [`Oscar.jl`](https://github.com/oscar-system/Oscar.jl) project no longer
+supports `GroupsCore.jl` interface at version `0.5`.
 
 ## Examples and Conformance testing
 
