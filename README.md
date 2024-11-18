@@ -30,8 +30,10 @@ using GroupsCore
 include(joinpath(pathof(GroupsCore), "..", "..", "test", "conformance_test.jl"))
 include("my_fancy_group.jl") # the implementation of MyFancyGroup
 let G = MyFancyGroup(...)
-    test_Group_interface(G)
-    test_GroupElement_interface(rand(G, 2)...)
+    test_GroupsCore_interface(G)
+    # optionally if particular two group elements are to be tested:
+    # g,h = rand(G, 2)
+    # test_GroupsCore_interface(g, h)
     nothing
 end
 ```

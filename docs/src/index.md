@@ -5,17 +5,18 @@ CurrentModule = GroupsCore
 ```
 
 The aim of this package is to standardize the common assumptions and functions
-on group i.e. to create Group interface.
+on group i.e. to create Group/Monoid interface.
 
-The protocol consists of two parts:
+Due to the fact that hardly any information can be encoded in `Type`, the
+interface consists of two parts:
 
-* [`Group`](@ref H1_groups) (parent object) methods,
-* [`GroupElement`](@ref H1_group_elements) methods.
+* [`Group` or `Monoid`](@ref H1_groups) (parent object) methods,
+* [`GroupElement` or `MonoidElement`](@ref H1_group_elements) methods.
 
-This is due to the fact that hardly any information can be encoded in `Type`, we
-rely on parent objects that represent groups, as well as ordinary group
-elements. It is assumed that all elements of a group have **identical** parent
-(i.e.  `===`) so that parent objects behave locally as singletons.
+We rely on parent objects that represent groups/monoids, and separate types
+for elements. It is assumed that all elements of a group or monoid have
+**identical** parent (i.e.  `===`) so that parent objects behave locally as
+singletons.
 
 ## Examples and Conformance testing
 
@@ -31,8 +32,10 @@ using GroupsCore
 include(joinpath(pathof(GroupsCore), "..", "..", "test", "conformance_test.jl"))
 include(joinpath(pathof(GroupsCore), "..", "..", "test", "cyclic.jl"))
 let C = CyclicGroup(15)
-    test_Group_interface(C)
-    test_GroupElement_interface(rand(C, 2)...)
+    test_GroupsCore_interface(C)
+    # optionally if particular two group elements are to be tested:
+    # g, h = rand(C, 2)
+    # test_GroupsCore_interface(g, h)
     nothing
 end
 ```
