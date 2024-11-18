@@ -5,7 +5,7 @@
 ## Obligatory methods
 
 ```@docs
-parent(::Monoid)
+parent(::MonoidElement)
 :(==)(::El, ::El) where {El <: MonoidElement}
 isfiniteorder(::MonoidElement)
 ```
