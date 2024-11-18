@@ -1,5 +1,3 @@
-using Random
-
 struct CyclicGroup <: GroupsCore.Group
     order::UInt
 end
