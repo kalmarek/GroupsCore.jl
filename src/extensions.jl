@@ -1,4 +1,3 @@
-_is_deepcopiable(g::GroupElement) = !isbits(g)
 
 function isabelian end
 function issolvable end

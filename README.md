@@ -8,7 +8,7 @@
 ----
 
 The aim of this package is to standardize common assumptions on and functions
-for groups, i.e. to create Group interface. Packages using it include:
+for groups and monoids, i.e. to create Group/Monoid interface. Packages using it include:
 * [PermutationGroups.jl](https://github.com/kalmarek/PermutationGroups.jl)
 * [Groups.jl](https://github.com/kalmarek/Groups.jl),
 * [SymbolicWedderburn.jl](https://github.com/kalmarek/SymbolicWedderburn.jl),
@@ -28,7 +28,7 @@ To test the conformance of a group implementation one can run
 ```julia
 using GroupsCore
 include(joinpath(pathof(GroupsCore), "..", "..", "test", "conformance_test.jl"))
-include("my_group.jl")
+include("my_fancy_group.jl") # the implementation of MyFancyGroup
 let G = MyFancyGroup(...)
     test_Group_interface(G)
     test_GroupElement_interface(rand(G, 2)...)
