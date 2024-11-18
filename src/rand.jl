@@ -13,36 +13,38 @@ end
 
 # constants taken from GAP
 function PRASampler(
-    G,
-    n::Integer = 2ngens(G) + 10,
+    M,
+    n::Integer = 2ngens(M) + 10,
     scramble_time::Integer = 10max(n, 10),
 )
-    return PRASampler(Random.default_rng(), G, n, scramble_time)
+    return PRASampler(Random.default_rng(), M, n, scramble_time)
 end
 
 function Random.Sampler(
     RNG::Type{<:Random.AbstractRNG},
-    G::Group,
+    M::Monoid,
     repetition::Random.Repetition = Val(Inf),
 )
-    return PRASampler(RNG(), G)
+    return PRASampler(RNG(), M)
 end
 
 function PRASampler(
     rng::Random.AbstractRNG,
-    G::Group,
-    n::Integer = 2ngens(G) + 10,
+    M::Monoid,
+    n::Integer = 2ngens(M) + 10,
     scramble_time::Integer = 10max(n, 10),
 )
-    if istrivial(G)
-        return PRASampler(fill(one(G), n), one(G), one(G))
+    if istrivial(M)
+        return PRASampler(fill(one(M), n), one(M), one(M))
     end
-    @assert hasgens(G)
-    l = max(n, 2ngens(G), 2)
-    sampler = let S = gens(G)
-        S = union!(inv.(S), S)
+    @assert hasgens(M)
+    l = max(n, 2ngens(M), 2)
+    sampler = let S = collect(gens(M))
+        if M isa Group
+            S = union!(S, inv.(S))
+        end
         append!(S, rand(rng, S, l - length(S)))
-        PRASampler(S, one(G), one(G))
+        PRASampler(S, one(M), one(M))
     end
     for _ in 1:scramble_time
         _ = rand(rng, sampler)
@@ -51,15 +53,11 @@ function PRASampler(
 end
 
 function Random.rand(rng::Random.AbstractRNG, pra::PRASampler)
-    range = 1:length(pra.gentuple)
+    i = rand(rng, 1:length(pra.gentuple))
 
     pra.right = pra.right * rand(rng, pra.gentuple)
-
-    i = rand(rng, range)
     @inbounds pra.gentuple[i] = pra.gentuple[i] * pra.right
-
-    j = rand(rng, range)
-    @inbounds pra.left = pra.left * pra.gentuple[j]
+    pra.left = rand(rng, pra.gentuple) * pra.left
 
     return pra.left
 end

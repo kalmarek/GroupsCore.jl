@@ -13,8 +13,10 @@ end
 struct InfiniteOrder{T} <: Exception
     x::T
     msg::Any
-    InfiniteOrder(g::Union{GroupElement,Group}) = new{typeof(g)}(g)
-    InfiniteOrder(g::Union{GroupElement,Group}, msg) = new{typeof(g)}(g, msg)
+    InfiniteOrder(g::Union{<:MonoidElement,<:Monoid}) = new{typeof(g)}(g)
+    function InfiniteOrder(g::Union{<:MonoidElement,<:Monoid}, msg)
+        return new{typeof(g)}(g, msg)
+    end
 end
 
 function Base.showerror(io::IO, err::InfiniteOrder{T}) where {T}
@@ -23,10 +25,10 @@ function Base.showerror(io::IO, err::InfiniteOrder{T}) where {T}
         print(io, err.msg)
     else
         print(io, "order will only return a value when it is finite. ")
-        f = if T <: Group
-            "isfinite(G)"
-        elseif T <: GroupElement
-            "isfiniteorder(g)"
+        f = if T <: Monoid
+            "isfinite(…)"
+        elseif T <: MonoidElement
+            "isfiniteorder(…)"
         end
         print(io, "You should check with `$f` first.")
     end

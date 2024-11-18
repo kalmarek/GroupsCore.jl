@@ -1,21 +1,20 @@
 # [Group elements](@id H1_group_elements)
 
-`GroupsCore` defines abstract type `GroupElement`, which all implementations
-of group elements should subtype.
+`GroupsCore` defines abstract types `GroupElement <: MonoidElement`, which all implementations of group/monoid elements should subtype.
 
 ## Obligatory methods
 
 ```@docs
-parent(::GroupElement)
-:(==)(::GEl, ::GEl) where {GEl <: GroupElement}
-isfiniteorder(::GroupElement)
+parent(::MonoidElement)
+:(==)(::El, ::El) where {El <: MonoidElement}
+isfiniteorder(::MonoidElement)
 ```
 
 As well as the two arithmetic operations:
 
 ```julia
+Base.:(*)(::El, ::El) where {El <: MonoidElement}
 Base.inv(::GroupElement)
-Base.:(*)(::GEl, ::GEl) where {GEl <: GroupElement}
 ```
 
 ### A note on `deepcopy`
@@ -23,14 +22,14 @@ Base.:(*)(::GEl, ::GEl) where {GEl <: GroupElement}
 The elements which are not of `isbitstype` should extend
 
 ```julia
-Base.deepcopy_internal(g::GroupElement, ::IdDict)
+Base.deepcopy_internal(g::MonoidElement, ::IdDict)
 ```
 
 according to
 [`Base.deepcopy`](https://docs.julialang.org/en/v1/base/base/#Base.deepcopy)
-docstring. Due to our assumption on parents of group elements (acting as local
-singleton objects), a group element and its `deepcopy` should have identical
-(i.e. `===`) parents.
+docstring. Due to our assumption on parents of group/monoid elements
+(acting as local singleton objects), a monoid element and its `deepcopy` should
+have identical (i.e. `===`) parents.
 
 ## Implemented methods
 
@@ -38,26 +37,25 @@ Using the obligatory methods we implement the rest of the functions in
 `GroupsCore`. For starters, the first of these are:
 
 ```julia
-Base.:(^)(::GroupElement, ::Integer)
-Base.:(/)(::GEl, ::GEl) where {GEl <: GroupElement}
-Base.one(::GroupElement)
+Base.one(::MonoidElement)
+Base.:(/)(::El, ::El) where {El <: GroupElement}
 ```
 
 and
 
 ```@docs
-order(::Type{T}, ::GroupElement) where T
+order(::Type{T}, ::MonoidElement) where T
 conj
 :(^)(::GEl, ::GEl) where {GEl <: GroupElement}
 commutator
 ```
 
-Moreover we provide basic implementation which should be altered for performance
+Moreover we provide basic implementation which could be altered for performance
 reasons:
 ```julia
-Base.:(^)(g::GroupElement, n::Integer)
-Groups.Core.order([::Type{T}], g::GroupElement) where T
-Base.hash(::GroupElement, ::UInt)
+Base.:(^)(g::MonoidElement, n::Integer)
+Groups.Core.order([::Type{T}], g::MonoidElement) where T
+Base.hash(::MonoidElement, ::UInt)
 ```
 
 ### Mutable API
