@@ -52,17 +52,17 @@ function Base.iterate(M::Monoid)
     hasgens(M) && throw(
         InterfaceNotImplemented(:Iteration, "Base.iterate(::$(typeof(M)))"),
     )
-    throw(ArgumentError("Group does not have assigned generators."))
+    throw(ArgumentError("Monoid does not have assigned generators."))
 end
 
-function Base.iterate(M::Group, state)
+function Base.iterate(M::Monoid, state)
     hasgens(M) && throw(
         InterfaceNotImplemented(
             :Iteration,
             "Base.iterate(::$(typeof(M)), state)",
         ),
     )
-    throw(ArgumentError("Group does not have assigned generators."))
+    throw(ArgumentError("Monoid does not have assigned generators."))
 end
 
 """

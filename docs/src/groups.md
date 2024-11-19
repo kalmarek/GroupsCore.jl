@@ -98,3 +98,15 @@ information is derivable from the type, there is no need to extend
 Base.isfinite(G::Group)
 istrivial(G::Group)
 ```
+
+## Random elements
+
+We provide two methods for generating random elements of a group or monoid.
+
+```@docs
+GroupsCore.ProductReplacementSampler
+GroupsCore.RandomWordSampler
+```
+
+By default for finite monoids `ProductReplacementSampler` is used and
+`RandomWordSampler` following `Poisson(λ=8)` is employed for inifinite ones.
