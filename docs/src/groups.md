@@ -104,9 +104,9 @@ istrivial(G::Group)
 We provide two methods for generating random elements of a group or monoid.
 
 ```@docs
-PRASampler
-RandomWordSampler
+GroupsCore.ProductReplacementSampler
+GroupsCore.RandomWordSampler
 ```
 
-By default for finite monoids `PRASampler` is used and
+By default for finite monoids `ProductReplacementSampler` is used and
 `RandomWordSampler` following `Poisson(λ=8)` is employed for inifinite ones.
