@@ -1,7 +1,7 @@
 name = "GroupsCore"
 uuid = "d5909c97-4eac-4ecc-a3dc-fdd0858a4120"
 authors = ["Marek Kaluba <kalmar@mailbox.org>"]
-version = "0.5.1"
+version = "0.5.2"
 
 [deps]
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
